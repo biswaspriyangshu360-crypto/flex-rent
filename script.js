@@ -710,26 +710,7 @@ async function signupUser() {
 }
 
 
-    alert(
-        "Account created successfully!\n\n" +
-        "Welcome, " +
-        name +
-        "!"
-    );
-
-
-    closeSignup();
-
-
-    // Clear fields
-
-    document.getElementById("signupName").value = "";
-
-    document.getElementById("signupEmail").value = "";
-
-    document.getElementById("signupPassword").value = "";
-
-}
+   
 
 
 // ======================================================
