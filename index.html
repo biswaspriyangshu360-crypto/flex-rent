@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Flex Rent - Rent. Earn. Grow.</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="navbar">
+
+        <div class="logo">
+            <span>Flex</span> Rent
+        </div>
+
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#categories">Categories</a>
+            <a href="#items">Browse</a>
+            <a href="#how-it-works">How It Works</a>
+        </nav>
+
+        <button class="login-btn" onclick="showLogin()">
+            Login
+        </button>
+        <button class="login-btn" onclick="openDashboard()">
+    Dashboard
+</button>
+    </header>
+
+
+    <!-- ================= HERO SECTION ================= -->
+
+    <section class="hero" id="home">
+
+        <div class="hero-content">
+
+            <p class="small-heading">
+                RENT • EARN • GROW
+            </p>
+
+            <h1>
+                Rent What You Need.
+                <br>
+                Earn From What You Own.
+            </h1>
+
+            <p class="hero-text">
+                Flex Rent is a community rental marketplace
+                where you can rent useful items and equipment
+                or earn money by renting out your own items.
+            </p>
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search for tools, books, equipment..."
+                    onkeyup="searchItems()"
+                >
+
+                <button onclick="searchItems()">
+                    Search
+                </button>
+
+            </div>
+
+            <div class="hero-buttons">
+
+                <button class="primary-btn" onclick="scrollToItems()">
+                    Browse Items
+                </button>
+
+                <button class="secondary-btn" onclick="openListForm()">
+                    List Your Item
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= CATEGORIES ================= -->
+
+    <section class="section" id="categories">
+
+        <div class="section-heading">
+
+            <p>EXPLORE</p>
+
+            <h2>Popular Categories</h2>
+
+        </div>
+
+
+        <div class="category-container">
+
+            <div class="category-card" onclick="filterCategory('Everyday')">
+                <div class="category-icon">📚</div>
+                <h3>Everyday Items</h3>
+                <p>Books, electronics and useful items</p>
+            </div>
+
+
+            <div class="category-card" onclick="filterCategory('Agriculture')">
+                <div class="category-icon">🌾</div>
+                <h3>Agriculture</h3>
+                <p>Farming tools and equipment</p>
+            </div>
+
+
+            <div class="category-card" onclick="filterCategory('Construction')">
+                <div class="category-icon">🏗️</div>
+                <h3>Construction</h3>
+                <p>Tools and construction equipment</p>
+            </div>
+
+
+            <div class="category-card" onclick="filterCategory('Industrial')">
+                <div class="category-icon">⚙️</div>
+                <h3>Industrial</h3>
+                <p>Industrial machines and equipment</p>
+            </div>
+
+
+            <div class="category-card" onclick="filterCategory('Gardening')">
+                <div class="category-icon">🌱</div>
+                <h3>Gardening</h3>
+                <p>Gardening tools and equipment</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= ITEMS ================= -->
+
+    <section class="section items-section" id="items">
+
+        <div class="section-heading">
+
+            <p>DISCOVER</p>
+
+            <h2>Available Items</h2>
+
+        </div>
+
+
+        <div class="items-container" id="itemsContainer">
+
+            <!-- Item 1 -->
+
+            <div class="item-card" data-category="Everyday">
+
+                <div class="item-image">
+                    📚
+                </div>
+
+                <div class="item-info">
+
+                    <span class="item-category">
+                        Everyday
+                    </span>
+
+                    <h3>Engineering Books</h3>
+
+                    <p>
+                        First-year engineering books
+                        for students.
+                    </p>
+
+                    <div class="item-bottom">
+
+                        <strong>
+                            ₹50/day
+                        </strong>
+
+                        <button onclick="openBooking('Engineering Books', 50)">
+    Rent Now
+</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Item 2 -->
+
+            <div class="item-card" data-category="Agriculture">
+
+                <div class="item-image">
+                    🌾
+                </div>
+
+                <div class="item-info">
+
+                    <span class="item-category">
+                        Agriculture
+                    </span>
+
+                    <h3>Power Sprayer</h3>
+
+                    <p>
+                        Useful equipment for
+                        agricultural work.
+                    </p>
+
+                    <div class="item-bottom">
+
+                        <strong>
+                            ₹300/day
+                        </strong>
+
+                        <button onclick="openBooking('Power Sprayer', 300)">
+    Rent Now
+</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Item 3 -->
+
+            <div class="item-card" data-category="Construction">
+
+                <div class="item-image">
+                    🛠️
+                </div>
+
+                <div class="item-info">
+
+                    <span class="item-category">
+                        Construction
+                    </span>
+
+                    <h3>Drilling Machine</h3>
+
+                    <p>
+                        Electric drilling machine
+                        for construction work.
+                    </p>
+
+                    <div class="item-bottom">
+
+                        <strong>
+                            ₹250/day
+                        </strong>
+
+                        <button onclick="openBooking('Drilling Machine', 250)">
+    Rent Now
+</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Item 4 -->
+
+            <div class="item-card" data-category="Industrial">
+
+                <div class="item-image">
+                    ⚙️
+                </div>
+
+                <div class="item-info">
+
+                    <span class="item-category">
+                        Industrial
+                    </span>
+
+                    <h3>Industrial Tool Kit</h3>
+
+                    <p>
+                        Professional tools for
+                        industrial applications.
+                    </p>
+
+                    <div class="item-bottom">
+
+                        <strong>
+                            ₹400/day
+                        </strong>
+
+                      <button onclick="openBooking('Industrial Tool Kit', 400)">
+    Rent Now
+</button>  
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Item 5 -->
+
+            <div class="item-card" data-category="Gardening">
+
+                <div class="item-image">
+                    🌱
+                </div>
+
+                <div class="item-info">
+
+                    <span class="item-category">
+                        Gardening
+                    </span>
+
+                    <h3>Garden Tool Set</h3>
+
+                    <p>
+                        Complete basic tool set
+                        for gardening.
+                    </p>
+
+                    <div class="item-bottom">
+
+                        <strong>
+                            ₹150/day
+                        </strong>
+
+                       <button onclick="openBooking('Garden Tool Set', 150)">
+    Rent Now
+</button> 
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Item 6 -->
+
+            <div class="item-card" data-category="Everyday">
+
+                <div class="item-image">
+                    💻
+                </div>
+
+                <div class="item-info">
+
+                    <span class="item-category">
+                        Everyday
+                    </span>
+
+                    <h3>Laptop</h3>
+
+                    <p>
+                        Laptop available for short-term
+                        academic use.
+                    </p>
+
+                    <div class="item-bottom">
+
+                        <strong>
+                            ₹500/day
+                        </strong>
+
+                        <button onclick="openBooking('Laptop', 500)">
+    Rent Now
+</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <p id="noResults" class="no-results">
+            No items found.
+        </p>
+
+    </section>
+    <!-- ================= MAP SECTION ================= -->
+
+<section class="map-section" id="location">
+
+    <div class="section-heading">
+
+        <p>FIND NEARBY</p>
+
+        <h2>Find Rental Items Near You</h2>
+
+        <p class="map-description">
+            Explore rental items available near your location.
+        </p>
+
+    </div>
+
+
+    <div class="map-container">
+
+        <div class="map-box">
+
+            <div class="map-title">
+                Flex Rent Locations
+            </div>
+
+            <div class="map-marker marker-1">
+                📍
+                <span>Books</span>
+            </div>
+
+            <div class="map-marker marker-2">
+                📍
+                <span>Laptop</span>
+            </div>
+
+            <div class="map-marker marker-3">
+                📍
+                <span>Drilling Machine</span>
+            </div>
+
+            <div class="map-marker marker-4">
+                📍
+                <span>Garden Tools</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+     <!-- ================= BOOKING MODAL ================= -->
+
+<div class="modal" id="bookingModal">
+
+    <div class="modal-content">
+
+        <button class="close-btn" onclick="closeBooking()">
+            ×
+        </button>
+
+        <h2>Book Your Item</h2>
+
+        <p id="bookingItemName">
+            Item Name
+        </p>
+
+        <p id="bookingItemPrice">
+            ₹0/day
+        </p>
+
+        <label>Start Date</label>
+
+        <input
+            type="date"
+            id="startDate"
+        >
+
+        <label>Number of Days</label>
+
+        <input
+            type="number"
+            id="rentalDays"
+            value="1"
+            min="1"
+            onchange="calculateTotal()"
+        >
+
+        <div class="booking-total">
+
+            <span>Total Amount</span>
+
+            <strong id="bookingTotal">
+                ₹0
+            </strong>
+
+        </div>
+
+        <button
+            class="primary-btn"
+            onclick="proceedToPayment()"
+        >
+            Proceed to Payment
+        </button>
+
+    </div>
+
+</div>
+<!-- ================= PAYMENT MODAL ================= -->
+
+<div class="modal" id="paymentModal">
+
+    <div class="modal-content payment-box">
+
+        <button class="close-btn" onclick="closePayment()">
+            ×
+        </button>
+
+        <h2>Complete Your Payment</h2>
+
+        <p>
+            Choose your preferred payment method.
+        </p>
+
+        <div class="payment-summary">
+
+            <div>
+                <span>Item</span>
+                <strong id="paymentItem">
+                    Rental Item
+                </strong>
+            </div>
+
+            <div>
+                <span>Rental Days</span>
+                <strong id="paymentDays">
+                    1 Day
+                </strong>
+            </div>
+
+            <div class="payment-total">
+
+                <span>Total Amount</span>
+
+                <strong id="paymentAmount">
+                    ₹0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <h3 class="payment-title">
+            Select Payment Method
+        </h3>
+
+
+        <div class="payment-methods">
+
+            <button
+                class="payment-method"
+                onclick="selectPaymentMethod('UPI')"
+            >
+                <span>📱</span>
+                <strong>UPI</strong>
+            </button>
+
+
+            <button
+                class="payment-method"
+                onclick="selectPaymentMethod('Card')"
+            >
+                <span>💳</span>
+                <strong>Card</strong>
+            </button>
+
+
+            <button
+                class="payment-method"
+                onclick="selectPaymentMethod('Net Banking')"
+            >
+                <span>🏦</span>
+                <strong>Net Banking</strong>
+            </button>
+
+        </div>
+
+
+        <p id="selectedPayment" class="selected-payment">
+            Please select a payment method.
+        </p>
+
+
+        <button
+            class="primary-btn pay-btn"
+            onclick="makePayment()"
+        >
+            Pay Now
+        </button>
+
+    </div>
+
+</div>
+    <!-- ================= HOW IT WORKS ================= -->
+
+    <section class="how-section" id="how-it-works">
+
+        <div class="section-heading">
+
+            <p>SIMPLE PROCESS</p>
+
+            <h2>How Flex Rent Works</h2>
+
+        </div>
+
+
+        <div class="steps-container">
+
+            <div class="step">
+
+                <div class="step-number">
+                    01
+                </div>
+
+                <h3>List</h3>
+
+                <p>
+                    List the item or equipment
+                    you want to rent.
+                </p>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    02
+                </div>
+
+                <h3>Search</h3>
+
+                <p>
+                    Find the item you need
+                    near you.
+                </p>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    03
+                </div>
+
+                <h3>Book</h3>
+
+                <p>
+                    Select your rental period
+                    and book the item.
+                </p>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    04
+                </div>
+
+                <h3>Receive</h3>
+
+                <p>
+                    Receive the item through
+                    delivery or pickup.
+                </p>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    05
+                </div>
+
+                <h3>Return</h3>
+
+                <p>
+                    Return the item after
+                    your rental period.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= LIST ITEM SECTION ================= -->
+
+    <section class="list-section">
+
+        <div class="list-content">
+
+            <p>START EARNING</p>
+
+            <h2>
+                Have something others need?
+            </h2>
+
+            <p>
+                List your unused items and earn
+                money by renting them out.
+            </p>
+
+            <button class="primary-btn" onclick="openListForm()">
+                List Your Item
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-logo">
+            <span>Flex</span> Rent
+        </div>
+
+        <p>
+            Rent. Earn. Grow.
+        </p>
+
+        <p class="copyright">
+            © 2026 Flex Rent. College Project.
+        </p>
+
+    </footer>
+
+
+    <!-- ================= MODAL ================= -->
+    <!-- ================= LOGIN MODAL ================= -->
+
+<div class="modal" id="loginModal">
+
+    <div class="modal-content">
+
+        <button class="close-btn" onclick="closeLogin()">
+            ×
+        </button>
+
+        <h2>Welcome to Flex Rent</h2>
+
+        <p>Login to rent or list items.</p>
+
+        <input
+            type="email"
+            id="loginEmail"
+            placeholder="Enter your email"
+        >
+
+        <input
+            type="password"
+            id="loginPassword"
+            placeholder="Enter your password"
+        >
+
+        <button class="primary-btn" onclick="loginUser()">
+            Login
+        </button>
+
+        <p class="signup-text">
+            Don't have an account?
+
+            <button class="link-btn" onclick="showSignup()">
+                Sign Up
+            </button>
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SIGNUP MODAL ================= -->
+
+<div class="modal" id="signupModal">
+
+    <div class="modal-content">
+
+        <button class="close-btn" onclick="closeSignup()">
+            ×
+        </button>
+
+        <h2>Create Account</h2>
+
+        <p>Join Flex Rent today.</p>
+
+        <input
+            type="text"
+            id="signupName"
+            placeholder="Full Name"
+        >
+
+        <input
+            type="email"
+            id="signupEmail"
+            placeholder="Email Address"
+        >
+
+        <input
+            type="password"
+            id="signupPassword"
+            placeholder="Create Password"
+        >
+
+        <button class="primary-btn" onclick="signupUser()">
+            Create Account
+        </button>
+
+        <p class="signup-text">
+            Already have an account?
+
+            <button class="link-btn" onclick="showLogin()">
+                Login
+            </button>
+        </p>
+
+    </div>
+
+</div>
+<!-- ================= DASHBOARD ================= -->
+
+<div class="modal" id="dashboardModal">
+
+    <div class="modal-content dashboard-box">
+
+        <button
+            class="close-btn"
+            onclick="closeDashboard()"
+        >
+            ×
+        </button>
+
+        <h2>My Dashboard</h2>
+
+        <p>
+            Manage your Flex Rent activity.
+        </p>
+
+
+        <!-- PROFILE -->
+
+        <div class="dashboard-profile">
+
+            <div class="profile-icon">
+                👤
+            </div>
+
+            <div>
+                <h3>Flex Rent User</h3>
+
+                <p>
+                    user@example.com
+                </p>
+            </div>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="dashboard-stats">
+
+            <div class="stat-card">
+
+                <strong id="totalListings">
+                    0
+                </strong>
+
+                <span>
+                    My Listings
+                </span>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <strong id="totalBookings">
+                    0
+                </strong>
+
+                <span>
+                    My Bookings
+                </span>
+
+            </div>
+
+        </div>
+
+      <!-- DASHBOARD BUTTONS -->
+
+<div class="dashboard-actions">
+
+    <button
+        class="dashboard-action"
+        onclick="openListForm(); closeDashboard();"
+    >
+        📦 List New Item
+    </button>
+
+
+    <button
+        class="dashboard-action"
+        onclick="openMyListings()"
+    >
+        🏷️ My Listings
+    </button>
+
+
+    <button
+        class="dashboard-action"
+        onclick="alert('My Bookings feature will show your bookings here.')"
+    >
+        📅 My Bookings
+    </button>
+
+</div>
+       
+
+         
+
+    </div>
+
+</div>
+<!-- ================= MY LISTINGS ================= -->
+
+<div class="modal" id="myListingsModal">
+
+    <div class="modal-content dashboard-box">
+
+        <button
+            class="close-btn"
+            onclick="closeMyListings()"
+        >
+            ×
+        </button>
+
+        <h2>My Listings</h2>
+
+        <p>
+            Items you have listed for rent.
+        </p>
+
+        <div id="myListingsContainer">
+
+            <p style="text-align:center; margin-top:30px;">
+                No items listed yet.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+    <div class="modal" id="listModal">
+
+        <div class="modal-content">
+
+            <button class="close-btn" onclick="closeListForm()">
+                ×
+            </button>
+
+            <h2>List Your Item</h2>
+
+            <p>
+                Enter your item details.
+            </p>
+
+            <input
+                type="text"
+                id="itemName"
+                placeholder="Item Name"
+            >
+            <input
+    type="file"
+    id="itemImage"
+    accept="image/*"
+>
+            <input
+    type="text"
+    id="itemLocation"
+    placeholder="Location"
+>
+
+<textarea
+    id="itemDescription"
+    placeholder="Describe your item"
+    rows="4"
+></textarea>
+            <input
+                type="text"
+                id="itemPrice"
+                placeholder="Price per day"
+            >
+
+            <select id="itemCategory">
+
+                <option value="Everyday">
+                    Everyday Items
+                </option>
+
+                <option value="Agriculture">
+                    Agriculture
+                </option>
+
+                <option value="Construction">
+                    Construction
+                </option>
+
+                <option value="Industrial">
+                    Industrial
+                </option>
+
+                <option value="Gardening">
+                    Gardening
+                </option>
+
+            </select>
+
+            <button class="primary-btn" onclick="submitItem()">
+                Submit Item
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- JavaScript -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
