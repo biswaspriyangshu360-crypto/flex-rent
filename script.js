@@ -628,44 +628,39 @@ function closeSignup() {
 // LOGIN USER
 // ======================================================
 
-function loginUser() {
+async function loginUser() {
 
-    let email =
+    const email =
         document.getElementById("loginEmail").value.trim();
 
-    let password =
+    const password =
         document.getElementById("loginPassword").value;
 
+    if (email === "" || password === "") {
 
-    if (
-        email === "" ||
-        password === ""
-    ) {
-
-        alert(
-            "Please enter email and password."
-        );
+        alert("Please enter email and password.");
 
         return;
-
     }
 
+    const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
 
-    alert(
-        "Login successful!\n\n" +
-        "Welcome to Flex Rent!"
-    );
+    if (error) {
 
+        alert(error.message);
+
+        return;
+    }
+
+    alert("Login successful!");
 
     closeLogin();
 
-
-    // Clear fields
-
-    document.getElementById("loginEmail").value = "";
-
-    document.getElementById("loginPassword").value = "";
-
+    openDashboard();
 }
 
 
