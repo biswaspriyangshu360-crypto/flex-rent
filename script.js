@@ -673,31 +673,41 @@ function loginUser() {
 // SIGN UP USER
 // ======================================================
 
-function signupUser() {
+async function signupUser() {
 
-    let name =
-        document.getElementById("signupName").value.trim();
+    const name = document.getElementById("signupName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
+    const password = document.getElementById("signupPassword").value;
 
-    let email =
-        document.getElementById("signupEmail").value.trim();
-
-    let password =
-        document.getElementById("signupPassword").value;
-
-
-    if (
-        name === "" ||
-        email === "" ||
-        password === ""
-    ) {
-
-        alert(
-            "Please fill all the details."
-        );
-
+    if (!name || !email || !password) {
+        alert("Please fill all fields.");
         return;
-
     }
+
+    if (password.length < 6) {
+        alert("Password must be at least 6 characters.");
+        return;
+    }
+
+    const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+            data: {
+                name: name
+            }
+        }
+    });
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    alert("Account created! Please check your email for confirmation.");
+
+    showLogin();
+}
 
 
     alert(
