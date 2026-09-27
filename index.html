@@ -573,32 +573,89 @@
     </section>
 
 
-    <!-- ================= MAP ================= -->
-
-   <!-- ================= REAL MAP SECTION ================= -->
+    <!-- ================= REAL MAP ================= -->
 
 <section class="map-section" id="location">
 
     <div class="section-heading">
-
         <p>FIND NEARBY</p>
 
         <h2>Find Rental Items Near You</h2>
 
         <p class="map-description">
-            Explore rental items available near your location.
+            Find available rental items around your location.
         </p>
+    </div>
+
+    <div class="map-wrapper">
+
+        <!-- Map -->
+        <div id="rentalMap"></div>
+
+        <!-- Map Search -->
+        <div class="map-search-box">
+            <input
+                type="text"
+                id="mapSearchInput"
+                placeholder="Search rental items..."
+            >
+
+            <button onclick="searchMapItems()">
+                🔍
+            </button>
+        </div>
+
+        <!-- Location Button -->
+        <button
+            class="location-button"
+            onclick="getMyLocation()"
+            title="Use my location"
+        >
+            📍
+        </button>
+
+        <!-- Search Area Button -->
+        <button
+            class="search-area-button"
+            onclick="searchThisArea()"
+        >
+            🔎 Search this area
+        </button>
 
     </div>
 
-    <div class="map-container">
+    <!-- Nearby Items -->
+    <div class="nearby-items" id="nearbyItems">
 
-        <div id="map"></div>
+        <h3>Nearby Rental Items</h3>
+
+        <div class="nearby-item">
+            <span>📚</span>
+            <div>
+                <strong>Engineering Books</strong>
+                <p>₹50/day</p>
+            </div>
+        </div>
+
+        <div class="nearby-item">
+            <span>💻</span>
+            <div>
+                <strong>Laptop</strong>
+                <p>₹500/day</p>
+            </div>
+        </div>
+
+        <div class="nearby-item">
+            <span>🛠️</span>
+            <div>
+                <strong>Drilling Machine</strong>
+                <p>₹250/day</p>
+            </div>
+        </div>
 
     </div>
 
 </section>
-
 
     <!-- ================= BOOKING MODAL ================= -->
 
