@@ -1035,3 +1035,165 @@ footer p {
     border: 1px solid #dddddd;
     overflow: hidden;
 }
+/* ================= REAL MAP ================= */
+
+.map-section {
+    padding: 90px 7%;
+    background: #ffffff;
+}
+
+.map-description {
+    color: #777;
+    margin-top: 10px;
+}
+
+.map-wrapper {
+    max-width: 1100px;
+    height: 500px;
+    margin: 30px auto 0;
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+/* Actual map */
+
+#rentalMap {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Map search box */
+
+.map-search-box {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    width: 350px;
+    display: flex;
+    z-index: 1000;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.18);
+    overflow: hidden;
+}
+
+.map-search-box input {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.map-search-box button {
+    width: 50px;
+    border: none;
+    background: #16a085;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+/* Location button */
+
+.location-button {
+    position: absolute;
+    right: 18px;
+    bottom: 75px;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 1000;
+    font-size: 20px;
+}
+
+.location-button:hover {
+    background: #e8fff8;
+}
+
+/* Search this area */
+
+.search-area-button {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: none;
+    background: #16a085;
+    color: white;
+    padding: 12px 22px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.search-area-button:hover {
+    background: #12866f;
+}
+
+/* Nearby items */
+
+.nearby-items {
+    max-width: 1100px;
+    margin: 30px auto 0;
+}
+
+.nearby-items h3 {
+    margin-bottom: 15px;
+}
+
+.nearby-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background: white;
+}
+
+.nearby-item > span {
+    font-size: 30px;
+}
+
+.nearby-item strong {
+    display: block;
+}
+
+.nearby-item p {
+    margin-top: 5px;
+    color: #16a085;
+    font-weight: bold;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    .map-section {
+        padding: 60px 5%;
+    }
+
+    .map-wrapper {
+        height: 450px;
+    }
+
+    .map-search-box {
+        width: calc(100% - 36px);
+    }
+
+    .nearby-item {
+        padding: 12px;
+    }
+}
