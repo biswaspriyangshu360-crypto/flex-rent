@@ -1155,3 +1155,49 @@ document.addEventListener(
 // ======================================================
 // FLEX RENT SCRIPT COMPLETE
 // ======================================================
+// ================= REAL MAP =================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const map = L.map("map").setView(
+        [22.5726, 88.3639],
+        12
+    );
+
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            attribution:
+                '&copy; OpenStreetMap contributors'
+        }
+    ).addTo(map);
+
+
+    L.marker([22.5726, 88.3639])
+        .addTo(map)
+        .bindPopup(
+            "<b>Engineering Books</b><br>₹50/day"
+        );
+
+
+    L.marker([22.5958, 88.2636])
+        .addTo(map)
+        .bindPopup(
+            "<b>Power Sprayer</b><br>₹300/day"
+        );
+
+
+    L.marker([22.5200, 88.3500])
+        .addTo(map)
+        .bindPopup(
+            "<b>Drilling Machine</b><br>₹250/day"
+        );
+
+
+    L.marker([22.6100, 88.4000])
+        .addTo(map)
+        .bindPopup(
+            "<b>Garden Tool Set</b><br>₹150/day"
+        );
+
+});
