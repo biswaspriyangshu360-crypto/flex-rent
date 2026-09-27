@@ -1112,3 +1112,18 @@ window.onclick = function(event) {
 // ======================================================
 // FLEX RENT SCRIPT COMPLETE
 // ======================================================
+async function googleLogin() {
+
+    const { data, error } =
+        await supabaseClient.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+                redirectTo: window.location.origin
+            }
+        });
+
+    if (error) {
+        alert("Google Login Failed: " + error.message);
+        console.error(error);
+    }
+}
