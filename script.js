@@ -1127,3 +1127,38 @@ async function googleLogin() {
         console.error(error);
     }
 }
+function startVoiceSearch() {
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+        alert("Voice search is not supported in this browser.");
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "en-IN";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.start();
+
+    recognition.onresult = function(event) {
+
+        const text =
+            event.results[0][0].transcript;
+
+        document.getElementById("searchInput").value = text;
+
+        searchItems();
+    };
+
+    recognition.onerror = function(event) {
+
+        alert("Microphone error: " + event.error);
+
+    };
+}
