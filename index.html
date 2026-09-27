@@ -10,19 +10,19 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Flex Rent - Rent. Earn. Grow.</title>
+    <title>
+        Flex Rent - Rent. Earn. Grow.
+    </title>
 
 
-    <!-- ================= CSS ================= -->
-
+    <!-- Your CSS -->
     <link
         rel="stylesheet"
         href="style.css"
     >
 
 
-    <!-- ================= LEAFLET MAP CSS ================= -->
-
+    <!-- Leaflet CSS -->
     <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -73,6 +73,7 @@
         <div class="nav-buttons">
 
             <button
+                type="button"
                 class="login-btn"
                 onclick="showLogin()"
             >
@@ -81,6 +82,7 @@
 
 
             <button
+                type="button"
                 class="google-login-btn"
                 onclick="googleLogin()"
             >
@@ -89,6 +91,7 @@
 
 
             <button
+                type="button"
                 class="login-btn"
                 onclick="openDashboard()"
             >
@@ -112,7 +115,6 @@
 
         <div class="hero-content">
 
-
             <p class="small-heading">
                 RENT • EARN • GROW
             </p>
@@ -121,9 +123,7 @@
             <h1>
 
                 Rent What You Need.
-
                 <br>
-
                 Earn From What You Own.
 
             </h1>
@@ -138,11 +138,9 @@
             </p>
 
 
-
-            <!-- ================= SEARCH ================= -->
+            <!-- SEARCH -->
 
             <div class="search-box">
-
 
                 <input
                     type="text"
@@ -152,7 +150,7 @@
                 >
 
 
-                <!-- MICROPHONE -->
+                <!-- VOICE SEARCH -->
 
                 <button
                     type="button"
@@ -162,47 +160,7 @@
                     aria-label="Voice Search"
                 >
 
-                    <svg
-                        width="22"
-                        height="22"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-
-                        <rect
-                            x="9"
-                            y="2"
-                            width="6"
-                            height="12"
-                            rx="3"
-                        ></rect>
-
-
-                        <path
-                            d="M5 10a7 7 0 0 0 14 0"
-                        ></path>
-
-
-                        <line
-                            x1="12"
-                            y1="19"
-                            x2="12"
-                            y2="22"
-                        ></line>
-
-
-                        <line
-                            x1="8"
-                            y1="22"
-                            x2="16"
-                            y2="22"
-                        ></line>
-
-                    </svg>
+                    🎤
 
                 </button>
 
@@ -211,31 +169,37 @@
                     type="button"
                     onclick="searchItems()"
                 >
+
                     Search
+
                 </button>
 
             </div>
 
 
-
-            <!-- ================= HERO BUTTONS ================= -->
+            <!-- HERO BUTTONS -->
 
             <div class="hero-buttons">
 
-
                 <button
+                    type="button"
                     class="primary-btn"
                     onclick="scrollToItems()"
                 >
+
                     Browse Items
+
                 </button>
 
 
                 <button
+                    type="button"
                     class="secondary-btn"
                     onclick="openListForm()"
                 >
+
                     List Your Item
+
                 </button>
 
             </div>
@@ -255,7 +219,6 @@
         id="categories"
     >
 
-
         <div class="section-heading">
 
             <p>
@@ -267,7 +230,6 @@
             </h2>
 
         </div>
-
 
 
         <div class="category-container">
@@ -376,6 +338,7 @@
 
             </div>
 
+
         </div>
 
     </section>
@@ -383,14 +346,13 @@
 
 
     <!-- ================================================= -->
-    <!-- ITEMS -->
+    <!-- AVAILABLE ITEMS -->
     <!-- ================================================= -->
 
     <section
         class="section items-section"
         id="items"
     >
-
 
         <div class="section-heading">
 
@@ -403,7 +365,6 @@
             </h2>
 
         </div>
-
 
 
         <div
@@ -726,7 +687,6 @@
         </div>
 
 
-
         <p
             id="noResults"
             class="no-results"
@@ -740,14 +700,13 @@
 
 
     <!-- ================================================= -->
-    <!-- REAL MAP -->
+    <!-- REAL MAP SECTION -->
     <!-- ================================================= -->
 
     <section
         class="map-section"
         id="location"
     >
-
 
         <div class="section-heading">
 
@@ -763,7 +722,7 @@
 
             <p class="map-description">
 
-                Find rental items available near
+                Explore rental items available near
                 your location.
 
             </p>
@@ -771,59 +730,124 @@
         </div>
 
 
+        <!-- MAP SEARCH -->
 
-        <!-- MAP SEARCH CONTROLS -->
-
-        <div class="map-controls">
-
+        <div
+            class="map-search"
+            style="
+                max-width:900px;
+                margin:0 auto 15px;
+                display:flex;
+                gap:10px;
+            "
+        >
 
             <input
                 type="text"
                 id="mapSearchInput"
-                placeholder="Search rental item..."
+                placeholder="Search map item e.g. Laptop"
+                style="
+                    flex:1;
+                    padding:13px;
+                    border:1px solid #ddd;
+                    border-radius:8px;
+                    font-size:15px;
+                "
+                onkeyup="
+                    if(event.key === 'Enter')
+                    searchMapItems()
+                "
             >
 
 
             <button
                 type="button"
+                class="primary-btn"
                 onclick="searchMapItems()"
             >
+
                 Search
-            </button>
 
-
-            <button
-                type="button"
-                onclick="getMyLocation()"
-            >
-                📍 My Location
             </button>
 
         </div>
 
 
+        <!-- MAP -->
 
-        <!-- ACTUAL MAP -->
-
-        <div class="map-container">
+        <div
+            class="map-container"
+            style="
+                max-width:1000px;
+                margin:auto;
+            "
+        >
 
             <div
                 id="rentalMap"
-                class="real-map"
-            ></div>
+                style="
+                    width:100%;
+                    height:450px;
+                    border-radius:15px;
+                    border:1px solid #ddd;
+                    overflow:hidden;
+                    background:#eef3f1;
+                "
+            >
+            </div>
 
         </div>
 
+
+        <!-- LOCATION CONTROLS -->
+
+        <div
+            style="
+                max-width:1000px;
+                margin:15px auto 0;
+                display:flex;
+                gap:10px;
+                flex-wrap:wrap;
+            "
+        >
+
+            <button
+                type="button"
+                class="primary-btn"
+                onclick="findMyLocation()"
+            >
+
+                📍 Use My Location
+
+            </button>
+
+
+            <button
+                type="button"
+                class="secondary-btn"
+                onclick="openMap()"
+            >
+
+                🗺️ Show Map
+
+            </button>
+
+        </div>
 
 
         <p
             id="locationStatus"
-            class="location-status"
+            style="
+                max-width:1000px;
+                margin:15px auto 0;
+                color:#777;
+            "
         >
-            Map is ready. Click "My Location"
-            to find your location.
-        </p>
 
+            Map is ready. Click "Use My Location"
+            to find your location.
+
+        </p>
 
     </section>
 
@@ -839,7 +863,6 @@
     >
 
         <div class="modal-content">
-
 
             <button
                 type="button"
@@ -909,7 +932,9 @@
                 class="primary-btn"
                 onclick="proceedToPayment()"
             >
+
                 Proceed to Payment
+
             </button>
 
         </div>
@@ -928,7 +953,6 @@
     >
 
         <div class="modal-content payment-box">
-
 
             <button
                 type="button"
@@ -949,16 +973,13 @@
             </p>
 
 
-
             <div class="payment-summary">
-
 
                 <div>
 
                     <span>
                         Item
                     </span>
-
 
                     <strong id="paymentItem">
                         Rental Item
@@ -967,13 +988,11 @@
                 </div>
 
 
-
                 <div>
 
                     <span>
                         Rental Days
                     </span>
-
 
                     <strong id="paymentDays">
                         1 Day
@@ -982,13 +1001,11 @@
                 </div>
 
 
-
                 <div class="payment-total">
 
                     <span>
                         Total Amount
                     </span>
-
 
                     <strong id="paymentAmount">
                         ₹0
@@ -996,15 +1013,12 @@
 
                 </div>
 
-
             </div>
-
 
 
             <h3 class="payment-title">
                 Select Payment Method
             </h3>
-
 
 
             <div class="payment-methods">
@@ -1066,14 +1080,14 @@
             </div>
 
 
-
             <p
                 id="selectedPayment"
                 class="selected-payment"
             >
-                Please select a payment method.
-            </p>
 
+                Please select a payment method.
+
+            </p>
 
 
             <button
@@ -1081,9 +1095,10 @@
                 class="primary-btn pay-btn"
                 onclick="makePayment()"
             >
-                Pay Now
-            </button>
 
+                Pay Now
+
+            </button>
 
         </div>
 
@@ -1100,7 +1115,6 @@
         id="how-it-works"
     >
 
-
         <div class="section-heading">
 
             <p>
@@ -1113,7 +1127,6 @@
             </h2>
 
         </div>
-
 
 
         <div class="steps-container">
@@ -1225,9 +1238,7 @@
 
     <section class="list-section">
 
-
         <div class="list-content">
-
 
             <p>
                 START EARNING
@@ -1250,9 +1261,10 @@
                 class="primary-btn"
                 onclick="openListForm()"
             >
-                List Your Item
-            </button>
 
+                List Your Item
+
+            </button>
 
         </div>
 
@@ -1266,13 +1278,11 @@
 
     <footer>
 
-
         <div class="footer-logo">
 
             <span>
                 Flex
             </span>
-
             Rent
 
         </div>
@@ -1286,7 +1296,6 @@
         <p class="copyright">
             © 2026 Flex Rent. College Project.
         </p>
-
 
     </footer>
 
@@ -1302,7 +1311,6 @@
     >
 
         <div class="modal-content">
-
 
             <button
                 type="button"
@@ -1342,7 +1350,9 @@
                 class="primary-btn"
                 onclick="loginUser()"
             >
+
                 Login
+
             </button>
 
 
@@ -1356,11 +1366,12 @@
                     class="link-btn"
                     onclick="showSignup()"
                 >
+
                     Sign Up
+
                 </button>
 
             </p>
-
 
         </div>
 
@@ -1378,7 +1389,6 @@
     >
 
         <div class="modal-content">
-
 
             <button
                 type="button"
@@ -1425,7 +1435,9 @@
                 class="primary-btn"
                 onclick="signupUser()"
             >
+
                 Create Account
+
             </button>
 
 
@@ -1439,11 +1451,12 @@
                     class="link-btn"
                     onclick="showLogin()"
                 >
+
                     Login
+
                 </button>
 
             </p>
-
 
         </div>
 
@@ -1461,7 +1474,6 @@
     >
 
         <div class="modal-content dashboard-box">
-
 
             <button
                 type="button"
@@ -1482,9 +1494,7 @@
             </p>
 
 
-
             <div class="dashboard-profile">
-
 
                 <div class="profile-icon">
                     👤
@@ -1492,7 +1502,6 @@
 
 
                 <div>
-
 
                     <h3 id="dashboardUserName">
                         Loading...
@@ -1503,12 +1512,9 @@
                         Loading...
                     </p>
 
-
                 </div>
 
-
             </div>
-
 
 
             <div class="dashboard-stats">
@@ -1544,17 +1550,22 @@
             </div>
 
 
-
             <div class="dashboard-actions">
 
 
                 <button
                     type="button"
                     class="dashboard-action"
-                    onclick="openListForm(); closeDashboard();"
+                    onclick="
+                        openListForm();
+                        closeDashboard();
+                    "
                 >
+
                     📦 List New Item
+
                 </button>
+
 
 
                 <button
@@ -1562,21 +1573,29 @@
                     class="dashboard-action"
                     onclick="openMyListings()"
                 >
+
                     🏷️ My Listings
+
                 </button>
+
 
 
                 <button
                     type="button"
                     class="dashboard-action"
-                    onclick="alert('My Bookings feature will show your bookings here.')"
+                    onclick="
+                        alert(
+                            'My Bookings feature will show your bookings here.'
+                        )
+                    "
                 >
+
                     📅 My Bookings
+
                 </button>
 
 
             </div>
-
 
         </div>
 
@@ -1594,7 +1613,6 @@
     >
 
         <div class="modal-content dashboard-box">
-
 
             <button
                 type="button"
@@ -1617,7 +1635,6 @@
 
             <div id="myListingsContainer">
 
-
                 <p
                     style="
                         text-align:center;
@@ -1627,9 +1644,7 @@
                     No items listed yet.
                 </p>
 
-
             </div>
-
 
         </div>
 
@@ -1647,7 +1662,6 @@
     >
 
         <div class="modal-content">
-
 
             <button
                 type="button"
@@ -1705,31 +1719,25 @@
 
             <select id="itemCategory">
 
-
                 <option value="Everyday">
                     Everyday Items
                 </option>
-
 
                 <option value="Agriculture">
                     Agriculture
                 </option>
 
-
                 <option value="Construction">
                     Construction
                 </option>
-
 
                 <option value="Industrial">
                     Industrial
                 </option>
 
-
                 <option value="Gardening">
                     Gardening
                 </option>
-
 
             </select>
 
@@ -1739,9 +1747,10 @@
                 class="primary-btn"
                 onclick="submitItem()"
             >
-                Submit Item
-            </button>
 
+                Submit Item
+
+            </button>
 
         </div>
 
@@ -1751,29 +1760,30 @@
 
     <!-- ================================================= -->
     <!-- JAVASCRIPT LIBRARIES -->
+    <!-- IMPORTANT: ORDER MATTERS -->
     <!-- ================================================= -->
 
 
-    <!-- SUPABASE FIRST -->
+    <!-- 1. Leaflet JS FIRST -->
 
     <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    ></script>
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
 
 
-    <!-- YOUR SUPABASE CONFIG -->
+    <!-- 2. Supabase library -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
+
+
+    <!-- 3. Supabase configuration -->
 
     <script src="./supabase.js"></script>
 
 
-    <!-- LEAFLET SECOND -->
-
-    <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    ></script>
-
-
-    <!-- YOUR SCRIPT LAST -->
+    <!-- 4. Your main JavaScript LAST -->
 
     <script src="./script.js"></script>
 
