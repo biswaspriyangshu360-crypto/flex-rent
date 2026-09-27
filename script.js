@@ -347,13 +347,39 @@ function submitItem() {
 // DASHBOARD
 // ======================================================
 
-function openDashboard() {
+async function openDashboard() {
 
+    const { data: { user }, error } =
+        await supabaseClient.auth.getUser();
+
+    if (error || !user) {
+        alert("Please login first.");
+        return;
+    }
+
+    // Email show karo
+    const emailElement =
+        document.querySelector(".dashboard-profile p");
+
+    if (emailElement) {
+        emailElement.innerText = user.email;
+    }
+
+    // Name show karo
+    const nameElement =
+        document.querySelector(".dashboard-profile h3");
+
+    if (nameElement) {
+        nameElement.innerText =
+            user.user_metadata?.name || "Flex Rent User";
+    }
+
+    // Dashboard stats
     updateDashboardStats();
 
+    // Dashboard open
     document.getElementById("dashboardModal").style.display =
         "flex";
-
 }
 
 
