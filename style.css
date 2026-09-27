@@ -1197,3 +1197,74 @@ footer p {
         padding: 12px;
     }
 }
+/* ================= REAL LOCATION MAP ================= */
+
+.map-section {
+    padding: 90px 7%;
+    background: #f8fafb;
+}
+
+.map-description {
+    margin-top: 10px;
+    color: #777;
+}
+
+.location-card {
+    max-width: 600px;
+    margin: auto;
+    padding: 45px 30px;
+    text-align: center;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.location-icon {
+    width: 75px;
+    height: 75px;
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e8fff8;
+    border-radius: 50%;
+
+    font-size: 38px;
+}
+
+.location-card h3 {
+    font-size: 25px;
+    margin-bottom: 12px;
+}
+
+.location-card p {
+    color: #777;
+    margin-bottom: 25px;
+}
+
+.location-card .primary-btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.map-open-btn {
+    width: 100%;
+    padding: 13px;
+
+    border: 2px solid #16a085;
+    background: white;
+    color: #16a085;
+
+    border-radius: 7px;
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.map-open-btn:hover {
+    background: #e8fff8;
+}
