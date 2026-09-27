@@ -1201,3 +1201,281 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
 });
+// ======================================================
+// REAL MAP - FLEX RENT
+// ======================================================
+
+let rentalMap;
+
+let userLocation = null;
+
+
+// Rental item locations
+const rentalLocations = [
+
+    {
+        name: "Engineering Books",
+        price: 50,
+        lat: 22.5726,
+        lng: 88.3639,
+        icon: "📚"
+    },
+
+    {
+        name: "Laptop",
+        price: 500,
+        lat: 22.5750,
+        lng: 88.3700,
+        icon: "💻"
+    },
+
+    {
+        name: "Drilling Machine",
+        price: 250,
+        lat: 22.5680,
+        lng: 88.3600,
+        icon: "🛠️"
+    },
+
+    {
+        name: "Garden Tool Set",
+        price: 150,
+        lat: 22.5800,
+        lng: 88.3550,
+        icon: "🌱"
+    }
+
+];
+
+
+// ======================================================
+// INITIALIZE MAP
+// ======================================================
+
+function initializeRentalMap() {
+
+    if (typeof L === "undefined") {
+
+        console.error("Leaflet library not loaded.");
+
+        return;
+    }
+
+
+    // Kolkata as default map location
+    rentalMap = L.map("rentalMap").setView(
+        [22.5726, 88.3639],
+        13
+    );
+
+
+    // OpenStreetMap
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            attribution:
+                '&copy; OpenStreetMap contributors'
+        }
+    ).addTo(rentalMap);
+
+
+    // Add rental markers
+    addRentalMarkers();
+
+}
+
+
+// ======================================================
+// ADD RENTAL MARKERS
+// ======================================================
+
+function addRentalMarkers() {
+
+    rentalLocations.forEach(function(item) {
+
+        const marker =
+            L.marker([item.lat, item.lng])
+            .addTo(rentalMap);
+
+
+        marker.bindPopup(`
+
+            <div style="min-width:170px">
+
+                <div style="font-size:30px">
+                    ${item.icon}
+                </div>
+
+                <strong>
+                    ${item.name}
+                </strong>
+
+                <p style="margin:6px 0;color:#16a085">
+                    ₹${item.price}/day
+                </p>
+
+                <button
+                    onclick="openBooking('${item.name}', ${item.price})"
+                    style="
+                        background:#16a085;
+                        color:white;
+                        border:none;
+                        padding:8px 12px;
+                        border-radius:6px;
+                        cursor:pointer;
+                    "
+                >
+                    Rent Now
+                </button>
+
+            </div>
+
+        `);
+
+    });
+
+}
+
+
+// ======================================================
+// GET USER LOCATION
+// ======================================================
+
+function getMyLocation() {
+
+    if (!navigator.geolocation) {
+
+        alert(
+            "Your browser does not support location."
+        );
+
+        return;
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            const lat =
+                position.coords.latitude;
+
+            const lng =
+                position.coords.longitude;
+
+
+            userLocation = [lat, lng];
+
+
+            // Move map
+            rentalMap.setView(
+                [lat, lng],
+                15
+            );
+
+
+            // User marker
+            L.marker([lat, lng])
+                .addTo(rentalMap)
+                .bindPopup(
+                    "📍 You are here"
+                )
+                .openPopup();
+
+        },
+
+        function(error) {
+
+            alert(
+                "Location permission was not allowed."
+            );
+
+        }
+
+    );
+
+}
+
+
+// ======================================================
+// SEARCH THIS AREA
+// ======================================================
+
+function searchThisArea() {
+
+    if (!rentalMap) {
+        return;
+    }
+
+    alert(
+        "Rental items in this map area are shown."
+    );
+
+}
+
+
+// ======================================================
+// SEARCH MAP ITEMS
+// ======================================================
+
+function searchMapItems() {
+
+    const input =
+        document
+        .getElementById("mapSearchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    if (input === "") {
+
+        rentalMap.setView(
+            [22.5726, 88.3639],
+            13
+        );
+
+        return;
+    }
+
+
+    const item =
+        rentalLocations.find(function(location) {
+
+            return location.name
+                .toLowerCase()
+                .includes(input);
+
+        });
+
+
+    if (!item) {
+
+        alert(
+            "No rental item found."
+        );
+
+        return;
+    }
+
+
+    rentalMap.setView(
+        [item.lat, item.lng],
+        16
+    );
+
+}
+
+
+// ======================================================
+// LOAD MAP AFTER PAGE LOAD
+// ======================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        initializeRentalMap();
+
+    }
+);
