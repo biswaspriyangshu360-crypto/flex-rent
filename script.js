@@ -694,10 +694,14 @@ async function signupUser() {
         }
     });
 
-    if (error) {
-        alert(error.message);
-        return;
-    }
+ if (error) {
+    console.error("SUPABASE LOGIN ERROR:", error);
+    alert(
+        "Login failed!\n\n" +
+        "Error: " + error.message
+    );
+    return;
+}
 
     alert("Account created! Please check your email for confirmation.");
 
