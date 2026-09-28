@@ -1,7 +1,6 @@
 // ======================================================
-// FLEX RENT - COMPLETE SCRIPT
+// FLEX RENT - COMPLETE SCRIPT.JS
 // ======================================================
-
 
 // ======================================================
 // GLOBAL DATA
@@ -13,43 +12,34 @@ let myBookings = [];
 let selectedItemPrice = 0;
 
 let selectedPaymentMethod = "";
+
 let currentPaymentItem = "";
 let currentPaymentDays = 1;
 let currentPaymentAmount = 0;
 
 let rentalMap = null;
-let userLocation = null;
 let userMarker = null;
+let mapMarkers = [];
 
 
 // ======================================================
-// RENTAL LOCATIONS
+// RENTAL ITEMS
 // ======================================================
 
 const rentalLocations = [
-
     {
         name: "Engineering Books",
-        price: 50,
         category: "Everyday",
+        price: 50,
         lat: 22.5726,
         lng: 88.3639,
         icon: "📚"
     },
 
     {
-        name: "Laptop",
-        price: 500,
-        category: "Everyday",
-        lat: 22.5750,
-        lng: 88.3700,
-        icon: "💻"
-    },
-
-    {
         name: "Power Sprayer",
-        price: 300,
         category: "Agriculture",
+        price: 300,
         lat: 22.5958,
         lng: 88.2636,
         icon: "🌾"
@@ -57,32 +47,81 @@ const rentalLocations = [
 
     {
         name: "Drilling Machine",
-        price: 250,
         category: "Construction",
-        lat: 22.5680,
-        lng: 88.3600,
+        price: 250,
+        lat: 22.5200,
+        lng: 88.3500,
         icon: "🛠️"
     },
 
     {
         name: "Industrial Tool Kit",
-        price: 400,
         category: "Industrial",
-        lat: 22.5650,
-        lng: 88.3750,
+        price: 400,
+        lat: 22.5600,
+        lng: 88.3900,
         icon: "⚙️"
     },
 
     {
         name: "Garden Tool Set",
-        price: 150,
         category: "Gardening",
-        lat: 22.5800,
-        lng: 88.3550,
+        price: 150,
+        lat: 22.6100,
+        lng: 88.4000,
         icon: "🌱"
+    },
+
+    {
+        name: "Laptop",
+        category: "Everyday",
+        price: 500,
+        lat: 22.5750,
+        lng: 88.3700,
+        icon: "💻"
+    }
+];
+
+
+// ======================================================
+// PAGE LOADING ANIMATION
+// ======================================================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    updateDashboardStats();
+
+    initializeRentalMap();
+
+    setupMapButton();
+
+    setupKeyboardSearch();
+
+    setupDate();
+
+    console.log("Flex Rent loaded successfully.");
+
+});
+
+
+// ======================================================
+// SCROLL TO ITEMS
+// ======================================================
+
+function scrollToItems() {
+
+    const section =
+        document.getElementById("items");
+
+    if (section) {
+
+        section.scrollIntoView({
+            behavior: "smooth"
+        });
+
     }
 
-];
+}
 
 
 // ======================================================
@@ -94,20 +133,20 @@ function searchItems() {
     const input =
         document.getElementById("searchInput");
 
+    const noResults =
+        document.getElementById("noResults");
+
     if (!input) return;
 
-    const searchText =
+    const search =
         input.value.toLowerCase().trim();
 
     const items =
         document.querySelectorAll(".item-card");
 
-    const noResults =
-        document.getElementById("noResults");
-
     let found = false;
 
-    items.forEach(function(item) {
+    items.forEach(function (item) {
 
         const name =
             item.querySelector("h3");
@@ -117,18 +156,18 @@ function searchItems() {
 
         if (!name) return;
 
-        const itemName =
+        const nameText =
             name.innerText.toLowerCase();
 
-        const itemDescription =
+        const descriptionText =
             description
                 ? description.innerText.toLowerCase()
                 : "";
 
         if (
-            searchText === "" ||
-            itemName.includes(searchText) ||
-            itemDescription.includes(searchText)
+            search === "" ||
+            nameText.includes(search) ||
+            descriptionText.includes(search)
         ) {
 
             item.style.display = "";
@@ -149,25 +188,139 @@ function searchItems() {
             found ? "none" : "block";
 
     }
+
 }
 
 
 // ======================================================
-// SCROLL TO ITEMS
+// SEARCH KEYBOARD
 // ======================================================
 
-function scrollToItems() {
+function setupKeyboardSearch() {
 
-    const section =
-        document.getElementById("items");
+    const input =
+        document.getElementById("searchInput");
 
-    if (section) {
+    if (!input) return;
 
-        section.scrollIntoView({
-            behavior: "smooth"
-        });
+    input.addEventListener("focus", function () {
+
+        setTimeout(function () {
+
+            input.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+        }, 200);
+
+    });
+
+}
+
+
+// ======================================================
+// VOICE SEARCH
+// ======================================================
+
+function startVoiceSearch() {
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+
+        alert(
+            "Voice search is not supported in this browser."
+        );
+
+        return;
+    }
+
+    const recognition =
+        new SpeechRecognition();
+
+    recognition.lang = "en-IN";
+
+    recognition.continuous = false;
+
+    recognition.interimResults = false;
+
+    const input =
+        document.getElementById("searchInput");
+
+    recognition.onstart = function () {
+
+        if (input) {
+
+            input.placeholder =
+                "Listening...";
+
+        }
+
+    };
+
+    recognition.onresult = function (event) {
+
+        const text =
+            event.results[0][0].transcript;
+
+        if (input) {
+
+            input.value = text;
+
+            searchItems();
+
+        }
+
+    };
+
+    recognition.onerror = function (event) {
+
+        console.error(
+            "Voice search error:",
+            event.error
+        );
+
+        if (input) {
+
+            input.placeholder =
+                "Search for tools, books, equipment...";
+
+        }
+
+        if (event.error === "not-allowed") {
+
+            alert(
+                "Microphone permission is blocked. Please allow microphone access in your browser."
+            );
+
+        }
+
+    };
+
+    recognition.onend = function () {
+
+        if (input) {
+
+            input.placeholder =
+                "Search for tools, books, equipment...";
+
+        }
+
+    };
+
+    try {
+
+        recognition.start();
+
+    } catch (error) {
+
+        console.error(error);
 
     }
+
 }
 
 
@@ -185,7 +338,7 @@ function filterCategory(category) {
 
     let found = false;
 
-    items.forEach(function(item) {
+    items.forEach(function (item) {
 
         const itemCategory =
             item.getAttribute("data-category");
@@ -214,12 +367,22 @@ function filterCategory(category) {
 
     }
 
-    scrollToItems();
+    const itemsSection =
+        document.getElementById("items");
+
+    if (itemsSection) {
+
+        itemsSection.scrollIntoView({
+            behavior: "smooth"
+        });
+
+    }
+
 }
 
 
 // ======================================================
-// LIST ITEM FORM
+// LIST ITEM MODAL
 // ======================================================
 
 function openListForm() {
@@ -232,6 +395,7 @@ function openListForm() {
         modal.style.display = "flex";
 
     }
+
 }
 
 
@@ -245,73 +409,40 @@ function closeListForm() {
         modal.style.display = "none";
 
     }
+
 }
 
 
 // ======================================================
-// ADD NEW ITEM
+// SUBMIT ITEM
 // ======================================================
 
 function submitItem() {
 
-    const nameElement =
-        document.getElementById("itemName");
-
-    const priceElement =
-        document.getElementById("itemPrice");
-
-    const categoryElement =
-        document.getElementById("itemCategory");
-
-    const locationElement =
-        document.getElementById("itemLocation");
-
-    const descriptionElement =
-        document.getElementById("itemDescription");
-
-    const imageElement =
-        document.getElementById("itemImage");
-
-
-    if (
-        !nameElement ||
-        !priceElement ||
-        !categoryElement ||
-        !locationElement ||
-        !descriptionElement ||
-        !imageElement
-    ) {
-
-        alert("Listing form is incomplete.");
-        return;
-
-    }
-
-
     const name =
-        nameElement.value.trim();
+        document.getElementById("itemName")?.value.trim();
 
     const price =
-        priceElement.value.trim();
+        document.getElementById("itemPrice")?.value.trim();
 
     const category =
-        categoryElement.value;
+        document.getElementById("itemCategory")?.value;
 
     const location =
-        locationElement.value.trim();
+        document.getElementById("itemLocation")?.value.trim();
 
     const description =
-        descriptionElement.value.trim();
+        document.getElementById("itemDescription")?.value.trim();
 
     const imageFile =
-        imageElement.files[0];
+        document.getElementById("itemImage")?.files[0];
 
 
     if (
-        name === "" ||
-        price === "" ||
-        location === "" ||
-        description === "" ||
+        !name ||
+        !price ||
+        !location ||
+        !description ||
         !imageFile
     ) {
 
@@ -338,10 +469,6 @@ function submitItem() {
     }
 
 
-    const imageURL =
-        URL.createObjectURL(imageFile);
-
-
     const listing = {
 
         name: name,
@@ -354,7 +481,8 @@ function submitItem() {
 
         description: description,
 
-        image: imageURL
+        image:
+            URL.createObjectURL(imageFile)
 
     };
 
@@ -362,19 +490,18 @@ function submitItem() {
     myListings.push(listing);
 
 
-    const itemsContainer =
+    const container =
         document.getElementById("itemsContainer");
 
+    if (container) {
 
-    if (itemsContainer) {
-
-        const newItem =
+        const card =
             document.createElement("div");
 
-        newItem.className =
+        card.className =
             "item-card";
 
-        newItem.setAttribute(
+        card.setAttribute(
             "data-category",
             category
         );
@@ -384,12 +511,12 @@ function submitItem() {
             name.replace(/'/g, "\\'");
 
 
-        newItem.innerHTML = `
+        card.innerHTML = `
 
             <div class="item-image">
 
                 <img
-                    src="${imageURL}"
+                    src="${listing.image}"
                     alt="${name}"
                 >
 
@@ -414,7 +541,7 @@ function submitItem() {
                 <div class="item-bottom">
 
                     <strong>
-                        ₹${Number(price)}/day
+                        ₹${price}/day
                     </strong>
 
                     <button
@@ -431,12 +558,14 @@ function submitItem() {
         `;
 
 
-        itemsContainer.appendChild(newItem);
+        container.appendChild(card);
 
     }
 
 
     updateDashboardStats();
+
+    closeListForm();
 
 
     alert(
@@ -446,259 +575,44 @@ function submitItem() {
     );
 
 
-    closeListForm();
-
-
-    nameElement.value = "";
-    priceElement.value = "";
-    locationElement.value = "";
-    descriptionElement.value = "";
-    imageElement.value = "";
+    clearListingForm();
 
 }
 
 
-// ======================================================
-// LOGIN MODAL
-// ======================================================
+function clearListingForm() {
 
-function showLogin() {
+    const fields = [
 
-    const modal =
-        document.getElementById("loginModal");
+        "itemName",
+        "itemPrice",
+        "itemLocation",
+        "itemDescription"
 
-    if (modal) {
+    ];
 
-        modal.style.display = "flex";
+    fields.forEach(function (id) {
 
-    }
-}
+        const element =
+            document.getElementById(id);
 
+        if (element) {
 
-function closeLogin() {
+            element.value = "";
 
-    const modal =
-        document.getElementById("loginModal");
+        }
 
-    if (modal) {
-
-        modal.style.display = "none";
-
-    }
-}
+    });
 
 
-// ======================================================
-// SIGNUP MODAL
-// ======================================================
+    const image =
+        document.getElementById("itemImage");
 
-function showSignup() {
+    if (image) {
 
-    closeLogin();
-
-    const modal =
-        document.getElementById("signupModal");
-
-    if (modal) {
-
-        modal.style.display = "flex";
+        image.value = "";
 
     }
-}
-
-
-function closeSignup() {
-
-    const modal =
-        document.getElementById("signupModal");
-
-    if (modal) {
-
-        modal.style.display = "none";
-
-    }
-}
-
-
-// ======================================================
-// LOGIN USER
-// ======================================================
-
-async function loginUser() {
-
-    const emailElement =
-        document.getElementById("loginEmail");
-
-    const passwordElement =
-        document.getElementById("loginPassword");
-
-
-    if (!emailElement || !passwordElement) {
-
-        alert("Login form not found.");
-        return;
-
-    }
-
-
-    const email =
-        emailElement.value.trim();
-
-    const password =
-        passwordElement.value;
-
-
-    if (!email || !password) {
-
-        alert(
-            "Please enter email and password."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        typeof supabaseClient === "undefined" ||
-        !supabaseClient
-    ) {
-
-        alert(
-            "Supabase is not connected."
-        );
-
-        return;
-
-    }
-
-
-    const { error } =
-        await supabaseClient.auth.signInWithPassword({
-
-            email: email,
-
-            password: password
-
-        });
-
-
-    if (error) {
-
-        alert(
-            "Login failed!\n\n" +
-            error.message
-        );
-
-        return;
-
-    }
-
-
-    alert(
-        "Login successful!"
-    );
-
-
-    closeLogin();
-
-    openDashboard();
-
-}
-
-
-// ======================================================
-// SIGN UP USER
-// ======================================================
-
-async function signupUser() {
-
-    const name =
-        document.getElementById("signupName").value.trim();
-
-    const email =
-        document.getElementById("signupEmail").value.trim();
-
-    const password =
-        document.getElementById("signupPassword").value;
-
-
-    if (!name || !email || !password) {
-
-        alert(
-            "Please fill all fields."
-        );
-
-        return;
-
-    }
-
-
-    if (password.length < 6) {
-
-        alert(
-            "Password must be at least 6 characters."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        typeof supabaseClient === "undefined" ||
-        !supabaseClient
-    ) {
-
-        alert(
-            "Supabase is not connected."
-        );
-
-        return;
-
-    }
-
-
-    const { error } =
-        await supabaseClient.auth.signUp({
-
-            email: email,
-
-            password: password,
-
-            options: {
-
-                data: {
-
-                    name: name
-
-                }
-
-            }
-
-        });
-
-
-    if (error) {
-
-        alert(
-            "Signup failed!\n\n" +
-            error.message
-        );
-
-        return;
-
-    }
-
-
-    alert(
-        "Account created successfully!"
-    );
-
-
-    closeSignup();
-
-    showLogin();
 
 }
 
@@ -723,67 +637,82 @@ async function openDashboard() {
     }
 
 
-    const result =
-        await supabaseClient.auth.getUser();
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.getUser();
 
 
-    const user =
-        result.data?.user;
+        if (error || !data.user) {
+
+            alert(
+                "Please login first."
+            );
+
+            showLogin();
+
+            return;
+
+        }
 
 
-    if (result.error || !user) {
+        const user =
+            data.user;
+
+
+        const emailElement =
+            document.getElementById(
+                "dashboardUserEmail"
+            );
+
+        const nameElement =
+            document.getElementById(
+                "dashboardUserName"
+            );
+
+
+        if (emailElement) {
+
+            emailElement.innerText =
+                user.email || "";
+
+        }
+
+
+        if (nameElement) {
+
+            nameElement.innerText =
+                user.user_metadata?.name ||
+                "Flex Rent User";
+
+        }
+
+
+        updateDashboardStats();
+
+
+        const modal =
+            document.getElementById(
+                "dashboardModal"
+            );
+
+
+        if (modal) {
+
+            modal.style.display = "flex";
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
 
         alert(
-            "Please login first."
+            "Unable to open dashboard."
         );
-
-        showLogin();
-
-        return;
-
-    }
-
-
-    const nameElement =
-        document.getElementById(
-            "dashboardUserName"
-        );
-
-    const emailElement =
-        document.getElementById(
-            "dashboardUserEmail"
-        );
-
-
-    if (nameElement) {
-
-        nameElement.innerText =
-            user.user_metadata?.name ||
-            "Flex Rent User";
-
-    }
-
-
-    if (emailElement) {
-
-        emailElement.innerText =
-            user.email || "";
-
-    }
-
-
-    updateDashboardStats();
-
-
-    const modal =
-        document.getElementById(
-            "dashboardModal"
-        );
-
-
-    if (modal) {
-
-        modal.style.display = "flex";
 
     }
 
@@ -796,7 +725,6 @@ function closeDashboard() {
         document.getElementById(
             "dashboardModal"
         );
-
 
     if (modal) {
 
@@ -900,15 +828,17 @@ function displayMyListings() {
 
         container.innerHTML = `
 
-            <p style="
-                text-align:center;
-                margin-top:30px;
-                color:#777;
-            ">
+            <div class="empty-state">
 
-                No items listed yet.
+                <div style="font-size:50px;">
+                    📦
+                </div>
 
-            </p>
+                <p>
+                    No items listed yet.
+                </p>
+
+            </div>
 
         `;
 
@@ -921,7 +851,7 @@ function displayMyListings() {
 
 
     myListings.forEach(
-        function(listing, index) {
+        function (listing, index) {
 
             const card =
                 document.createElement("div");
@@ -971,7 +901,7 @@ function displayMyListings() {
                         class="dashboard-action"
                         onclick="deleteListing(${index})"
                     >
-                        🗑️ Delete
+                        🗑️ Delete Listing
                     </button>
 
                 </div>
@@ -1000,7 +930,7 @@ function deleteListing(index) {
     if (!listing) return;
 
 
-    const answer =
+    const confirmDelete =
         confirm(
             "Do you want to delete " +
             listing.name +
@@ -1008,13 +938,10 @@ function deleteListing(index) {
         );
 
 
-    if (!answer) return;
+    if (!confirmDelete) return;
 
 
-    myListings.splice(
-        index,
-        1
-    );
+    myListings.splice(index, 1);
 
 
     displayMyListings();
@@ -1030,6 +957,296 @@ function deleteListing(index) {
 
 
 // ======================================================
+// LOGIN
+// ======================================================
+
+function showLogin() {
+
+    const modal =
+        document.getElementById(
+            "loginModal"
+        );
+
+
+    if (modal) {
+
+        modal.style.display = "flex";
+
+    }
+
+}
+
+
+function closeLogin() {
+
+    const modal =
+        document.getElementById(
+            "loginModal"
+        );
+
+
+    if (modal) {
+
+        modal.style.display = "none";
+
+    }
+
+}
+
+
+// ======================================================
+// SIGNUP
+// ======================================================
+
+function showSignup() {
+
+    closeLogin();
+
+
+    const modal =
+        document.getElementById(
+            "signupModal"
+        );
+
+
+    if (modal) {
+
+        modal.style.display = "flex";
+
+    }
+
+}
+
+
+function closeSignup() {
+
+    const modal =
+        document.getElementById(
+            "signupModal"
+        );
+
+
+    if (modal) {
+
+        modal.style.display = "none";
+
+    }
+
+}
+
+
+// ======================================================
+// LOGIN USER
+// ======================================================
+
+async function loginUser() {
+
+    const email =
+        document.getElementById(
+            "loginEmail"
+        )?.value.trim();
+
+
+    const password =
+        document.getElementById(
+            "loginPassword"
+        )?.value;
+
+
+    if (!email || !password) {
+
+        alert(
+            "Please enter email and password."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        typeof supabaseClient === "undefined" ||
+        !supabaseClient
+    ) {
+
+        alert(
+            "Supabase is not connected."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient.auth.signInWithPassword({
+
+                email: email,
+
+                password: password
+
+            });
+
+
+        if (error) {
+
+            alert(
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        closeLogin();
+
+
+        alert(
+            "Login successful!"
+        );
+
+
+        openDashboard();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Login failed. Please try again."
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// SIGNUP USER
+// ======================================================
+
+async function signupUser() {
+
+    const name =
+        document.getElementById(
+            "signupName"
+        )?.value.trim();
+
+
+    const email =
+        document.getElementById(
+            "signupEmail"
+        )?.value.trim();
+
+
+    const password =
+        document.getElementById(
+            "signupPassword"
+        )?.value;
+
+
+    if (!name || !email || !password) {
+
+        alert(
+            "Please fill all fields."
+        );
+
+        return;
+
+    }
+
+
+    if (password.length < 6) {
+
+        alert(
+            "Password must be at least 6 characters."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        typeof supabaseClient === "undefined" ||
+        !supabaseClient
+    ) {
+
+        alert(
+            "Supabase is not connected."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.signUp({
+
+                email: email,
+
+                password: password,
+
+                options: {
+
+                    data: {
+                        name: name
+                    }
+
+                }
+
+            });
+
+
+        if (error) {
+
+            alert(
+                "Signup failed!\n\n" +
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        alert(
+            "Account created successfully!\n\n" +
+            "Please check your email if email confirmation is enabled."
+        );
+
+
+        closeSignup();
+
+        showLogin();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Signup failed. Please try again."
+        );
+
+    }
+
+}
+
+
+// ======================================================
 // BOOKING
 // ======================================================
 
@@ -1039,13 +1256,13 @@ function openBooking(itemName, price) {
         Number(price);
 
 
-    const nameElement =
+    const itemNameElement =
         document.getElementById(
             "bookingItemName"
         );
 
 
-    const priceElement =
+    const itemPriceElement =
         document.getElementById(
             "bookingItemPrice"
         );
@@ -1057,23 +1274,17 @@ function openBooking(itemName, price) {
         );
 
 
-    const modal =
-        document.getElementById(
-            "bookingModal"
-        );
+    if (itemNameElement) {
 
-
-    if (nameElement) {
-
-        nameElement.innerText =
+        itemNameElement.innerText =
             itemName;
 
     }
 
 
-    if (priceElement) {
+    if (itemPriceElement) {
 
-        priceElement.innerText =
+        itemPriceElement.innerText =
             "₹" +
             selectedItemPrice +
             "/day";
@@ -1089,6 +1300,12 @@ function openBooking(itemName, price) {
 
 
     calculateTotal();
+
+
+    const modal =
+        document.getElementById(
+            "bookingModal"
+        );
 
 
     if (modal) {
@@ -1118,7 +1335,7 @@ function closeBooking() {
 
 
 // ======================================================
-// CALCULATE BOOKING TOTAL
+// CALCULATE TOTAL
 // ======================================================
 
 function calculateTotal() {
@@ -1133,9 +1350,7 @@ function calculateTotal() {
 
 
     let days =
-        parseInt(
-            daysElement.value
-        );
+        parseInt(daysElement.value);
 
 
     if (
@@ -1151,8 +1366,7 @@ function calculateTotal() {
 
 
     const total =
-        selectedItemPrice *
-        days;
+        selectedItemPrice * days;
 
 
     const totalElement =
@@ -1172,34 +1386,23 @@ function calculateTotal() {
 
 
 // ======================================================
-// PROCEED TO PAYMENT
+// PAYMENT
 // ======================================================
 
 function proceedToPayment() {
 
-    const daysElement =
-        document.getElementById(
-            "rentalDays"
-        );
-
-
-    const nameElement =
-        document.getElementById(
-            "bookingItemName"
-        );
-
-
-    if (!daysElement || !nameElement) {
-
-        return;
-
-    }
-
-
     const days =
         parseInt(
-            daysElement.value
+            document.getElementById(
+                "rentalDays"
+            )?.value
         );
+
+
+    const itemName =
+        document.getElementById(
+            "bookingItemName"
+        )?.innerText;
 
 
     if (
@@ -1216,13 +1419,8 @@ function proceedToPayment() {
     }
 
 
-    const itemName =
-        nameElement.innerText;
-
-
     const total =
-        selectedItemPrice *
-        days;
+        selectedItemPrice * days;
 
 
     currentPaymentItem =
@@ -1240,19 +1438,16 @@ function proceedToPayment() {
             "paymentItem"
         );
 
+
     const paymentDays =
         document.getElementById(
             "paymentDays"
         );
 
+
     const paymentAmount =
         document.getElementById(
             "paymentAmount"
-        );
-
-    const selectedPayment =
-        document.getElementById(
-            "selectedPayment"
         );
 
 
@@ -1286,9 +1481,15 @@ function proceedToPayment() {
     selectedPaymentMethod = "";
 
 
-    if (selectedPayment) {
+    const selected =
+        document.getElementById(
+            "selectedPayment"
+        );
 
-        selectedPayment.innerText =
+
+    if (selected) {
+
+        selected.innerText =
             "Please select a payment method.";
 
     }
@@ -1297,24 +1498,21 @@ function proceedToPayment() {
     closeBooking();
 
 
-    const modal =
+    const paymentModal =
         document.getElementById(
             "paymentModal"
         );
 
 
-    if (modal) {
+    if (paymentModal) {
 
-        modal.style.display = "flex";
+        paymentModal.style.display =
+            "flex";
 
     }
 
 }
 
-
-// ======================================================
-// PAYMENT METHOD
-// ======================================================
 
 function selectPaymentMethod(method) {
 
@@ -1322,55 +1520,25 @@ function selectPaymentMethod(method) {
         method;
 
 
-    const element =
+    const selected =
         document.getElementById(
             "selectedPayment"
         );
 
 
-    if (element) {
+    if (selected) {
 
-        element.innerText =
+        selected.innerText =
             "Selected: " + method;
-
-    }
-
-
-    document
-        .querySelectorAll(
-            ".payment-method"
-        )
-        .forEach(
-            function(button) {
-
-                button.classList.remove(
-                    "selected"
-                );
-
-            }
-        );
-
-
-    if (event && event.currentTarget) {
-
-        event.currentTarget.classList.add(
-            "selected"
-        );
 
     }
 
 }
 
 
-// ======================================================
-// MAKE PAYMENT
-// ======================================================
-
 function makePayment() {
 
-    if (
-        selectedPaymentMethod === ""
-    ) {
+    if (!selectedPaymentMethod) {
 
         alert(
             "Please select a payment method."
@@ -1396,43 +1564,37 @@ function makePayment() {
             selectedPaymentMethod,
 
         status:
-            "Confirmed"
+            "Confirmed",
+
+        date:
+            new Date().toLocaleDateString()
 
     };
 
 
-    myBookings.push(
-        booking
-    );
+    myBookings.push(booking);
 
 
     updateDashboardStats();
-
-
-    alert(
-        "Payment Successful!\n\n" +
-
-        "Item: " +
-        currentPaymentItem +
-
-        "\nDays: " +
-        currentPaymentDays +
-
-        "\nAmount: ₹" +
-        currentPaymentAmount +
-
-        "\nMethod: " +
-        selectedPaymentMethod
-    );
 
 
     closePayment();
 
 
     alert(
-        "Booking Confirmed!\n\n" +
-        "Thank you for using Flex Rent."
+        "Payment Successful!\n\n" +
+        "Item: " +
+        currentPaymentItem +
+        "\nDays: " +
+        currentPaymentDays +
+        "\nAmount: ₹" +
+        currentPaymentAmount +
+        "\nPayment: " +
+        selectedPaymentMethod
     );
+
+
+    selectedPaymentMethod = "";
 
 }
 
@@ -1447,7 +1609,8 @@ function closePayment() {
 
     if (modal) {
 
-        modal.style.display = "none";
+        modal.style.display =
+            "none";
 
     }
 
@@ -1474,26 +1637,41 @@ async function googleLogin() {
     }
 
 
-    const { error } =
-        await supabaseClient.auth.signInWithOAuth({
+    try {
 
-            provider: "google",
+        const {
+            error
+        } =
+            await supabaseClient.auth.signInWithOAuth({
 
-            options: {
+                provider: "google",
 
-                redirectTo:
-                    window.location.origin
+                options: {
 
-            }
+                    redirectTo:
+                        window.location.origin +
+                        window.location.pathname
 
-        });
+                }
+
+            });
 
 
-    if (error) {
+        if (error) {
+
+            alert(
+                "Google Login Failed:\n\n" +
+                error.message
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
 
         alert(
-            "Google Login Failed:\n\n" +
-            error.message
+            "Google Login failed."
         );
 
     }
@@ -1502,150 +1680,23 @@ async function googleLogin() {
 
 
 // ======================================================
-// VOICE SEARCH
+// REAL WORLD MAP
 // ======================================================
 
-function startVoiceSearch() {
+function initializeRentalMap() {
 
-    const SpeechRecognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
+    if (
+        typeof L === "undefined"
+    ) {
 
-
-    if (!SpeechRecognition) {
-
-        alert(
-            "Voice search is not supported in this browser."
+        console.error(
+            "Leaflet library is not loaded."
         );
 
         return;
 
     }
 
-
-    const recognition =
-        new SpeechRecognition();
-
-
-    recognition.lang =
-        "en-IN";
-
-
-    recognition.continuous =
-        false;
-
-
-    recognition.interimResults =
-        false;
-
-
-    const micButton =
-        document.querySelector(
-            ".mic-button"
-        );
-
-
-    if (micButton) {
-
-        micButton.classList.add(
-            "listening"
-        );
-
-    }
-
-
-    recognition.onresult =
-        function(event) {
-
-            const text =
-                event
-                    .results[0][0]
-                    .transcript;
-
-
-            const input =
-                document.getElementById(
-                    "searchInput"
-                );
-
-
-            if (input) {
-
-                input.value =
-                    text;
-
-                searchItems();
-
-            }
-
-        };
-
-
-    recognition.onerror =
-        function(event) {
-
-            console.error(
-                "Voice search error:",
-                event.error
-            );
-
-        };
-
-
-    recognition.onend =
-        function() {
-
-            if (micButton) {
-
-                micButton.classList.remove(
-                    "listening"
-                );
-
-            }
-
-        };
-
-
-    try {
-
-        recognition.start();
-
-    } catch (error) {
-
-        console.error(error);
-
-    }
-
-}
-
-
-// ======================================================
-// LOCATION STATUS
-// ======================================================
-
-function setLocationStatus(message) {
-
-    const status =
-        document.getElementById(
-            "locationStatus"
-        );
-
-
-    if (status) {
-
-        status.innerText =
-            message;
-
-    }
-
-}
-
-
-// ======================================================
-// INITIALIZE REAL WORLD MAP
-// ======================================================
-
-function initializeRentalMap() {
 
     const mapElement =
         document.getElementById(
@@ -1656,24 +1707,7 @@ function initializeRentalMap() {
     if (!mapElement) {
 
         console.log(
-            "Map container not found yet."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        typeof L === "undefined"
-    ) {
-
-        console.error(
-            "Leaflet library not loaded."
-        );
-
-        setLocationStatus(
-            "Map library is loading. Please refresh the page."
+            "Map element not found."
         );
 
         return;
@@ -1683,14 +1717,17 @@ function initializeRentalMap() {
 
     if (rentalMap) {
 
-        return;
+        rentalMap.remove();
 
     }
 
 
     rentalMap =
         L.map(
-            "rentalMap"
+            "rentalMap",
+            {
+                worldCopyJump: true
+            }
         ).setView(
             [20, 0],
             2
@@ -1701,35 +1738,29 @@ function initializeRentalMap() {
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
 
-            attribution:
-                '&copy; OpenStreetMap contributors',
+            maxZoom: 19,
 
-            maxZoom:
-                19
+            attribution:
+                '&copy; OpenStreetMap contributors'
 
         }
-    ).addTo(
-        rentalMap
-    );
+    ).addTo(rentalMap);
 
 
     addRentalMarkers();
 
 
-    setTimeout(
-        function() {
+    setTimeout(function () {
 
-            rentalMap.invalidateSize();
+        rentalMap.invalidateSize();
 
-        },
-        300
-    );
+    }, 300);
 
 }
 
 
 // ======================================================
-// ADD RENTAL MARKERS
+// MAP MARKERS
 // ======================================================
 
 function addRentalMarkers() {
@@ -1738,7 +1769,7 @@ function addRentalMarkers() {
 
 
     rentalLocations.forEach(
-        function(item) {
+        function (item) {
 
             const marker =
                 L.marker(
@@ -1746,23 +1777,24 @@ function addRentalMarkers() {
                         item.lat,
                         item.lng
                     ]
-                )
-                .addTo(
-                    rentalMap
-                );
+                ).addTo(rentalMap);
 
 
             marker.bindPopup(`
 
-                <div style="
-                    min-width:180px;
-                    font-family:Arial,sans-serif;
-                ">
+                <div
+                    style="
+                        min-width:180px;
+                        text-align:center;
+                    "
+                >
 
-                    <div style="
-                        font-size:32px;
-                        margin-bottom:8px;
-                    ">
+                    <div
+                        style="
+                            font-size:35px;
+                            margin-bottom:8px;
+                        "
+                    >
                         ${item.icon}
                     </div>
 
@@ -1770,30 +1802,26 @@ function addRentalMarkers() {
                         ${item.name}
                     </strong>
 
-                    <p style="
-                        margin:7px 0;
-                        color:#16a085;
-                        font-weight:bold;
-                    ">
+                    <p
+                        style="
+                            color:#16a085;
+                            font-weight:bold;
+                            margin:7px 0;
+                        "
+                    >
                         ₹${item.price}/day
                     </p>
 
-                    <small>
-                        ${item.category}
-                    </small>
-
-                    <br><br>
-
                     <button
-                        onclick="openBooking('${item.name.replace(/'/g, "\\'")}', ${item.price})"
+                        onclick="openBooking('${item.name}', ${item.price})"
                         style="
+                            width:100%;
+                            padding:9px;
+                            border:none;
+                            border-radius:7px;
                             background:#16a085;
                             color:white;
-                            border:none;
-                            padding:9px 14px;
-                            border-radius:7px;
                             cursor:pointer;
-                            font-weight:bold;
                         "
                     >
                         Rent Now
@@ -1803,176 +1831,7 @@ function addRentalMarkers() {
 
             `);
 
-        }
-    );
-
-}
-
-
-// ======================================================
-// OPEN MAP
-// ======================================================
-
-function openMap() {
-
-    const mapElement =
-        document.getElementById(
-            "rentalMap"
-        );
-
-
-    if (!mapElement) {
-
-        createMapModal();
-
-    }
-
-
-    const modal =
-        document.getElementById(
-            "worldMapModal"
-        );
-
-
-    if (modal) {
-
-        modal.style.display =
-            "flex";
-
-    }
-
-
-    setTimeout(
-        function() {
-
-            initializeRentalMap();
-
-            if (rentalMap) {
-
-                rentalMap.invalidateSize();
-
-            }
-
-        },
-        200
-    );
-
-}
-
-
-// ======================================================
-// CREATE MAP MODAL IF NEEDED
-// ======================================================
-
-function createMapModal() {
-
-    if (
-        document.getElementById(
-            "worldMapModal"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    const modal =
-        document.createElement(
-            "div"
-        );
-
-
-    modal.id =
-        "worldMapModal";
-
-
-    modal.className =
-        "modal";
-
-
-    modal.innerHTML = `
-
-        <div style="
-            width:94%;
-            max-width:1100px;
-            height:85vh;
-            background:white;
-            border-radius:16px;
-            padding:15px;
-            position:relative;
-            box-shadow:0 20px 60px rgba(0,0,0,.25);
-        ">
-
-            <button
-                onclick="closeMap()"
-                style="
-                    position:absolute;
-                    right:18px;
-                    top:12px;
-                    z-index:1000;
-                    width:38px;
-                    height:38px;
-                    border:none;
-                    border-radius:50%;
-                    background:white;
-                    font-size:25px;
-                    cursor:pointer;
-                    box-shadow:0 3px 12px rgba(0,0,0,.2);
-                "
-            >
-                ×
-            </button>
-
-            <div
-                id="rentalMap"
-                style="
-                    width:100%;
-                    height:100%;
-                    border-radius:12px;
-                "
-            ></div>
-
-            <button
-                onclick="findMyLocation()"
-                style="
-                    position:absolute;
-                    left:30px;
-                    bottom:30px;
-                    z-index:1000;
-                    background:white;
-                    border:none;
-                    padding:12px 16px;
-                    border-radius:10px;
-                    font-weight:bold;
-                    cursor:pointer;
-                    box-shadow:0 4px 15px rgba(0,0,0,.2);
-                "
-            >
-                📍 Use My Location
-            </button>
-
-        </div>
-
-    `;
-
-
-    document.body.appendChild(
-        modal
-    );
-
-
-    modal.addEventListener(
-        "click",
-        function(event) {
-
-            if (
-                event.target === modal
-            ) {
-
-                closeMap();
-
-            }
+            mapMarkers.push(marker);
 
         }
     );
@@ -1981,58 +1840,42 @@ function createMapModal() {
 
 
 // ======================================================
-// CLOSE MAP
-// ======================================================
-
-function closeMap() {
-
-    const modal =
-        document.getElementById(
-            "worldMapModal"
-        );
-
-
-    if (modal) {
-
-        modal.style.display =
-            "none";
-
-    }
-
-}
-
-
-// ======================================================
-// FIND USER LOCATION
+// USER LOCATION
 // ======================================================
 
 function findMyLocation() {
 
-    if (
-        !navigator.geolocation
-    ) {
-
-        setLocationStatus(
-            "Your browser does not support location."
+    const status =
+        document.getElementById(
+            "locationStatus"
         );
 
-        alert(
-            "Your browser does not support location."
-        );
+
+    if (!navigator.geolocation) {
+
+        if (status) {
+
+            status.innerText =
+                "Location is not supported by this browser.";
+
+        }
 
         return;
 
     }
 
 
-    setLocationStatus(
-        "Finding your location..."
-    );
+    if (status) {
+
+        status.innerText =
+            "Finding your location...";
+
+    }
 
 
     navigator.geolocation.getCurrentPosition(
 
-        function(position) {
+        function (position) {
 
             const lat =
                 position.coords.latitude;
@@ -2041,24 +1884,17 @@ function findMyLocation() {
                 position.coords.longitude;
 
 
-            userLocation =
-                [lat, lng];
+            if (!rentalMap) {
+
+                initializeRentalMap();
+
+            }
 
 
             if (!rentalMap) {
 
-                openMap();
-
-                setTimeout(
-                    function() {
-
-                        showUserLocation(
-                            lat,
-                            lng
-                        );
-
-                    },
-                    500
+                alert(
+                    "Map could not be loaded."
                 );
 
                 return;
@@ -2066,74 +1902,94 @@ function findMyLocation() {
             }
 
 
-            showUserLocation(
-                lat,
-                lng
+            rentalMap.setView(
+                [lat, lng],
+                14
             );
+
+
+            if (userMarker) {
+
+                rentalMap.removeLayer(
+                    userMarker
+                );
+
+            }
+
+
+            userMarker =
+                L.marker(
+                    [lat, lng]
+                ).addTo(rentalMap);
+
+
+            userMarker.bindPopup(
+                "<b>📍 You are here</b>"
+            ).openPopup();
+
+
+            if (status) {
+
+                status.innerText =
+                    "Your location has been found.";
+
+            }
 
         },
 
+        function (error) {
 
-        function(error) {
+            console.error(
+                "Location error:",
+                error
+            );
+
 
             let message =
                 "Unable to find your location.";
 
 
-            if (
-                error.code ===
-                error.PERMISSION_DENIED
-            ) {
+            if (error.code === 1) {
 
                 message =
-                    "Location permission denied. Please allow location access in your browser.";
+                    "Location permission was denied. Please allow location access in your browser.";
+
+            }
+
+            if (error.code === 2) {
+
+                message =
+                    "Your location could not be determined.";
+
+            }
+
+            if (error.code === 3) {
+
+                message =
+                    "Location request timed out.";
 
             }
 
 
-            if (
-                error.code ===
-                error.POSITION_UNAVAILABLE
-            ) {
+            if (status) {
 
-                message =
-                    "Your location is currently unavailable.";
+                status.innerText =
+                    message;
 
             }
 
 
-            if (
-                error.code ===
-                error.TIMEOUT
-            ) {
-
-                message =
-                    "Location request timed out. Please try again.";
-
-            }
-
-
-            setLocationStatus(
-                message
-            );
-
-
-            alert(
-                message
-            );
+            alert(message);
 
         },
 
         {
 
-            enableHighAccuracy:
-                true,
+            enableHighAccuracy: true,
 
-            timeout:
-                15000,
+            timeout: 10000,
 
-            maximumAge:
-                0
+            maximumAge: 0
 
         }
 
@@ -2143,54 +1999,39 @@ function findMyLocation() {
 
 
 // ======================================================
-// SHOW USER LOCATION
+// OPEN MAP BUTTON
 // ======================================================
 
-function showUserLocation(
-    lat,
-    lng
-) {
+function setupMapButton() {
 
-    if (!rentalMap) {
-
-        return;
-
-    }
-
-
-    rentalMap.setView(
-        [lat, lng],
-        15
-    );
-
-
-    if (userMarker) {
-
-        rentalMap.removeLayer(
-            userMarker
-        );
-
-    }
-
-
-    userMarker =
-        L.marker(
-            [lat, lng]
-        )
-        .addTo(
-            rentalMap
+    const button =
+        document.getElementById(
+            "openMapBtn"
         );
 
 
-    userMarker
-        .bindPopup(
-            "<b>📍 You are here</b>"
-        )
-        .openPopup();
+    if (!button) return;
 
 
-    setLocationStatus(
-        "Your location found successfully."
+    button.addEventListener(
+        "click",
+        function () {
+
+            const mapSection =
+                document.getElementById(
+                    "location"
+                );
+
+
+            if (mapSection) {
+
+                mapSection.scrollIntoView({
+                    behavior: "smooth"
+                });
+
+            }
+
+        }
     );
 
 }
@@ -2208,11 +2049,7 @@ function searchMapItems() {
         );
 
 
-    if (!input) {
-
-        return;
-
-    }
+    if (!input || !rentalMap) return;
 
 
     const text =
@@ -2223,6 +2060,11 @@ function searchMapItems() {
 
     if (!text) {
 
+        rentalMap.setView(
+            [20, 0],
+            2
+        );
+
         return;
 
     }
@@ -2230,13 +2072,11 @@ function searchMapItems() {
 
     const item =
         rentalLocations.find(
-            function(location) {
+            function (location) {
 
-                return (
-                    location.name
-                        .toLowerCase()
-                        .includes(text)
-                );
+                return location.name
+                    .toLowerCase()
+                    .includes(text);
 
             }
         );
@@ -2253,132 +2093,76 @@ function searchMapItems() {
     }
 
 
-    openMap();
-
-
-    setTimeout(
-        function() {
-
-            if (rentalMap) {
-
-                rentalMap.setView(
-                    [
-                        item.lat,
-                        item.lng
-                    ],
-                    16
-                );
-
-            }
-
-        },
-        500
+    rentalMap.setView(
+        [
+            item.lat,
+            item.lng
+        ],
+        16
     );
 
 }
 
 
 // ======================================================
-// SEARCH THIS AREA
+// DATE
 // ======================================================
 
-function searchThisArea() {
+function setupDate() {
 
-    if (!rentalMap) {
-
-        openMap();
-
-        return;
-
-    }
-
-
-    const center =
-        rentalMap.getCenter();
-
-
-    const nearby =
-        rentalLocations.filter(
-            function(item) {
-
-                const distance =
-                    Math.sqrt(
-
-                        Math.pow(
-                            item.lat -
-                            center.lat,
-                            2
-                        )
-
-                        +
-
-                        Math.pow(
-                            item.lng -
-                            center.lng,
-                            2
-                        )
-
-                    );
-
-                return distance < 0.2;
-
-            }
+    const date =
+        document.getElementById(
+            "startDate"
         );
 
 
-    if (nearby.length === 0) {
+    if (!date) return;
 
-        alert(
-            "No rental items found in this area."
-        );
 
-        return;
+    const today =
+        new Date()
+            .toISOString()
+            .split("T")[0];
+
+
+    date.min = today;
+
+
+    if (!date.value) {
+
+        date.value = today;
 
     }
-
-
-    alert(
-        nearby.length +
-        " rental item(s) found in this area."
-    );
 
 }
 
 
 // ======================================================
-// CLOSE MODALS ON OUTSIDE CLICK
+// CLOSE MODALS BY OUTSIDE CLICK
 // ======================================================
 
 window.addEventListener(
     "click",
-    function(event) {
+    function (event) {
 
         const modalIds = [
 
             "loginModal",
-
             "signupModal",
-
             "bookingModal",
-
             "paymentModal",
-
             "dashboardModal",
-
             "myListingsModal",
-
             "listModal"
 
         ];
 
 
         modalIds.forEach(
-            function(id) {
+            function (id) {
 
                 const modal =
-                    document.getElementById(
-                        id
-                    );
+                    document.getElementById(id);
 
 
                 if (
@@ -2399,132 +2183,102 @@ window.addEventListener(
 
 
 // ======================================================
-// KEYBOARD SEARCH
+// ESCAPE KEY
 // ======================================================
 
 document.addEventListener(
     "keydown",
-    function(event) {
+    function (event) {
 
-        const active =
-            document.activeElement;
-
-
-        const typing =
-            active &&
-            (
-                active.tagName === "INPUT" ||
-                active.tagName === "TEXTAREA"
-            );
+        if (event.key !== "Escape") {
+            return;
+        }
 
 
-        if (
-            event.key === "/" &&
-            !typing
-        ) {
-
-            event.preventDefault();
-
-
-            const search =
-                document.getElementById(
-                    "searchInput"
-                );
+        const modals = [
+            "loginModal",
+            "signupModal",
+            "bookingModal",
+            "paymentModal",
+            "dashboardModal",
+            "myListingsModal",
+            "listModal"
+        ];
 
 
-            if (search) {
+        modals.forEach(
+            function (id) {
 
-                search.focus();
+                const modal =
+                    document.getElementById(id);
+
+
+                if (modal) {
+
+                    modal.style.display =
+                        "none";
+
+                }
 
             }
-
-        }
-
-    }
-);
-
-
-// ======================================================
-// PAGE LOAD
-// ======================================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        updateDashboardStats();
-
-
-        const mapButton =
-            document.getElementById(
-                "openMapBtn"
-            );
-
-
-        if (mapButton) {
-
-            mapButton.addEventListener(
-                "click",
-                function() {
-
-                    openMap();
-
-                }
-            );
-
-        }
-
-
-        const mapSearch =
-            document.getElementById(
-                "mapSearchInput"
-            );
-
-
-        if (mapSearch) {
-
-            mapSearch.addEventListener(
-                "keydown",
-                function(event) {
-
-                    if (
-                        event.key === "Enter"
-                    ) {
-
-                        searchMapItems();
-
-                    }
-
-                }
-            );
-
-        }
+        );
 
     }
 );
 
 
 // ======================================================
-// SUPABASE AUTH STATE
+// SUPABASE SESSION CHECK
 // ======================================================
 
-if (
-    typeof supabaseClient !== "undefined" &&
-    supabaseClient
-) {
+async function checkUserSession() {
 
-    supabaseClient.auth.onAuthStateChange(
-        function(event, session) {
+    if (
+        typeof supabaseClient === "undefined" ||
+        !supabaseClient
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const {
+            data
+        } =
+            await supabaseClient.auth.getSession();
+
+
+        if (data?.session) {
 
             console.log(
-                "Supabase Auth:",
-                event
+                "User is logged in:",
+                data.session.user.email
+            );
+
+        } else {
+
+            console.log(
+                "No active user session."
             );
 
         }
-    );
+
+    } catch (error) {
+
+        console.error(
+            "Session check failed:",
+            error
+        );
+
+    }
 
 }
+
+
+checkUserSession();
 
 
 // ======================================================
