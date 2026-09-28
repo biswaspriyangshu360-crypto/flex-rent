@@ -163,9 +163,16 @@
           <input type="text" id="item-location" required placeholder="New York, NY">
         </div>
         <div class="form-group">
-          <label>Image URL</label>
-          <input type="url" id="item-image" placeholder="https://images.unsplash.com/photo-..." required>
-        </div>
+          <div class="form-group">
+  <label>Item Image</label>
+  <input 
+    type="file" 
+    id="item-image" 
+    accept="image/*" 
+    required
+  >
+  <small>Upload a clear image of your item. Maximum size: 5 MB.</small>
+</div>
         <div class="form-group">
           <label>Description</label>
           <textarea id="item-description" rows="3" placeholder="Provide details about condition, pickup, etc."></textarea>
