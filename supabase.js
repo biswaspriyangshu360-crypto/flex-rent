@@ -1,36 +1,72 @@
-// ============================================================
-// FLEX RENT - SUPABASE CONNECTION
-// ============================================================
+// Replace these with your project's Supabase URL and Anon Key
+const SUPABASE_URL = "https://ztjclizjijlgskxdyvvc.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_HpN-JfR1xpMxCJqzJHpK4A_mPicSh4m";
 
-// Your Supabase Project URL
-const SUPABASE_URL =
-    "https://ztjclizjijlgskxdyvvc.supabase.co";
+// Initialize Supabase Client using the CDN script
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Your Supabase Publishable Key
-const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_HpN-JfR1xpMxCJqzJHpK4A_mPicSh4m";
+// Auth Helpers
+async function signUpUser(email, password, fullName, phone) {
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) throw error;
+  if (data.user) {
+    await supabase.from('profiles').insert([
+      { id: data.user.id, email, full_name: fullName, phone }
+    ]);
+  }
+  return data;
+}
 
+async function signInUser(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  return data;
+}
 
-// ============================================================
-// CREATE SUPABASE CLIENT
-// ============================================================
+async function signOutUser() {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
+}
 
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-    );
+// Database Helpers
+async function fetchListings() {
+  const { data, error } = await supabase.from('listings').select('*').order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
+}
 
+async function createListing(listingData) {
+  const { data, error } = await supabase.from('listings').insert([listingData]).select();
+  if (error) throw error;
+  return data;
+}
 
-// ============================================================
-// CONNECTION CHECK
-// ============================================================
+async function createBooking(bookingData) {
+  const { data, error } = await supabase.from('bookings').insert([bookingData]).select();
+  if (error) throw error;
+  return data;
+}
 
-console.log(
-    "Flex Rent: Supabase connected successfully."
-);
+async function createPayment(paymentData) {
+  const { data, error } = await supabase.from('payments').insert([paymentData]).select();
+  if (error) throw error;
+  return data;
+}
 
-console.log(
-    "Supabase URL:",
-    SUPABASE_URL
-);
+async function fetchUserBookings(userId) {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*, listings(*)')
+    .eq('renter_id', userId);
+  if (error) throw error;
+  return data;
+}
+
+async function fetchUserListings(userId) {
+  const { data, error } = await supabase
+    .from('listings')
+    .select('*')
+    .eq('owner_id', userId);
+  if (error) throw error;
+  return data;
+}
