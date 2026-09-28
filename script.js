@@ -1,4 +1,10 @@
-```javascript
+// =====================================================
+// FLEX RENT - MAIN JAVASCRIPT
+// Currency: Indian Rupees (₹)
+// Image Upload: Supabase Storage
+// =====================================================
+
+
 // =====================================================
 // STATE MANAGEMENT
 // =====================================================
@@ -11,21 +17,31 @@ let selectedListingForBooking = null;
 
 
 // =====================================================
+// CURRENCY FORMATTER
+// =====================================================
+
+function formatINR(amount) {
+  const number = Number(amount) || 0;
+
+  return `₹${number.toLocaleString("en-IN")}`;
+}
+
+
+// =====================================================
 // MOCK INITIAL DATA
+// Used when Supabase has no listings / is unavailable
 // =====================================================
 
 const mockListings = [
-
   {
     id: "1",
     title: "Caterpillar Mini Excavator",
     category: "Construction",
-    description:
-      "Heavy-duty compact excavator for digging and trenching.",
+    description: "Heavy-duty compact excavator for digging and trenching.",
     price_per_day: 5000,
-    location: "Kolkata, India",
-    lat: 22.5726,
-    lng: 88.3639,
+    location: "New York, USA",
+    lat: 40.7128,
+    lng: -74.0060,
     image_url:
       "https://images.unsplash.com/photo-1579412690850-bd41cd0af397?auto=format&fit=crop&w=600&q=80"
   },
@@ -34,12 +50,11 @@ const mockListings = [
     id: "2",
     title: "John Deere Farm Tractor",
     category: "Agriculture",
-    description:
-      "75HP tractor with multiple attachment capabilities.",
+    description: "75HP tractor with multiple attachment capabilities.",
     price_per_day: 4000,
-    location: "Guwahati, India",
-    lat: 26.1445,
-    lng: 91.7362,
+    location: "Texas, USA",
+    lat: 31.9686,
+    lng: -99.9018,
     image_url:
       "https://images.unsplash.com/photo-1530267981375-f0de937f5f13?auto=format&fit=crop&w=600&q=80"
   },
@@ -48,16 +63,14 @@ const mockListings = [
     id: "3",
     title: "Bosch Professional Power Drill",
     category: "Everyday",
-    description:
-      "18V Cordless hammer drill with battery kit.",
+    description: "18V Cordless hammer drill with battery kit.",
     price_per_day: 500,
-    location: "Mumbai, India",
-    lat: 19.0760,
-    lng: 72.8777,
+    location: "London, UK",
+    lat: 51.5074,
+    lng: -0.1278,
     image_url:
       "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=600&q=80"
   }
-
 ];
 
 
@@ -65,66 +78,55 @@ const mockListings = [
 // PAGE LOAD
 // =====================================================
 
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-    // Hide Loading Screen
-    setTimeout(() => {
+  // Hide Loading Screen
+  setTimeout(() => {
 
-      const loader =
-        document.getElementById(
-          "loading-screen"
-        );
+    const loader = document.getElementById("loading-screen");
 
-      if (loader) {
+    if (loader) {
+      loader.style.opacity = "0";
 
-        loader.style.opacity = "0";
+      setTimeout(() => {
+        loader.style.display = "none";
+      }, 500);
+    }
 
-        setTimeout(() => {
-          loader.style.display = "none";
-        }, 500);
-
-      }
-
-    }, 1000);
+  }, 1000);
 
 
-    initMap();
+  // Initialize website features
+  initMap();
+  setupVoiceSearch();
+  setupEventListeners();
+  loadListings();
+  checkSession();
 
-    setupVoiceSearch();
-
-    setupEventListeners();
-
-    loadListings();
-
-    checkSession();
-
-  }
-);
+});
 
 
 // =====================================================
-// MAP
+// INITIALIZE LEAFLET MAP
 // =====================================================
 
 function initMap() {
 
-  map = L.map("map")
-    .setView(
-      [20.5937, 78.9629],
-      2
-    );
+  const mapElement = document.getElementById("map");
 
+  if (!mapElement) return;
+
+  map = L.map("map").setView(
+    [20.5937, 78.9629],
+    2
+  );
 
   L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-      attribution:
-        "© OpenStreetMap contributors"
+      attribution: "© OpenStreetMap contributors"
     }
   ).addTo(map);
-
 }
 
 
@@ -136,10 +138,10 @@ function updateMapMarkers(items) {
 
   if (!map) return;
 
-
-  mapMarkers.forEach(
-    marker => map.removeLayer(marker)
-  );
+  // Remove old markers
+  mapMarkers.forEach(marker => {
+    map.removeLayer(marker);
+  });
 
   mapMarkers = [];
 
@@ -148,47 +150,35 @@ function updateMapMarkers(items) {
 
     if (
       item.lat !== null &&
-      item.lat !== undefined &&
       item.lng !== null &&
+      item.lat !== undefined &&
       item.lng !== undefined
     ) {
 
-      const marker =
-        L.marker([
-          item.lat,
-          item.lng
-        ]).addTo(map);
+      const marker = L.marker([
+        item.lat,
+        item.lng
+      ]).addTo(map);
 
 
       marker.bindPopup(`
-        <div style="min-width:180px;">
-          <b>${item.title}</b>
-          <br>
-          <span>
-            ${item.location}
-          </span>
-          <br>
-          <strong>
-            ₹${Number(item.price_per_day).toLocaleString("en-IN")}/day
-          </strong>
-          <br>
+        <b>${item.title}</b><br>
+        Price: ${formatINR(item.price_per_day)}/day<br>
 
-          <button
-            onclick="openBookingModal('${item.id}')"
-            style="
-              margin-top:8px;
-              background:#4F46E5;
-              color:#fff;
-              border:none;
-              padding:6px 10px;
-              border-radius:4px;
-              cursor:pointer;
-            "
-          >
-            Rent Now
-          </button>
-
-        </div>
+        <button
+          onclick="openBookingModal('${item.id}')"
+          style="
+            margin-top:5px;
+            background:#4F46E5;
+            color:#fff;
+            border:none;
+            padding:4px 8px;
+            border-radius:4px;
+            cursor:pointer;
+          "
+        >
+          Rent Now
+        </button>
       `);
 
 
@@ -202,31 +192,29 @@ function updateMapMarkers(items) {
 
 
 // =====================================================
-// LOAD LISTINGS
+// LOAD LISTINGS FROM SUPABASE
 // =====================================================
 
 async function loadListings() {
 
   try {
 
-    const dbListings =
-      await fetchListings();
+    const dbListings = await fetchListings();
 
+    if (dbListings && dbListings.length > 0) {
 
-    listings =
-      (
-        dbListings &&
-        dbListings.length > 0
-      )
-        ? dbListings
-        : mockListings;
+      listings = dbListings;
 
+    } else {
+
+      listings = mockListings;
+
+    }
 
   } catch (err) {
 
     console.warn(
-      "Using fallback mock data:",
-      err.message
+      "Using fallback mock data because Supabase is unavailable."
     );
 
     listings = mockListings;
@@ -235,42 +223,26 @@ async function loadListings() {
 
 
   renderListings(listings);
-
   updateMapMarkers(listings);
 
 }
 
 
 // =====================================================
-// FORMAT INDIAN CURRENCY
-// =====================================================
-
-function formatINR(amount) {
-
-  const number =
-    Number(amount) || 0;
-
-  return `₹${number.toLocaleString("en-IN")}`;
-
-}
-
-
-// =====================================================
-// RENDER LISTINGS
+// RENDER LISTING CARDS
 // =====================================================
 
 function renderListings(items) {
 
   const container =
-    document.getElementById(
-      "listings-grid"
-    );
+    document.getElementById("listings-grid");
 
+  if (!container) return;
 
   container.innerHTML = "";
 
 
-  if (items.length === 0) {
+  if (!items || items.length === 0) {
 
     container.innerHTML =
       "<p>No rental items found.</p>";
@@ -282,17 +254,14 @@ function renderListings(items) {
 
   items.forEach(item => {
 
-    const card =
-      document.createElement("div");
-
+    const card = document.createElement("div");
 
     card.className = "card";
 
 
     card.innerHTML = `
-
       <img
-        src="${item.image_url}"
+        src="${item.image_url || "https://via.placeholder.com/600x400?text=No+Image"}"
         alt="${item.title}"
       >
 
@@ -324,7 +293,6 @@ function renderListings(items) {
         </button>
 
       </div>
-
     `;
 
 
@@ -342,14 +310,13 @@ function renderListings(items) {
 function setupVoiceSearch() {
 
   const micBtn =
-    document.getElementById(
-      "mic-btn"
-    );
+    document.getElementById("mic-btn");
 
   const searchInput =
-    document.getElementById(
-      "search-input"
-    );
+    document.getElementById("search-input");
+
+
+  if (!micBtn || !searchInput) return;
 
 
   const SpeechRecognition =
@@ -365,67 +332,62 @@ function setupVoiceSearch() {
 
     recognition.continuous = false;
 
-    recognition.lang = "en-IN";
+    recognition.lang = "en-US";
 
 
     micBtn.addEventListener(
       "click",
       () => {
 
-        micBtn.classList.add(
-          "listening"
-        );
+        try {
 
-        recognition.start();
+          micBtn.classList.add("listening");
+
+          recognition.start();
+
+        } catch (error) {
+
+          console.warn(
+            "Voice recognition already running."
+          );
+
+        }
 
       }
     );
 
 
-    recognition.onresult =
-      event => {
+    recognition.onresult = event => {
 
-        const transcript =
-          event.results[0][0]
-            .transcript;
+      const transcript =
+        event.results[0][0].transcript;
 
 
-        searchInput.value =
-          transcript;
+      searchInput.value = transcript;
+
+      micBtn.classList.remove("listening");
+
+      filterListings();
+
+    };
 
 
-        micBtn.classList.remove(
-          "listening"
-        );
+    recognition.onerror = () => {
+
+      micBtn.classList.remove("listening");
+
+      alert(
+        "Voice search failed or was denied. Please try typing."
+      );
+
+    };
 
 
-        filterListings();
+    recognition.onend = () => {
 
-      };
+      micBtn.classList.remove("listening");
 
-
-    recognition.onerror =
-      () => {
-
-        micBtn.classList.remove(
-          "listening"
-        );
-
-        alert(
-          "Voice search failed or was denied. Please try typing."
-        );
-
-      };
-
-
-    recognition.onend =
-      () => {
-
-        micBtn.classList.remove(
-          "listening"
-        );
-
-      };
+    };
 
   } else {
 
@@ -442,36 +404,45 @@ function setupVoiceSearch() {
 
 function filterListings() {
 
+  const searchInput =
+    document.getElementById("search-input");
+
+  if (!searchInput) return;
+
+
   const query =
-    document
-      .getElementById("search-input")
-      .value
-      .toLowerCase();
+    searchInput.value.toLowerCase();
+
+
+  const activeChip =
+    document.querySelector(
+      ".category-chip.active"
+    );
 
 
   const activeCategory =
-    document
-      .querySelector(
-        ".category-chip.active"
-      )
-      .dataset.category;
+    activeChip
+      ? activeChip.dataset.category
+      : "All";
 
 
   const filtered =
     listings.filter(item => {
 
+      const title =
+        (item.title || "").toLowerCase();
+
+      const location =
+        (item.location || "").toLowerCase();
+
+      const description =
+        (item.description || "").toLowerCase();
+
+
       const matchesSearch =
-        item.title
-          .toLowerCase()
-          .includes(query) ||
-
-        item.location
-          .toLowerCase()
-          .includes(query) ||
-
-        (item.description || "")
-          .toLowerCase()
-          .includes(query);
+        title.includes(query) ||
+        location.includes(query) ||
+        description.includes(query);
 
 
       const matchesCategory =
@@ -500,38 +471,43 @@ function filterListings() {
 
 function setupEventListeners() {
 
-  // Search
-  document
-    .getElementById("search-input")
-    .addEventListener(
+  // ---------------------------------------------------
+  // SEARCH
+  // ---------------------------------------------------
+
+  const searchInput =
+    document.getElementById("search-input");
+
+  if (searchInput) {
+
+    searchInput.addEventListener(
       "input",
       filterListings
     );
 
+  }
 
-  // Category filter
+
+  // ---------------------------------------------------
+  // CATEGORY FILTER
+  // ---------------------------------------------------
+
   document
-    .querySelectorAll(
-      ".category-chip"
-    )
+    .querySelectorAll(".category-chip")
     .forEach(chip => {
 
       chip.addEventListener(
         "click",
-        e => {
+        event => {
 
           document
-            .querySelectorAll(
-              ".category-chip"
-            )
+            .querySelectorAll(".category-chip")
             .forEach(c =>
-              c.classList.remove(
-                "active"
-              )
+              c.classList.remove("active")
             );
 
 
-          e.currentTarget.classList.add(
+          event.currentTarget.classList.add(
             "active"
           );
 
@@ -544,41 +520,55 @@ function setupEventListeners() {
     });
 
 
-  // Modals
+  // ---------------------------------------------------
+  // MODALS
+  // ---------------------------------------------------
+
   const authModal =
-    document.getElementById(
-      "auth-modal"
-    );
+    document.getElementById("auth-modal");
 
   const listItemModal =
-    document.getElementById(
-      "list-item-modal"
-    );
+    document.getElementById("list-item-modal");
 
   const bookingModal =
-    document.getElementById(
-      "booking-modal"
-    );
+    document.getElementById("booking-modal");
 
 
-  // Login
-  document
-    .getElementById("auth-nav-btn")
-    .addEventListener(
+  // ---------------------------------------------------
+  // AUTH BUTTON
+  // ---------------------------------------------------
+
+  const authNavBtn =
+    document.getElementById("auth-nav-btn");
+
+
+  if (authNavBtn) {
+
+    authNavBtn.addEventListener(
       "click",
-      () =>
-        authModal.classList.remove(
-          "hidden"
-        )
+      () => {
+
+        authModal.classList.remove("hidden");
+
+      }
+    );
+
+  }
+
+
+  // ---------------------------------------------------
+  // LIST YOUR ITEM BUTTON
+  // ---------------------------------------------------
+
+  const listItemNavBtn =
+    document.getElementById(
+      "list-item-nav-btn"
     );
 
 
-  // List Item
-  document
-    .getElementById(
-      "list-item-nav-btn"
-    )
-    .addEventListener(
+  if (listItemNavBtn) {
+
+    listItemNavBtn.addEventListener(
       "click",
       () => {
 
@@ -604,29 +594,29 @@ function setupEventListeners() {
       }
     );
 
+  }
 
-  // Close modals
+
+  // ---------------------------------------------------
+  // CLOSE MODALS
+  // ---------------------------------------------------
+
   document
-    .querySelectorAll(
-      ".close-modal"
-    )
+    .querySelectorAll(".close-modal")
     .forEach(btn => {
 
       btn.addEventListener(
         "click",
         () => {
 
-          authModal.classList.add(
-            "hidden"
-          );
+          if (authModal)
+            authModal.classList.add("hidden");
 
-          listItemModal.classList.add(
-            "hidden"
-          );
+          if (listItemModal)
+            listItemModal.classList.add("hidden");
 
-          bookingModal.classList.add(
-            "hidden"
-          );
+          if (bookingModal)
+            bookingModal.classList.add("hidden");
 
         }
       );
@@ -634,9 +624,9 @@ function setupEventListeners() {
     });
 
 
-  // =================================================
-  // AUTH TOGGLE
-  // =================================================
+  // ===================================================
+  // LOGIN / REGISTER
+  // ===================================================
 
   let isRegistering = false;
 
@@ -647,79 +637,82 @@ function setupEventListeners() {
     );
 
 
-  toggleBtn.addEventListener(
-    "click",
-    e => {
+  if (toggleBtn) {
 
-      e.preventDefault();
+    toggleBtn.addEventListener(
+      "click",
+      event => {
 
-      isRegistering =
-        !isRegistering;
+        event.preventDefault();
 
-
-      document.getElementById(
-        "auth-title"
-      ).innerText =
-        isRegistering
-          ? "Register Account"
-          : "Login to Flex Rent";
+        isRegistering =
+          !isRegistering;
 
 
-      document.getElementById(
-        "auth-submit-btn"
-      ).innerText =
-        isRegistering
-          ? "Register"
-          : "Login";
+        document.getElementById(
+          "auth-title"
+        ).innerText =
+          isRegistering
+            ? "Register Account"
+            : "Login to Flex Rent";
 
 
-      document
-        .getElementById("name-group")
-        .classList.toggle(
-          "hidden",
-          !isRegistering
-        );
+        document.getElementById(
+          "auth-submit-btn"
+        ).innerText =
+          isRegistering
+            ? "Register"
+            : "Login";
 
 
-      document
-        .getElementById("phone-group")
-        .classList.toggle(
-          "hidden",
-          !isRegistering
-        );
-
-    }
-  );
+        document
+          .getElementById("name-group")
+          .classList.toggle(
+            "hidden",
+            !isRegistering
+          );
 
 
-  // =================================================
-  // AUTH FORM
-  // =================================================
+        document
+          .getElementById("phone-group")
+          .classList.toggle(
+            "hidden",
+            !isRegistering
+          );
 
-  document
-    .getElementById("auth-form")
-    .addEventListener(
+      }
+    );
+
+  }
+
+
+  // ===================================================
+  // AUTH FORM SUBMIT
+  // ===================================================
+
+  const authForm =
+    document.getElementById("auth-form");
+
+
+  if (authForm) {
+
+    authForm.addEventListener(
       "submit",
-      async e => {
+      async event => {
 
-        e.preventDefault();
+        event.preventDefault();
 
 
         const email =
-          document
-            .getElementById(
-              "auth-email"
-            )
-            .value
-            .trim();
+          document.getElementById(
+            "auth-email"
+          ).value;
 
 
         const password =
-          document
-            .getElementById(
-              "auth-password"
-            )
-            .value;
+          document.getElementById(
+            "auth-password"
+          ).value;
 
 
         try {
@@ -727,21 +720,15 @@ function setupEventListeners() {
           if (isRegistering) {
 
             const name =
-              document
-                .getElementById(
-                  "auth-name"
-                )
-                .value
-                .trim();
+              document.getElementById(
+                "auth-name"
+              ).value;
 
 
             const phone =
-              document
-                .getElementById(
-                  "auth-phone"
-                )
-                .value
-                .trim();
+              document.getElementById(
+                "auth-phone"
+              ).value;
 
 
             await signUpUser(
@@ -786,7 +773,8 @@ function setupEventListeners() {
         } catch (err) {
 
           alert(
-            err.message
+            err.message ||
+            "Authentication failed."
           );
 
         }
@@ -794,24 +782,32 @@ function setupEventListeners() {
       }
     );
 
+  }
 
-  // =================================================
-  // NEW LISTING
-  // =================================================
 
-  document
-    .getElementById("listing-form")
-    .addEventListener(
+  // ===================================================
+  // NEW LISTING SUBMIT
+  // ===================================================
+
+  const listingForm =
+    document.getElementById(
+      "listing-form"
+    );
+
+
+  if (listingForm) {
+
+    listingForm.addEventListener(
       "submit",
-      async e => {
+      async event => {
 
-        e.preventDefault();
+        event.preventDefault();
 
 
         if (!currentUser) {
 
           alert(
-            "Please login first to list an item."
+            "Please login first."
           );
 
           return;
@@ -819,6 +815,7 @@ function setupEventListeners() {
         }
 
 
+        // Get image file
         const imageInput =
           document.getElementById(
             "item-image"
@@ -826,7 +823,10 @@ function setupEventListeners() {
 
 
         const imageFile =
-          imageInput.files[0];
+          imageInput &&
+          imageInput.files
+            ? imageInput.files[0]
+            : null;
 
 
         if (!imageFile) {
@@ -840,83 +840,63 @@ function setupEventListeners() {
         }
 
 
-        const submitButton =
-          e.target.querySelector(
-            "button[type='submit']"
+        try {
+
+          // ------------------------------------------------
+          // Upload image to Supabase Storage
+          // ------------------------------------------------
+
+          alert(
+            "Uploading image... Please wait."
           );
 
 
-        const originalText =
-          submitButton.textContent;
-
-
-        try {
-
-          submitButton.disabled =
-            true;
-
-          submitButton.textContent =
-            "Uploading Image...";
-
-
-          // Upload image
           const imageUrl =
             await uploadListingImage(
               imageFile
             );
 
 
+          // ------------------------------------------------
           // Create listing
+          // ------------------------------------------------
+
           const newListing = {
 
             owner_id:
               currentUser.id,
 
             title:
-              document
-                .getElementById(
-                  "item-title"
-                )
-                .value
-                .trim(),
+              document.getElementById(
+                "item-title"
+              ).value,
 
             category:
-              document
-                .getElementById(
-                  "item-category"
-                )
-                .value,
+              document.getElementById(
+                "item-category"
+              ).value,
 
             price_per_day:
               parseFloat(
-                document
-                  .getElementById(
-                    "item-price"
-                  )
-                  .value
+                document.getElementById(
+                  "item-price"
+                ).value
               ),
 
             location:
-              document
-                .getElementById(
-                  "item-location"
-                )
-                .value
-                .trim(),
+              document.getElementById(
+                "item-location"
+              ).value,
 
             image_url:
               imageUrl,
 
             description:
-              document
-                .getElementById(
-                  "item-description"
-                )
-                .value
-                .trim(),
+              document.getElementById(
+                "item-description"
+              ).value,
 
             // Temporary coordinates
-            // Real GPS will be added later
             lat:
               20.5937 +
               (Math.random() - 0.5) * 10,
@@ -928,24 +908,21 @@ function setupEventListeners() {
           };
 
 
-          submitButton.textContent =
-            "Publishing...";
-
-
-          // Save listing
-          const created =
+          // Save listing to Supabase
+          const createdListing =
             await createListing(
               newListing
             );
 
 
+          // Use database version if returned
           if (
-            created &&
-            created.length > 0
+            createdListing &&
+            createdListing[0]
           ) {
 
             listings.unshift(
-              created[0]
+              createdListing[0]
             );
 
           } else {
@@ -957,28 +934,19 @@ function setupEventListeners() {
           }
 
 
-          renderListings(
-            listings
-          );
+          renderListings(listings);
 
-
-          updateMapMarkers(
-            listings
-          );
-
-
-          // Reset form
-          document
-            .getElementById(
-              "listing-form"
-            )
-            .reset();
+          updateMapMarkers(listings);
 
 
           // Close modal
           listItemModal.classList.add(
             "hidden"
           );
+
+
+          // Reset form
+          listingForm.reset();
 
 
           alert(
@@ -989,70 +957,64 @@ function setupEventListeners() {
         } catch (err) {
 
           console.error(
-            "Listing error:",
+            "Listing upload error:",
             err
           );
 
 
           alert(
-            "Could not publish listing.\n\n" +
-            (err.message ||
-              "Something went wrong.")
+            err.message ||
+            "Failed to publish listing."
           );
-
-
-        } finally {
-
-          submitButton.disabled =
-            false;
-
-          submitButton.textContent =
-            originalText;
 
         }
 
       }
     );
 
+  }
 
-  // =================================================
+
+  // ===================================================
   // BOOKING DAYS
-  // =================================================
+  // ===================================================
 
-  document
-    .getElementById("booking-days")
-    .addEventListener(
+  const bookingDays =
+    document.getElementById(
+      "booking-days"
+    );
+
+
+  if (bookingDays) {
+
+    bookingDays.addEventListener(
       "input",
       updateBookingSummary
     );
 
+  }
 
-  // =================================================
+
+  // ===================================================
   // PAYMENT OPTIONS
-  // =================================================
+  // ===================================================
 
   document
-    .querySelectorAll(
-      ".pay-option"
-    )
+    .querySelectorAll(".pay-option")
     .forEach(btn => {
 
       btn.addEventListener(
         "click",
-        e => {
+        event => {
 
           document
-            .querySelectorAll(
-              ".pay-option"
-            )
+            .querySelectorAll(".pay-option")
             .forEach(b =>
-              b.classList.remove(
-                "active"
-              )
+              b.classList.remove("active")
             );
 
 
-          e.currentTarget.classList.add(
+          event.currentTarget.classList.add(
             "active"
           );
 
@@ -1062,15 +1024,19 @@ function setupEventListeners() {
     });
 
 
-  // =================================================
+  // ===================================================
   // CONFIRM BOOKING
-  // =================================================
+  // ===================================================
 
-  document
-    .getElementById(
+  const confirmBookingBtn =
+    document.getElementById(
       "confirm-booking-btn"
-    )
-    .addEventListener(
+    );
+
+
+  if (confirmBookingBtn) {
+
+    confirmBookingBtn.addEventListener(
       "click",
       async () => {
 
@@ -1089,12 +1055,10 @@ function setupEventListeners() {
         }
 
 
-        if (
-          !selectedListingForBooking
-        ) {
+        if (!selectedListingForBooking) {
 
           alert(
-            "Please select an item first."
+            "Please select a listing first."
           );
 
           return;
@@ -1102,44 +1066,38 @@ function setupEventListeners() {
         }
 
 
+        const activePayment =
+          document.querySelector(
+            ".pay-option.active"
+          );
+
+
         const selectedMethod =
-          document
-            .querySelector(
-              ".pay-option.active"
-            )
-            .dataset.method;
+          activePayment
+            ? activePayment.dataset.method
+            : "UPI";
 
 
         const days =
           parseInt(
-            document
-              .getElementById(
-                "booking-days"
-              )
-              .value
+            document.getElementById(
+              "booking-days"
+            ).value
           ) || 1;
-
-
-        if (days < 1) {
-
-          alert(
-            "Rental duration must be at least 1 day."
-          );
-
-          return;
-
-        }
 
 
         const total =
           days *
           Number(
-            selectedListingForBooking
-              .price_per_day
+            selectedListingForBooking.price_per_day
           );
 
 
         try {
+
+          // ------------------------------------------------
+          // Create Booking
+          // ------------------------------------------------
 
           const bookingData = {
 
@@ -1150,11 +1108,9 @@ function setupEventListeners() {
               currentUser.id,
 
             start_date:
-              document
-                .getElementById(
-                  "booking-date"
-                )
-                .value,
+              document.getElementById(
+                "booking-date"
+              ).value,
 
             duration_days:
               days,
@@ -1171,9 +1127,13 @@ function setupEventListeners() {
             );
 
 
+          // ------------------------------------------------
+          // Create Payment Record
+          // ------------------------------------------------
+
           if (
             createdBooking &&
-            createdBooking.length > 0
+            createdBooking[0]
           ) {
 
             await createPayment({
@@ -1210,8 +1170,14 @@ function setupEventListeners() {
           );
 
 
+          /*
+           IMPORTANT:
+           This only means the local UI can continue.
+           It does NOT mean a real payment was processed.
+          */
+
           alert(
-            `Booking could not be saved.\n\n${err.message}`
+            `Booking could not be saved to the database.\n\nTotal: ${formatINR(total)}\n\nPlease check your Supabase tables and policies.`
           );
 
         }
@@ -1219,135 +1185,202 @@ function setupEventListeners() {
       }
     );
 
+  }
+
 }
 
 
 // =====================================================
-// BOOKING MODAL
+// OPEN BOOKING MODAL
 // =====================================================
 
-window.openBookingModal =
-  function(id) {
+window.openBookingModal = function(id) {
 
-    selectedListingForBooking =
-      listings.find(
-        item =>
-          String(item.id) ===
-          String(id)
-      );
+  selectedListingForBooking =
+    listings.find(
+      item => String(item.id) === String(id)
+    );
 
 
-    if (
-      !selectedListingForBooking
-    ) {
+  if (!selectedListingForBooking) {
 
-      alert(
-        "Listing not found."
-      );
+    alert(
+      "Listing not found."
+    );
 
-      return;
+    return;
 
-    }
+  }
 
 
+  const titleElement =
     document.getElementById(
       "modal-item-title"
-    ).innerText =
-      selectedListingForBooking.title;
+    );
 
 
+  const locationElement =
     document.getElementById(
       "modal-item-location"
-    ).innerText =
-      `Location: ${selectedListingForBooking.location}`;
+    );
 
 
+  const priceElement =
     document.getElementById(
       "modal-item-price"
-    ).innerText =
+    );
+
+
+  if (titleElement) {
+
+    titleElement.innerText =
+      selectedListingForBooking.title;
+
+  }
+
+
+  if (locationElement) {
+
+    locationElement.innerText =
+      `Location: ${selectedListingForBooking.location}`;
+
+  }
+
+
+  if (priceElement) {
+
+    priceElement.innerText =
       `Price: ${formatINR(
         selectedListingForBooking.price_per_day
       )} / day`;
 
+  }
 
-    // Set today's date
-    const today =
+
+  // Set today's date
+  const bookingDate =
+    document.getElementById(
+      "booking-date"
+    );
+
+
+  if (bookingDate) {
+
+    bookingDate.value =
       new Date()
         .toISOString()
         .split("T")[0];
 
-
-    document.getElementById(
-      "booking-date"
-    ).value = today;
+  }
 
 
-    // Reset duration
+  // Reset days to 1
+  const bookingDays =
     document.getElementById(
       "booking-days"
-    ).value = 1;
+    );
 
 
-    updateBookingSummary();
+  if (bookingDays) {
+
+    bookingDays.value = 1;
+
+  }
 
 
+  updateBookingSummary();
+
+
+  const bookingModal =
     document.getElementById(
       "booking-modal"
-    ).classList.remove(
+    );
+
+
+  if (bookingModal) {
+
+    bookingModal.classList.remove(
       "hidden"
     );
 
-  };
+  }
+
+};
 
 
 // =====================================================
-// BOOKING SUMMARY
+// UPDATE BOOKING SUMMARY
 // =====================================================
 
 function updateBookingSummary() {
 
-  if (
-    !selectedListingForBooking
-  ) return;
+  if (!selectedListingForBooking) return;
+
+
+  const bookingDays =
+    document.getElementById(
+      "booking-days"
+    );
 
 
   const days =
     parseInt(
-      document
-        .getElementById(
-          "booking-days"
-        )
-        .value
+      bookingDays
+        ? bookingDays.value
+        : 1
     ) || 1;
 
 
   const price =
     Number(
-      selectedListingForBooking
-        .price_per_day
-    );
+      selectedListingForBooking.price_per_day
+    ) || 0;
 
 
   const total =
     days * price;
 
 
-  document.getElementById(
-    "summary-rate"
-  ).innerText =
-    formatINR(price);
+  const summaryRate =
+    document.getElementById(
+      "summary-rate"
+    );
 
 
-  document.getElementById(
-    "summary-days"
-  ).innerText =
-    days;
+  const summaryDays =
+    document.getElementById(
+      "summary-days"
+    );
 
 
-  document.getElementById(
-    "summary-total"
-  ).innerText =
-    formatINR(total);
+  const summaryTotal =
+    document.getElementById(
+      "summary-total"
+    );
+
+
+  if (summaryRate) {
+
+    summaryRate.innerText =
+      formatINR(price);
+
+  }
+
+
+  if (summaryDays) {
+
+    summaryDays.innerText =
+      days;
+
+  }
+
+
+  if (summaryTotal) {
+
+    summaryTotal.innerText =
+      formatINR(total);
+
+  }
 
 }
 
@@ -1360,9 +1393,7 @@ async function checkSession() {
 
   try {
 
-    const {
-      data
-    } =
+    const { data } =
       await supabase.auth.getSession();
 
 
@@ -1371,16 +1402,15 @@ async function checkSession() {
       currentUser =
         data.session.user;
 
-
       updateUIForUser();
 
     }
 
   } catch (error) {
 
-    console.warn(
+    console.error(
       "Session check failed:",
-      error.message
+      error
     );
 
   }
@@ -1389,7 +1419,7 @@ async function checkSession() {
 
 
 // =====================================================
-// UPDATE USER UI
+// UPDATE UI AFTER LOGIN
 // =====================================================
 
 function updateUIForUser() {
@@ -1408,25 +1438,79 @@ function updateUIForUser() {
 
   if (currentUser) {
 
-    authButton.classList.add(
-      "hidden"
-    );
+    if (authButton) {
 
-    dashboardButton.classList.remove(
-      "hidden"
-    );
+      authButton.classList.add(
+        "hidden"
+      );
+
+    }
+
+
+    if (dashboardButton) {
+
+      dashboardButton.classList.remove(
+        "hidden"
+      );
+
+    }
 
   } else {
 
-    authButton.classList.remove(
-      "hidden"
+    if (authButton) {
+
+      authButton.classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+    if (dashboardButton) {
+
+      dashboardButton.classList.add(
+        "hidden"
+      );
+
+    }
+
+  }
+
+}
+
+
+// =====================================================
+// OPTIONAL: LOGOUT HELPER
+// Can be used by your dashboard/logout button
+// =====================================================
+
+async function logoutUser() {
+
+  try {
+
+    await signOutUser();
+
+    currentUser = null;
+
+    updateUIForUser();
+
+    alert(
+      "Logged out successfully."
     );
 
-    dashboardButton.classList.add(
-      "hidden"
+    location.reload();
+
+  } catch (error) {
+
+    alert(
+      error.message ||
+      "Logout failed."
     );
 
   }
 
 }
-```
+
+
+// Make logout available globally
+window.logoutUser = logoutUser;
