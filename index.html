@@ -5,18 +5,24 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Flex Rent - Rent. Earn. Grow.</title>
 
     <!-- Main CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
-    <!-- Leaflet CSS -->
+    <!-- Leaflet Map CSS -->
     <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIINfQ3m9Z8J5V5r5Q6Q5Q5Q5Q5Q5Q5Q5Q="
         crossorigin=""
     >
 
@@ -26,9 +32,9 @@
 <body>
 
 
-<!-- =====================================================
-     NAVBAR
-===================================================== -->
+<!-- ===================================================== -->
+<!-- NAVBAR -->
+<!-- ===================================================== -->
 
 <header class="navbar">
 
@@ -39,15 +45,25 @@
 
     <nav>
 
-        <a href="#home">Home</a>
+        <a href="#home">
+            Home
+        </a>
 
-        <a href="#categories">Categories</a>
+        <a href="#categories">
+            Categories
+        </a>
 
-        <a href="#items">Browse</a>
+        <a href="#items">
+            Browse
+        </a>
 
-        <a href="#location">Location</a>
+        <a href="#location">
+            Location
+        </a>
 
-        <a href="#how-it-works">How It Works</a>
+        <a href="#how-it-works">
+            How It Works
+        </a>
 
     </nav>
 
@@ -55,6 +71,7 @@
     <div class="nav-buttons">
 
         <button
+            type="button"
             class="login-btn"
             onclick="showLogin()"
         >
@@ -63,6 +80,7 @@
 
 
         <button
+            type="button"
             class="google-login-btn"
             onclick="googleLogin()"
         >
@@ -71,6 +89,7 @@
 
 
         <button
+            type="button"
             class="login-btn"
             onclick="openDashboard()"
         >
@@ -83,9 +102,9 @@
 
 
 
-<!-- =====================================================
-     HERO
-===================================================== -->
+<!-- ===================================================== -->
+<!-- HERO -->
+<!-- ===================================================== -->
 
 <section
     class="hero"
@@ -119,9 +138,13 @@
         </p>
 
 
+
+        <!-- ================================================= -->
         <!-- SEARCH -->
+        <!-- ================================================= -->
 
         <div class="search-box">
+
 
             <input
                 type="text"
@@ -131,14 +154,55 @@
             >
 
 
+            <!-- PROFESSIONAL GOOGLE STYLE MIC -->
+
             <button
                 type="button"
                 class="mic-button"
                 onclick="startVoiceSearch()"
-                title="Voice Search"
+                title="Search by voice"
+                aria-label="Search by voice"
             >
 
-                🎤
+                <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+
+                    <path
+                        d="M12 14.5C13.933 14.5 15.5 12.933 15.5 11V6.5C15.5 4.567 13.933 3 12 3C10.067 3 8.5 4.567 8.5 6.5V11C8.5 12.933 10.067 14.5 12 14.5Z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                    <path
+                        d="M5 10.5V11C5 14.866 8.134 18 12 18C15.866 18 19 14.866 19 11V10.5"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                    <path
+                        d="M12 18V21"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    />
+
+                    <path
+                        d="M9 21H15"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    />
+
+                </svg>
 
             </button>
 
@@ -147,17 +211,20 @@
                 type="button"
                 onclick="searchItems()"
             >
-
                 Search
-
             </button>
 
         </div>
 
 
+
+        <!-- HERO BUTTONS -->
+
         <div class="hero-buttons">
 
+
             <button
+                type="button"
                 class="primary-btn"
                 onclick="scrollToItems()"
             >
@@ -166,11 +233,13 @@
 
 
             <button
+                type="button"
                 class="secondary-btn"
                 onclick="openListForm()"
             >
                 List Your Item
             </button>
+
 
         </div>
 
@@ -180,9 +249,9 @@
 
 
 
-<!-- =====================================================
-     CATEGORIES
-===================================================== -->
+<!-- ===================================================== -->
+<!-- CATEGORIES -->
+<!-- ===================================================== -->
 
 <section
     class="section"
@@ -195,12 +264,12 @@
             EXPLORE
         </p>
 
-
         <h2>
             Popular Categories
         </h2>
 
     </div>
+
 
 
     <div class="category-container">
@@ -309,15 +378,16 @@
 
         </div>
 
+
     </div>
 
 </section>
 
 
 
-<!-- =====================================================
-     ITEMS
-===================================================== -->
+<!-- ===================================================== -->
+<!-- AVAILABLE ITEMS -->
+<!-- ===================================================== -->
 
 <section
     class="section items-section"
@@ -335,6 +405,7 @@
         </h2>
 
     </div>
+
 
 
     <div
@@ -361,11 +432,9 @@
                     Everyday
                 </span>
 
-
                 <h3>
                     Engineering Books
                 </h3>
-
 
                 <p>
                     First-year engineering books
@@ -378,7 +447,6 @@
                     <strong>
                         ₹50/day
                     </strong>
-
 
                     <button
                         type="button"
@@ -413,11 +481,9 @@
                     Agriculture
                 </span>
 
-
                 <h3>
                     Power Sprayer
                 </h3>
-
 
                 <p>
                     Useful equipment for
@@ -430,7 +496,6 @@
                     <strong>
                         ₹300/day
                     </strong>
-
 
                     <button
                         type="button"
@@ -465,11 +530,9 @@
                     Construction
                 </span>
 
-
                 <h3>
                     Drilling Machine
                 </h3>
-
 
                 <p>
                     Electric drilling machine
@@ -482,7 +545,6 @@
                     <strong>
                         ₹250/day
                     </strong>
-
 
                     <button
                         type="button"
@@ -517,11 +579,9 @@
                     Industrial
                 </span>
 
-
                 <h3>
                     Industrial Tool Kit
                 </h3>
-
 
                 <p>
                     Professional tools for
@@ -534,7 +594,6 @@
                     <strong>
                         ₹400/day
                     </strong>
-
 
                     <button
                         type="button"
@@ -569,11 +628,9 @@
                     Gardening
                 </span>
 
-
                 <h3>
                     Garden Tool Set
                 </h3>
-
 
                 <p>
                     Complete basic tool set
@@ -586,7 +643,6 @@
                     <strong>
                         ₹150/day
                     </strong>
-
 
                     <button
                         type="button"
@@ -621,15 +677,13 @@
                     Everyday
                 </span>
 
-
                 <h3>
                     Laptop
                 </h3>
 
-
                 <p>
-                    Laptop available for
-                    short-term academic use.
+                    Laptop available for short-term
+                    academic use.
                 </p>
 
 
@@ -638,7 +692,6 @@
                     <strong>
                         ₹500/day
                     </strong>
-
 
                     <button
                         type="button"
@@ -653,12 +706,14 @@
 
         </div>
 
+
     </div>
 
 
     <p
         id="noResults"
         class="no-results"
+        style="display:none;"
     >
         No items found.
     </p>
@@ -667,15 +722,14 @@
 
 
 
-<!-- =====================================================
-     WORLD MAP
-===================================================== -->
+<!-- ===================================================== -->
+<!-- WORLD MAP -->
+<!-- ===================================================== -->
 
 <section
     class="map-section"
     id="location"
 >
-
 
     <div class="section-heading">
 
@@ -683,17 +737,12 @@
             FIND NEARBY
         </p>
 
-
         <h2>
-            Find Rental Items Anywhere
+            Find Rental Items Near You
         </h2>
 
-
         <p class="map-description">
-
-            Search any city, country or location
-            around the world.
-
+            Explore rental items around the world.
         </p>
 
     </div>
@@ -702,91 +751,77 @@
 
     <!-- MAP SEARCH -->
 
-    <div
-        class="map-search-container"
-        style="
-            max-width:1000px;
-            margin:0 auto 20px;
-            display:flex;
-            gap:10px;
-            flex-wrap:wrap;
-        "
-    >
+    <div class="map-search-container">
 
         <input
             type="text"
             id="mapSearchInput"
-            placeholder="Search city or country e.g. Kolkata, London, New York..."
-            style="
-                flex:1;
-                min-width:250px;
-                padding:14px;
-                border:1px solid #ddd;
-                border-radius:8px;
-                font-size:15px;
-            "
+            placeholder="Search location or rental item..."
         >
 
 
         <button
             type="button"
-            class="primary-btn"
-            onclick="searchWorldLocation()"
+            onclick="searchMapItems()"
         >
-            🔍 Search Location
-        </button>
-
-
-        <button
-            type="button"
-            class="secondary-btn"
-            onclick="findMyLocation()"
-        >
-            📍 My Location
+            🔍 Search
         </button>
 
     </div>
 
 
 
-    <!-- LOCATION STATUS -->
+    <!-- LOCATION BUTTON -->
+
+    <div class="map-controls">
+
+        <button
+            type="button"
+            class="primary-btn"
+            onclick="getMyLocation()"
+        >
+            📍 Use My Location
+        </button>
+
+
+        <button
+            type="button"
+            class="secondary-btn"
+            onclick="searchThisArea()"
+        >
+            🔎 Search This Area
+        </button>
+
+    </div>
+
+
+
+    <!-- REAL WORLD MAP -->
+
+    <div class="map-container">
+
+        <div
+            id="rentalMap"
+            class="rental-map"
+        ></div>
+
+    </div>
+
 
     <p
         id="locationStatus"
-        style="
-            text-align:center;
-            margin-bottom:15px;
-            color:#777;
-        "
+        class="location-status"
     >
-        Search a location or click "My Location".
+        Map ready. You can search anywhere in the world.
     </p>
-
-
-
-    <!-- REAL MAP -->
-
-    <div
-        id="rentalMap"
-        style="
-            width:100%;
-            max-width:1000px;
-            height:500px;
-            margin:auto;
-            border-radius:15px;
-            border:1px solid #ddd;
-            overflow:hidden;
-        "
-    ></div>
-
 
 </section>
 
 
 
-<!-- =====================================================
-     BOOKING MODAL
-===================================================== -->
+<!-- ===================================================== -->
+<!-- BOOKING MODAL -->
+<!-- ===================================================== -->
 
 <div
     class="modal"
@@ -867,15 +902,16 @@
             Proceed to Payment
         </button>
 
+
     </div>
 
 </div>
 
 
 
-<!-- =====================================================
-     PAYMENT MODAL
-===================================================== -->
+<!-- ===================================================== -->
+<!-- PAYMENT MODAL -->
+<!-- ===================================================== -->
 
 <div
     class="modal"
@@ -945,6 +981,7 @@
 
             </div>
 
+
         </div>
 
 
@@ -1006,6 +1043,7 @@
 
             </button>
 
+
         </div>
 
 
@@ -1025,28 +1063,27 @@
             Pay Now
         </button>
 
+
     </div>
 
 </div>
 
 
 
-<!-- =====================================================
-     HOW IT WORKS
-===================================================== -->
+<!-- ===================================================== -->
+<!-- HOW IT WORKS -->
+<!-- ===================================================== -->
 
 <section
     class="how-section"
     id="how-it-works"
 >
 
-
     <div class="section-heading">
 
         <p>
             SIMPLE PROCESS
         </p>
-
 
         <h2>
             How Flex Rent Works
@@ -1147,15 +1184,16 @@
 
         </div>
 
+
     </div>
 
 </section>
 
 
 
-<!-- =====================================================
-     LIST ITEM
-===================================================== -->
+<!-- ===================================================== -->
+<!-- LIST ITEM SECTION -->
+<!-- ===================================================== -->
 
 <section class="list-section">
 
@@ -1191,9 +1229,9 @@
 
 
 
-<!-- =====================================================
-     FOOTER
-===================================================== -->
+<!-- ===================================================== -->
+<!-- FOOTER -->
+<!-- ===================================================== -->
 
 <footer>
 
@@ -1202,6 +1240,7 @@
         <span>
             Flex
         </span>
+
         Rent
 
     </div>
@@ -1220,9 +1259,9 @@
 
 
 
-<!-- =====================================================
-     LOGIN MODAL
-===================================================== -->
+<!-- ===================================================== -->
+<!-- LOGIN MODAL -->
+<!-- ===================================================== -->
 
 <div
     class="modal"
@@ -1289,15 +1328,16 @@
 
         </p>
 
+
     </div>
 
 </div>
 
 
 
-<!-- =====================================================
-     SIGNUP MODAL
-===================================================== -->
+<!-- ===================================================== -->
+<!-- SIGNUP MODAL -->
+<!-- ===================================================== -->
 
 <div
     class="modal"
@@ -1371,15 +1411,16 @@
 
         </p>
 
+
     </div>
 
 </div>
 
 
 
-<!-- =====================================================
-     DASHBOARD
-===================================================== -->
+<!-- ===================================================== -->
+<!-- DASHBOARD -->
+<!-- ===================================================== -->
 
 <div
     class="modal"
@@ -1429,7 +1470,9 @@
 
             </div>
 
+
         </div>
+
 
 
         <div class="dashboard-stats">
@@ -1460,7 +1503,9 @@
 
             </div>
 
+
         </div>
+
 
 
         <div class="dashboard-actions">
@@ -1492,7 +1537,9 @@
                 📅 My Bookings
             </button>
 
+
         </div>
+
 
     </div>
 
@@ -1500,9 +1547,9 @@
 
 
 
-<!-- =====================================================
-     MY LISTINGS
-===================================================== -->
+<!-- ===================================================== -->
+<!-- MY LISTINGS -->
+<!-- ===================================================== -->
 
 <div
     class="modal"
@@ -1533,11 +1580,17 @@
 
         <div id="myListingsContainer">
 
-            <p style="text-align:center;margin-top:30px;">
+            <p
+                style="
+                    text-align:center;
+                    margin-top:30px;
+                "
+            >
                 No items listed yet.
             </p>
 
         </div>
+
 
     </div>
 
@@ -1545,9 +1598,9 @@
 
 
 
-<!-- =====================================================
-     LIST ITEM MODAL
-===================================================== -->
+<!-- ===================================================== -->
+<!-- LIST ITEM MODAL -->
+<!-- ===================================================== -->
 
 <div
     class="modal"
@@ -1605,7 +1658,7 @@
 
 
         <input
-            type="text"
+            type="number"
             id="itemPrice"
             placeholder="Price per day"
         >
@@ -1644,41 +1697,43 @@
             Submit Item
         </button>
 
+
     </div>
 
 </div>
 
 
 
-<!-- =====================================================
-     JAVASCRIPT LIBRARIES
-===================================================== -->
-
-
-<!-- Supabase FIRST -->
-
-<script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-</script>
-
-
-<!-- Leaflet SECOND -->
+<!-- ===================================================== -->
+<!-- LEAFLET MAP JAVASCRIPT -->
+<!-- ===================================================== -->
 
 <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    crossorigin="">
-</script>
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+></script>
 
 
-<!-- Your Supabase configuration -->
+
+<!-- ===================================================== -->
+<!-- SUPABASE -->
+<!-- ===================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
 
 <script src="./supabase.js"></script>
 
 
-<!-- Your main JavaScript -->
+
+<!-- ===================================================== -->
+<!-- MAIN JAVASCRIPT -->
+<!-- ===================================================== -->
 
 <script src="./script.js"></script>
-
 
 
 </body>
