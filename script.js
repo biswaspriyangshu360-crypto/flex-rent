@@ -253,18 +253,93 @@ function setupEventListeners() {
 
   // New Listing Submit
   document.getElementById("listing-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
+  e.preventDefault();
+
+  try {
+    // Check login
+    if (!currentUser) {
+      alert("Please login first to list an item.");
+      return;
+    }
+
+    // Get image file
+    const imageInput = document.getElementById("item-image");
+    const imageFile = imageInput.files[0];
+
+    if (!imageFile) {
+      alert("Please select an image.");
+      return;
+    }
+
+    // Show uploading message
+    const submitButton = e.target.querySelector("button[type='submit']");
+    const originalText = submitButton.textContent;
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Uploading Image...";
+
+    // Upload image to Supabase Storage
+    const imageUrl = await uploadListingImage(imageFile);
+
+    // Create listing
     const newListing = {
-      owner_id: currentUser ? currentUser.id : null,
-      title: document.getElementById("item-title").value,
+      owner_id: currentUser.id,
+      title: document.getElementById("item-title").value.trim(),
       category: document.getElementById("item-category").value,
-      price_per_day: parseFloat(document.getElementById("item-price").value),
-      location: document.getElementById("item-location").value,
-      image_url: document.getElementById("item-image").value,
-      description: document.getElementById("item-description").value,
-      lat: 20.5937 + (Math.random() - 0.5) * 10, // Approximate random lat for location view
+      price_per_day: parseFloat(
+        document.getElementById("item-price").value
+      ),
+      location: document.getElementById("item-location").value.trim(),
+      image_url: imageUrl,
+      description: document.getElementById("item-description").value.trim(),
+
+      // Temporary coordinates
+      // Real GPS will be added in the next step
+      lat: 20.5937 + (Math.random() - 0.5) * 10,
       lng: 78.9629 + (Math.random() - 0.5) * 10
     };
+
+    submitButton.textContent = "Publishing...";
+
+    // Save listing to Supabase database
+    const created = await createListing(newListing);
+
+    // Add to local listings
+    if (created && created.length > 0) {
+      listings.unshift(created[0]);
+    } else {
+      listings.unshift(newListing);
+    }
+
+    // Refresh marketplace
+    renderListings(listings);
+    updateMapMarkers(listings);
+
+    // Reset form
+    document.getElementById("listing-form").reset();
+
+    // Close modal
+    document.getElementById("list-item-modal").classList.add("hidden");
+
+    alert("Listing published successfully!");
+
+  } catch (error) {
+    console.error("Listing upload error:", error);
+
+    alert(
+      "Could not publish listing.\n\n" +
+      (error.message || "Something went wrong.")
+    );
+
+  } finally {
+    const submitButton = e.target.querySelector("button[type='submit']");
+
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = "Publish Listing";
+    }
+  }
+});
 
     try {
       await createListing(newListing);
