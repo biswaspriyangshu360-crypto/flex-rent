@@ -1,10 +1,31 @@
-const SUPABASE_URL = "https://ztjclizjijlgskxdyvvc.supabase.co";
+// ======================================================
+// FLEX RENT - SUPABASE CONFIGURATION
+// ======================================================
 
-const SUPABASE_ANON_KEY = "sb_publishable_HpN-JfR1xpMxCJqzJHpK4A_mPicSh4m";
+// Supabase Project URL
+const SUPABASE_URL =
+    "https://ztjclizjijlgskxdyvvc.supabase.co";
+
+// Supabase Publishable Key
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_HpN-JfR1xpMxCJqzJHpK4A_mPicSh4m";
+
+// ======================================================
+// CREATE SUPABASE CLIENT
+// ======================================================
 
 const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_ANON_KEY
+    SUPABASE_PUBLISHABLE_KEY
 );
 
-console.log("Flex Rent: Supabase connected successfully.");
+// ======================================================
+// CONNECTION CHECK
+// ======================================================
+
+console.log("Flex Rent Supabase connected.");
+
+console.log(
+    "Supabase URL:",
+    SUPABASE_URL
+);
