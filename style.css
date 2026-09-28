@@ -1,9 +1,11 @@
-/* ======================================================
+/* =========================================================
    FLEX RENT - COMPLETE STYLE.CSS
-   ====================================================== */
+   ========================================================= */
 
 
-/* ================= BASIC SETTINGS ================= */
+/* =========================================================
+   BASIC SETTINGS
+   ========================================================= */
 
 * {
     margin: 0;
@@ -16,21 +18,24 @@ html {
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     color: #172033;
     background: #ffffff;
 }
 
 
-/* ================= NAVBAR ================= */
+/* =========================================================
+   NAVBAR
+   ========================================================= */
 
 .navbar {
-    height: 75px;
+    min-height: 75px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 7%;
-    background: white;
+    gap: 20px;
+    padding: 12px 7%;
+    background: #ffffff;
     border-bottom: 1px solid #eeeeee;
     position: sticky;
     top: 0;
@@ -40,6 +45,7 @@ body {
 .logo {
     font-size: 27px;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 .logo span {
@@ -48,7 +54,8 @@ body {
 
 .navbar nav {
     display: flex;
-    gap: 30px;
+    align-items: center;
+    gap: 28px;
 }
 
 .navbar nav a {
@@ -61,27 +68,44 @@ body {
     color: #16a085;
 }
 
-
-/* ================= LOGIN / GOOGLE / DASHBOARD ================= */
+.nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
 .login-btn,
 .google-login-btn {
-    padding: 10px 18px;
-    border: 1px solid #16a085;
-    background: white;
-    color: #16a085;
+    padding: 10px 16px;
     border-radius: 7px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
 }
 
-.login-btn:hover,
-.google-login-btn:hover {
+.login-btn {
+    border: 1px solid #16a085;
+    background: #ffffff;
+    color: #16a085;
+}
+
+.login-btn:hover {
     background: #e8fff8;
 }
 
+.google-login-btn {
+    border: 1px solid #dddddd;
+    background: #ffffff;
+    color: #333333;
+}
 
-/* ================= HERO ================= */
+.google-login-btn:hover {
+    background: #f7f7f7;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
 
 .hero {
     min-height: 600px;
@@ -120,73 +144,115 @@ body {
 }
 
 
-/* ================= SEARCH ================= */
+/* =========================================================
+   SEARCH BOX
+   ========================================================= */
 
 .search-box {
     display: flex;
-    align-items: stretch;
-    width: 100%;
-    max-width: 650px;
+    align-items: center;
+    max-width: 700px;
     margin-top: 30px;
+    background: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 9px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
 }
 
 .search-box input {
     flex: 1;
     min-width: 0;
     padding: 17px;
-    border: 1px solid #dddddd;
-    border-right: none;
-    border-radius: 8px 0 0 8px;
-    font-size: 16px;
+    border: none;
     outline: none;
+    font-size: 16px;
+    color: #172033;
 }
 
-.search-box input:focus {
-    border-color: #16a085;
+.search-box input::placeholder {
+    color: #999999;
 }
 
 
-/* ================= MICROPHONE ================= */
+/* =========================================================
+   PROFESSIONAL GOOGLE-STYLE MIC BUTTON
+   ========================================================= */
 
-.search-box .mic-button {
-    width: 55px;
-    min-width: 55px;
-    padding: 0;
-    border: 1px solid #dddddd;
-    border-left: none;
-    border-radius: 0;
-    background: white;
-    color: #555555;
+.mic-button {
+    width: 48px;
+    height: 48px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
+    flex-shrink: 0;
+
+    border: none;
+    background: transparent;
+    color: #555555;
+
+    border-radius: 50%;
+
     cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
-.search-box .mic-button:hover {
-    background: #f2f2f2;
+.mic-button:hover {
+    background: #f1f3f4;
     color: #16a085;
 }
 
-.search-box .mic-button:active {
-    background: #e8fff8;
+.mic-button:active {
+    transform: scale(0.92);
 }
 
-.search-box .mic-button svg {
+.mic-button svg {
     width: 22px;
     height: 22px;
 }
 
 
-/* ================= SEARCH BUTTON ================= */
+/* Mic listening state */
+
+.mic-button.listening {
+    background: #e8fff8;
+    color: #16a085;
+    animation: micPulse 1.2s infinite;
+}
+
+@keyframes micPulse {
+
+    0% {
+        box-shadow: 0 0 0 0 rgba(22, 160, 133, 0.35);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(22, 160, 133, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(22, 160, 133, 0);
+    }
+}
+
+
+/* =========================================================
+   SEARCH BUTTON
+   ========================================================= */
 
 .search-box > button:last-child {
-    padding: 0 30px;
+    height: 100%;
+    padding: 0 28px;
     border: none;
     background: #16a085;
     color: white;
     font-weight: bold;
-    border-radius: 0 8px 8px 0;
     cursor: pointer;
 }
 
@@ -195,7 +261,9 @@ body {
 }
 
 
-/* ================= BUTTONS ================= */
+/* =========================================================
+   BUTTONS
+   ========================================================= */
 
 .hero-buttons {
     display: flex;
@@ -220,6 +288,7 @@ body {
 
 .primary-btn:hover {
     background: #12866f;
+    border-color: #12866f;
 }
 
 .secondary-btn {
@@ -233,7 +302,9 @@ body {
 }
 
 
-/* ================= SECTIONS ================= */
+/* =========================================================
+   SECTIONS
+   ========================================================= */
 
 .section {
     padding: 90px 7%;
@@ -244,7 +315,7 @@ body {
     margin-bottom: 50px;
 }
 
-.section-heading p {
+.section-heading p:first-child {
     color: #16a085;
     font-size: 13px;
     font-weight: bold;
@@ -256,8 +327,15 @@ body {
     font-size: 38px;
 }
 
+.map-description {
+    margin-top: 10px;
+    color: #777777;
+}
 
-/* ================= CATEGORY ================= */
+
+/* =========================================================
+   CATEGORY
+   ========================================================= */
 
 .category-container {
     display: grid;
@@ -290,13 +368,15 @@ body {
 }
 
 .category-card p {
-    color: #777;
+    color: #777777;
     font-size: 14px;
     line-height: 1.5;
 }
 
 
-/* ================= ITEMS ================= */
+/* =========================================================
+   ITEMS
+   ========================================================= */
 
 .items-section {
     background: #f8fafb;
@@ -323,11 +403,15 @@ body {
 
 .item-image {
     height: 180px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     background: #e8fff8;
+
     font-size: 75px;
+    overflow: hidden;
 }
 
 .item-image img {
@@ -352,7 +436,7 @@ body {
 }
 
 .item-info p {
-    color: #777;
+    color: #777777;
     line-height: 1.5;
     font-size: 14px;
 }
@@ -361,6 +445,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
     margin-top: 20px;
 }
 
@@ -384,12 +469,125 @@ body {
 .no-results {
     display: none;
     text-align: center;
-    color: #777;
+    color: #777777;
     margin-top: 30px;
 }
 
 
-/* ================= HOW IT WORKS ================= */
+/* =========================================================
+   MAP / LOCATION SECTION
+   ========================================================= */
+
+.map-section {
+    padding: 90px 7%;
+    background: #ffffff;
+}
+
+.location-card {
+    max-width: 550px;
+    margin: 0 auto;
+
+    padding: 40px 30px;
+
+    text-align: center;
+
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.08);
+}
+
+.location-icon {
+    width: 70px;
+    height: 70px;
+
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e8fff8;
+
+    border-radius: 50%;
+
+    font-size: 35px;
+}
+
+.location-card h3 {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.location-card p {
+    color: #777777;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.map-open-btn {
+    display: block;
+
+    width: 100%;
+
+    margin-top: 12px;
+
+    padding: 13px;
+
+    border: 1px solid #16a085;
+
+    background: white;
+
+    color: #16a085;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.map-open-btn:hover {
+    background: #e8fff8;
+}
+
+
+/* =========================================================
+   REAL MAP CONTAINER
+   ========================================================= */
+
+#rentalMap {
+    width: 100%;
+    height: 500px;
+
+    margin-top: 25px;
+
+    border-radius: 15px;
+
+    border: 1px solid #dddddd;
+
+    overflow: hidden;
+}
+
+
+/* Leaflet popup */
+
+.leaflet-popup-content-wrapper {
+    border-radius: 10px;
+}
+
+.leaflet-popup-content {
+    font-family: Arial, sans-serif;
+}
+
+
+/* =========================================================
+   HOW IT WORKS
+   ========================================================= */
 
 .how-section {
     padding: 90px 7%;
@@ -408,14 +606,20 @@ body {
 .step-number {
     width: 60px;
     height: 60px;
+
     margin: auto;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     background: #16a085;
     color: white;
+
     border-radius: 50%;
+
     font-weight: bold;
+
     margin-bottom: 20px;
 }
 
@@ -424,13 +628,15 @@ body {
 }
 
 .step p {
-    color: #777;
+    color: #777777;
     font-size: 14px;
     line-height: 1.5;
 }
 
 
-/* ================= LIST SECTION ================= */
+/* =========================================================
+   LIST SECTION
+   ========================================================= */
 
 .list-section {
     padding: 90px 7%;
@@ -462,7 +668,9 @@ body {
 }
 
 
-/* ================= FOOTER ================= */
+/* =========================================================
+   FOOTER
+   ========================================================= */
 
 footer {
     padding: 40px 7%;
@@ -490,26 +698,41 @@ footer p {
 }
 
 
-/* ================= MODAL ================= */
+/* =========================================================
+   MODAL
+   ========================================================= */
 
 .modal {
     display: none;
+
     position: fixed;
+
     inset: 0;
+
     background: rgba(0, 0, 0, 0.6);
+
     align-items: center;
     justify-content: center;
+
     z-index: 2000;
+
+    padding: 20px;
 }
 
 .modal-content {
     width: 90%;
     max-width: 450px;
+
     max-height: 90vh;
+
     overflow-y: auto;
+
     background: white;
+
     padding: 35px;
+
     border-radius: 12px;
+
     position: relative;
 }
 
@@ -518,27 +741,35 @@ footer p {
 }
 
 .modal-content p {
-    color: #777;
+    color: #777777;
     margin-bottom: 20px;
 }
 
 .modal-content input,
-.modal-content select {
-    width: 100%;
-    padding: 13px;
-    margin-bottom: 15px;
-    border: 1px solid #dddddd;
-    border-radius: 6px;
-}
-
+.modal-content select,
 .modal-content textarea {
     width: 100%;
-    padding: 12px;
-    margin: 10px 0;
+
+    padding: 13px;
+
+    margin-bottom: 15px;
+
     border: 1px solid #dddddd;
-    border-radius: 8px;
-    resize: vertical;
+
+    border-radius: 6px;
+
     font-family: inherit;
+
+    outline: none;
+}
+
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+    border-color: #16a085;
+
+    box-shadow:
+        0 0 0 2px rgba(22, 160, 133, 0.08);
 }
 
 .modal-content .primary-btn {
@@ -547,13 +778,19 @@ footer p {
 
 .close-btn {
     position: absolute;
+
     right: 15px;
     top: 10px;
+
     border: none;
+
     background: none;
+
     font-size: 28px;
+
     cursor: pointer;
-    color: #555;
+
+    color: #555555;
 }
 
 .close-btn:hover {
@@ -561,20 +798,29 @@ footer p {
 }
 
 
-/* ================= LOGIN / SIGNUP ================= */
+/* =========================================================
+   LOGIN / SIGNUP
+   ========================================================= */
 
 .signup-text {
     text-align: center;
+
     margin-top: 20px;
-    color: #777;
+
+    color: #777777;
 }
 
 .link-btn {
     border: none;
+
     background: none;
+
     color: #16a085;
+
     font-weight: bold;
+
     cursor: pointer;
+
     font-size: 14px;
 }
 
@@ -583,259 +829,46 @@ footer p {
 }
 
 
-/* ================= DASHBOARD ================= */
-
-.dashboard-box {
-    max-width: 550px;
-}
-
-.dashboard-profile {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-top: 25px;
-    padding: 18px;
-    background: #f5f8f7;
-    border-radius: 10px;
-}
-
-.profile-icon {
-    width: 55px;
-    height: 55px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #e8fff8;
-    border-radius: 50%;
-    font-size: 28px;
-}
-
-.dashboard-profile h3 {
-    margin-bottom: 5px;
-}
-
-.dashboard-profile p {
-    margin: 0;
-    color: #777;
-}
-
-.dashboard-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.stat-card {
-    padding: 20px;
-    text-align: center;
-    background: #e8fff8;
-    border-radius: 10px;
-}
-
-.stat-card strong {
-    display: block;
-    font-size: 30px;
-    color: #16a085;
-}
-
-.stat-card span {
-    display: block;
-    margin-top: 5px;
-    color: #666;
-}
-
-.dashboard-actions {
-    margin-top: 20px;
-    display: grid;
-    gap: 10px;
-}
-
-.dashboard-action {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 8px;
-    cursor: pointer;
-    text-align: left;
-    font-size: 15px;
-    transition: 0.2s;
-}
-
-.dashboard-action:hover {
-    border-color: #16a085;
-    background: #e8fff8;
-}
-
-
-/* ================= MY LISTINGS ================= */
-
-.my-listing-card {
-    display: flex;
-    gap: 15px;
-    padding: 15px;
-    margin-top: 15px;
-    border: 1px solid #eeeeee;
-    border-radius: 10px;
-    background: white;
-}
-
-.my-listing-image {
-    width: 110px;
-    height: 110px;
-    flex-shrink: 0;
-    overflow: hidden;
-    border-radius: 8px;
-    background: #e8fff8;
-}
-
-.my-listing-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.my-listing-info {
-    flex: 1;
-}
-
-.my-listing-info h3 {
-    margin: 7px 0;
-}
-
-.my-listing-info p {
-    margin-bottom: 8px;
-}
-
-
-/* ================= MAP SECTION ================= */
-
-.map-section {
-    padding: 90px 7%;
-    background: white;
-}
-
-.map-description {
-    margin-top: 10px;
-    color: #777;
-}
-
-.map-container {
-    max-width: 1000px;
-    margin: auto;
-}
-
-.map-box {
-    height: 450px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 15px;
-    border: 1px solid #dddddd;
-    background:
-        linear-gradient(
-            35deg,
-            transparent 45%,
-            #d8d8d8 46%,
-            #d8d8d8 48%,
-            transparent 49%
-        ),
-        linear-gradient(
-            120deg,
-            transparent 45%,
-            #d8d8d8 46%,
-            #d8d8d8 48%,
-            transparent 49%
-        ),
-        #eef3f1;
-}
-
-.map-title {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: white;
-    padding: 12px 18px;
-    border-radius: 8px;
-    font-weight: bold;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.map-marker {
-    position: absolute;
-    font-size: 30px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.map-marker:hover {
-    transform: scale(1.2);
-}
-
-.map-marker span {
-    display: none;
-    position: absolute;
-    left: 30px;
-    top: 0;
-    background: white;
-    padding: 7px 12px;
-    border-radius: 6px;
-    white-space: nowrap;
-    font-size: 13px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-}
-
-.map-marker:hover span {
-    display: block;
-}
-
-.marker-1 {
-    top: 35%;
-    left: 25%;
-}
-
-.marker-2 {
-    top: 55%;
-    left: 65%;
-}
-
-.marker-3 {
-    top: 30%;
-    left: 75%;
-}
-
-.marker-4 {
-    top: 70%;
-    left: 40%;
-}
-
-
-/* ================= BOOKING ================= */
+/* =========================================================
+   BOOKING
+   ========================================================= */
 
 .modal-content label {
     display: block;
+
     margin-bottom: 7px;
+
     font-weight: bold;
+
     font-size: 14px;
 }
 
 .booking-total {
     display: flex;
+
     justify-content: space-between;
+
     align-items: center;
+
     margin: 20px 0;
+
     padding: 15px;
+
     background: #e8fff8;
+
     border-radius: 8px;
 }
 
 .booking-total strong {
     color: #16a085;
+
     font-size: 20px;
 }
 
 
-/* ================= PAYMENT ================= */
+/* =========================================================
+   PAYMENT
+   ========================================================= */
 
 .payment-box {
     max-width: 500px;
@@ -843,66 +876,89 @@ footer p {
 
 .payment-summary {
     margin-top: 20px;
+
     padding: 18px;
+
     background: #f5f8f7;
+
     border-radius: 10px;
 }
 
 .payment-summary > div {
     display: flex;
+
     justify-content: space-between;
+
+    gap: 15px;
+
     margin-bottom: 12px;
 }
 
 .payment-summary span {
-    color: #777;
+    color: #777777;
 }
 
 .payment-total {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #dddddd;
+
     padding-top: 15px;
+
     margin-top: 15px;
 }
 
 .payment-total strong {
     color: #16a085;
+
     font-size: 22px;
 }
 
 .payment-title {
     margin-top: 25px;
+
     margin-bottom: 15px;
 }
 
 .payment-methods {
     display: grid;
+
     grid-template-columns: repeat(3, 1fr);
+
     gap: 10px;
 }
 
 .payment-method {
     padding: 15px 8px;
+
     background: white;
-    border: 1px solid #ddd;
+
+    border: 1px solid #dddddd;
+
     border-radius: 8px;
+
     cursor: pointer;
 }
 
 .payment-method span {
     display: block;
+
     font-size: 25px;
+
     margin-bottom: 8px;
 }
 
 .payment-method:hover {
     border-color: #16a085;
+
     background: #e8fff8;
 }
 
 .selected-payment {
     text-align: center;
+
     color: #16a085;
+
     font-weight: bold;
+
     margin: 18px 0;
 }
 
@@ -911,28 +967,248 @@ footer p {
 }
 
 
-/* ================= RESPONSIVE ================= */
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+.dashboard-box {
+    max-width: 550px;
+}
+
+.dashboard-profile {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-top: 25px;
+
+    padding: 18px;
+
+    background: #f5f8f7;
+
+    border-radius: 10px;
+}
+
+.profile-icon {
+    width: 55px;
+    height: 55px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #e8fff8;
+
+    border-radius: 50%;
+
+    font-size: 28px;
+
+    flex-shrink: 0;
+}
+
+.dashboard-profile h3 {
+    margin-bottom: 5px;
+}
+
+.dashboard-profile p {
+    margin: 0;
+
+    color: #777777;
+}
+
+.dashboard-stats {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 15px;
+
+    margin-top: 20px;
+}
+
+.stat-card {
+    padding: 20px;
+
+    text-align: center;
+
+    background: #e8fff8;
+
+    border-radius: 10px;
+}
+
+.stat-card strong {
+    display: block;
+
+    font-size: 30px;
+
+    color: #16a085;
+}
+
+.stat-card span {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #666666;
+}
+
+.dashboard-actions {
+    margin-top: 20px;
+
+    display: grid;
+
+    gap: 10px;
+}
+
+.dashboard-action {
+    width: 100%;
+
+    padding: 14px;
+
+    border: 1px solid #dddddd;
+
+    background: white;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    font-size: 15px;
+
+    transition: 0.2s;
+}
+
+.dashboard-action:hover {
+    border-color: #16a085;
+
+    background: #e8fff8;
+}
+
+
+/* =========================================================
+   MY LISTINGS
+   ========================================================= */
+
+.my-listing-card {
+    display: flex;
+
+    gap: 15px;
+
+    padding: 15px;
+
+    margin-top: 15px;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 10px;
+
+    background: #ffffff;
+}
+
+.my-listing-image {
+    width: 120px;
+    height: 100px;
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+
+    border-radius: 8px;
+
+    background: #e8fff8;
+}
+
+.my-listing-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.my-listing-info {
+    flex: 1;
+}
+
+.my-listing-info h3 {
+    margin: 5px 0;
+}
+
+.my-listing-info p {
+    margin: 5px 0;
+
+    font-size: 14px;
+
+    color: #777777;
+}
+
+
+/* =========================================================
+   LIST ITEM FORM
+   ========================================================= */
+
+.modal-content textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
 
 @media (max-width: 1100px) {
+
+    .navbar {
+        padding: 12px 4%;
+    }
+
+    .navbar nav {
+        gap: 18px;
+    }
 
     .category-container {
         grid-template-columns: repeat(3, 1fr);
     }
 
+    .items-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
     .steps-container {
         grid-template-columns: repeat(3, 1fr);
+    }
+
+    .hero {
+        padding: 70px 5%;
     }
 }
 
 
+/* =========================================================
+   RESPONSIVE - 900px
+   ========================================================= */
+
 @media (max-width: 900px) {
+
+    .navbar {
+        flex-wrap: wrap;
+    }
 
     .navbar nav {
         display: none;
     }
 
+    .nav-buttons {
+        margin-left: auto;
+    }
+
     .hero h1 {
-        font-size: 42px;
+        font-size: 44px;
     }
 
     .category-container {
@@ -946,66 +1222,98 @@ footer p {
     .steps-container {
         grid-template-columns: repeat(2, 1fr);
     }
-
-    .navbar {
-        padding: 0 4%;
-    }
 }
 
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
 
 @media (max-width: 600px) {
 
     .navbar {
-        height: auto;
-        min-height: 70px;
-        gap: 8px;
-        padding: 10px 4%;
+        padding: 12px 5%;
+
+        min-height: auto;
     }
 
     .logo {
-        font-size: 22px;
+        font-size: 23px;
+    }
+
+    .nav-buttons {
+        width: 100%;
+
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+
+        gap: 7px;
+    }
+
+    .nav-buttons .google-login-btn {
+        grid-column: span 2;
     }
 
     .login-btn,
     .google-login-btn {
-        padding: 8px 10px;
-        font-size: 12px;
+        width: 100%;
     }
+
+
+    /* HERO */
 
     .hero {
         padding: 60px 5%;
+
+        min-height: auto;
     }
 
     .hero h1 {
         font-size: 35px;
     }
 
+    .hero-text {
+        font-size: 16px;
+    }
+
+
+    /* SEARCH */
+
     .search-box {
         width: 100%;
+
+        display: flex;
     }
 
     .search-box input {
-        min-width: 0;
+        padding: 15px 10px;
+
+        font-size: 14px;
     }
 
-    .search-box .mic-button {
-        width: 50px;
-        min-width: 50px;
+    .mic-button {
+        width: 45px;
+        height: 45px;
     }
 
     .search-box > button:last-child {
-        padding: 0 15px;
+        padding: 0 16px;
     }
+
+
+    /* HERO BUTTONS */
 
     .hero-buttons {
         flex-direction: column;
     }
 
-    .category-container,
-    .items-container,
-    .steps-container {
-        grid-template-columns: 1fr;
+    .hero-buttons button {
+        width: 100%;
     }
+
+
+    /* SECTIONS */
 
     .section,
     .how-section,
@@ -1013,9 +1321,42 @@ footer p {
         padding: 60px 5%;
     }
 
+    .section-heading h2 {
+        font-size: 30px;
+    }
+
+
+    /* GRID */
+
+    .category-container,
+    .items-container,
+    .steps-container {
+        grid-template-columns: 1fr;
+    }
+
+
+    /* MAP */
+
+    #rentalMap {
+        height: 400px;
+    }
+
+
+    /* PAYMENT */
+
     .payment-methods {
         grid-template-columns: 1fr;
     }
+
+
+    /* DASHBOARD */
+
+    .dashboard-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+
+    /* MY LISTING */
 
     .my-listing-card {
         flex-direction: column;
@@ -1025,310 +1366,31 @@ footer p {
         width: 100%;
         height: 180px;
     }
-}
-/* ================= REAL MAP ================= */
 
-#map {
-    width: 100%;
-    height: 450px;
-    border-radius: 15px;
-    border: 1px solid #dddddd;
-    overflow: hidden;
-}
-/* ================= REAL MAP ================= */
 
-.map-section {
-    padding: 90px 7%;
-    background: #ffffff;
-}
+    /* LIST SECTION */
 
-.map-description {
-    color: #777;
-    margin-top: 10px;
-}
-
-.map-wrapper {
-    max-width: 1100px;
-    height: 500px;
-    margin: 30px auto 0;
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid #ddd;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-}
-
-/* Actual map */
-
-#rentalMap {
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-
-/* Map search box */
-
-.map-search-box {
-    position: absolute;
-    top: 18px;
-    left: 18px;
-    width: 350px;
-    display: flex;
-    z-index: 1000;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.18);
-    overflow: hidden;
-}
-
-.map-search-box input {
-    flex: 1;
-    padding: 14px;
-    border: none;
-    outline: none;
-    font-size: 14px;
-}
-
-.map-search-box button {
-    width: 50px;
-    border: none;
-    background: #16a085;
-    color: white;
-    cursor: pointer;
-    font-size: 18px;
-}
-
-/* Location button */
-
-.location-button {
-    position: absolute;
-    right: 18px;
-    bottom: 75px;
-    width: 48px;
-    height: 48px;
-    border: none;
-    border-radius: 50%;
-    background: white;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    cursor: pointer;
-    z-index: 1000;
-    font-size: 20px;
-}
-
-.location-button:hover {
-    background: #e8fff8;
-}
-
-/* Search this area */
-
-.search-area-button {
-    position: absolute;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    border: none;
-    background: #16a085;
-    color: white;
-    padding: 12px 22px;
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: bold;
-    z-index: 1000;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.search-area-button:hover {
-    background: #12866f;
-}
-
-/* Nearby items */
-
-.nearby-items {
-    max-width: 1100px;
-    margin: 30px auto 0;
-}
-
-.nearby-items h3 {
-    margin-bottom: 15px;
-}
-
-.nearby-item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    margin-bottom: 10px;
-    border: 1px solid #eee;
-    border-radius: 10px;
-    background: white;
-}
-
-.nearby-item > span {
-    font-size: 30px;
-}
-
-.nearby-item strong {
-    display: block;
-}
-
-.nearby-item p {
-    margin-top: 5px;
-    color: #16a085;
-    font-weight: bold;
-}
-
-/* Mobile */
-
-@media (max-width: 600px) {
-
-    .map-section {
-        padding: 60px 5%;
-    }
-
-    .map-wrapper {
-        height: 450px;
-    }
-
-    .map-search-box {
-        width: calc(100% - 36px);
-    }
-
-    .nearby-item {
-        padding: 12px;
+    .list-content h2 {
+        font-size: 32px;
     }
 }
-/* ================= REAL LOCATION MAP ================= */
-
-.map-section {
-    padding: 90px 7%;
-    background: #f8fafb;
-}
-
-.map-description {
-    margin-top: 10px;
-    color: #777;
-}
-
-.location-card {
-    max-width: 600px;
-    margin: auto;
-    padding: 45px 30px;
-    text-align: center;
-    background: white;
-    border-radius: 16px;
-    border: 1px solid #e5e5e5;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
-
-.location-icon {
-    width: 75px;
-    height: 75px;
-    margin: 0 auto 20px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: #e8fff8;
-    border-radius: 50%;
-
-    font-size: 38px;
-}
-
-.location-card h3 {
-    font-size: 25px;
-    margin-bottom: 12px;
-}
-
-.location-card p {
-    color: #777;
-    margin-bottom: 25px;
-}
-
-.location-card .primary-btn {
-    display: block;
-    width: 100%;
-    margin-bottom: 12px;
-}
-
-.map-open-btn {
-    width: 100%;
-    padding: 13px;
-
-    border: 2px solid #16a085;
-    background: white;
-    color: #16a085;
-
-    border-radius: 7px;
-    cursor: pointer;
-
-    font-weight: bold;
-}
-
-.map-open-btn:hover {
-    background: #e8fff8;
-}
-/* ================= REAL LEAFLET MAP ================= */
-
-.real-map {
-    width: 100%;
-    height: 500px;
-    border-radius: 15px;
-    border: 1px solid #dddddd;
-    overflow: hidden;
-}
-
-.map-controls {
-    max-width: 1000px;
-    margin: 0 auto 20px auto;
-    display: flex;
-    gap: 10px;
-}
-
-.map-controls input {
-    flex: 1;
-    padding: 14px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 15px;
-    outline: none;
-}
-
-.map-controls input:focus {
-    border-color: #16a085;
-}
-
-.map-controls button {
-    padding: 12px 18px;
-    border: none;
-    background: #16a085;
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.map-controls button:hover {
-    background: #12866f;
-}
-
-.location-status {
-    text-align: center;
-    margin-top: 15px;
-    color: #777;
-}
 
 
-/* Mobile */
+/* =========================================================
+   EXTRA SMALL MOBILE
+   ========================================================= */
 
-@media (max-width: 600px) {
+@media (max-width: 380px) {
 
-    .map-controls {
-        flex-direction: column;
+    .hero h1 {
+        font-size: 30px;
     }
 
-    .real-map {
-        height: 400px;
+    .dashboard-stats {
+        grid-template-columns: 1fr;
     }
 
+    .search-box > button:last-child {
+        padding: 0 12px;
+    }
 }
