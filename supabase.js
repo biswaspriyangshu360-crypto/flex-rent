@@ -70,3 +70,40 @@ async function fetchUserListings(userId) {
   if (error) throw error;
   return data;
 }
+// Upload Listing Image to Supabase Storage
+async function uploadListingImage(file) {
+  if (!file) {
+    throw new Error("Please select an image.");
+  }
+
+  // Basic validation
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Only image files are allowed.");
+  }
+
+  // Maximum 5 MB
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("Image size must be less than 5 MB.");
+  }
+
+  const fileExt = file.name.split(".").pop().toLowerCase();
+  const fileName = `${crypto.randomUUID()}.${fileExt}`;
+  const filePath = `${Date.now()}-${fileName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("listing-images")
+    .upload(filePath, file, {
+      cacheControl: "3600",
+      upsert: false
+    });
+
+  if (uploadError) {
+    throw uploadError;
+  }
+
+  const { data } = supabase.storage
+    .from("listing-images")
+    .getPublicUrl(filePath);
+
+  return data.publicUrl;
+}
