@@ -5,34 +5,49 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <meta name="theme-color"
-          content="#0b1f3a">
+    <meta
+        name="description"
+        content="Flex Rent - Rent what you need and earn from what you own."
+    >
 
     <title>Flex Rent - Rent. Earn. Grow.</title>
 
-    <!-- Google Font -->
+
+    <!-- ================================================= -->
+    <!-- GOOGLE FONT -->
+    <!-- ================================================= -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
     <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet"
     >
 
-    <!-- Font Awesome -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
 
-    <!-- Leaflet Map -->
+    <!-- ================================================= -->
+    <!-- LEAFLET MAP CSS -->
+    <!-- ================================================= -->
+
     <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     >
 
-    <!-- Your CSS -->
-    <link rel="stylesheet" href="style.css">
+
+    <!-- ================================================= -->
+    <!-- YOUR CSS -->
+    <!-- ================================================= -->
+
+    <link
+        rel="stylesheet"
+        href="./style.css"
+    >
 
 </head>
 
@@ -40,172 +55,120 @@
 <body>
 
 
-<!-- =====================================================
-     ANIMATED SPLASH SCREEN
-===================================================== -->
+<!-- ===================================================== -->
+<!-- PAGE LOADER -->
+<!-- ===================================================== -->
 
-<div id="splashView">
+<div
+    id="pageLoader"
+    class="page-loader"
+>
 
-    <div class="corner-star star-tl"></div>
-    <div class="corner-star star-tr"></div>
-    <div class="corner-star star-bl"></div>
-    <div class="corner-star star-br"></div>
+    <div class="loader-logo">
 
-    <div class="splash-content">
-
-        <div class="splash-logo">
-            <span>Flex</span> Rent
-        </div>
-
-        <p>
-            Rent. Earn. Grow.
-        </p>
+        <span>Flex</span> Rent
 
     </div>
+
+    <div class="loader-spinner"></div>
+
+    <p>
+        Rent. Earn. Grow.
+    </p>
 
 </div>
 
 
-<!-- =====================================================
-     NAVBAR
-===================================================== -->
+<!-- ===================================================== -->
+<!-- NAVBAR -->
+<!-- ===================================================== -->
 
 <header class="navbar">
 
-    <div class="nav-container">
+    <div
+        class="logo"
+        onclick="window.scrollTo({top:0,behavior:'smooth'})"
+    >
+
+        <span>Flex</span> Rent
+
+    </div>
 
 
-        <!-- LOGO -->
+    <nav>
 
-        <a
-            href="#home"
-            class="brand"
-        >
-
-            <span>Flex</span> Rent
-
+        <a href="#home">
+            Home
         </a>
 
+        <a href="#categories">
+            Categories
+        </a>
 
-        <!-- MOBILE MENU -->
+        <a href="#items">
+            Browse
+        </a>
+
+        <a href="#location">
+            Nearby
+        </a>
+
+        <a href="#how-it-works">
+            How It Works
+        </a>
+
+    </nav>
+
+
+    <div class="nav-buttons">
 
         <button
-            type="button"
-            class="mobile-menu-btn"
-            onclick="toggleMobileMenu()"
-            aria-label="Open Menu"
+            class="login-btn"
+            onclick="showLogin()"
         >
-
-            <i class="fa-solid fa-bars"></i>
-
+            Login
         </button>
 
 
-        <!-- NAVIGATION -->
-
-        <nav
-            class="nav-links"
-            id="navLinks"
+        <button
+            class="dashboard-nav-btn"
+            onclick="openDashboard()"
         >
-
-            <a
-                href="#home"
-                onclick="closeMobileMenu()"
-            >
-                Home
-            </a>
-
-            <a
-                href="#categories"
-                onclick="closeMobileMenu()"
-            >
-                Categories
-            </a>
-
-            <a
-                href="#items"
-                onclick="closeMobileMenu()"
-            >
-                Browse
-            </a>
-
-            <a
-                href="#location"
-                onclick="closeMobileMenu()"
-            >
-                <i class="fa-solid fa-location-dot"></i>
-                Nearby
-            </a>
-
-            <a
-                href="#how-it-works"
-                onclick="closeMobileMenu()"
-            >
-                How It Works
-            </a>
-
-
-            <button
-                type="button"
-                class="btn btn-outline"
-                onclick="showLogin(); closeMobileMenu()"
-            >
-
-                <i class="fa-solid fa-right-to-bracket"></i>
-
-                Login
-
-            </button>
-
-
-            <button
-                type="button"
-                class="btn btn-primary"
-                onclick="openDashboard(); closeMobileMenu()"
-            >
-
-                <i class="fa-solid fa-user"></i>
-
-                Dashboard
-
-            </button>
-
-        </nav>
+            Dashboard
+        </button>
 
     </div>
 
 </header>
 
 
-<!-- =====================================================
-     HOME
-===================================================== -->
 
-<main>
-
+<!-- ===================================================== -->
+<!-- HERO -->
+<!-- ===================================================== -->
 
 <section
     class="hero"
     id="home"
 >
 
-    <div class="hero-background"></div>
-
-
     <div class="hero-content">
 
-        <span class="hero-badge">
+        <div class="hero-badge">
+            🚀 Smart Community Rental Marketplace
+        </div>
 
-            <i class="fa-solid fa-sparkles"></i>
 
-            COMMUNITY RENTAL MARKETPLACE
-
-        </span>
+        <p class="small-heading">
+            RENT • EARN • GROW
+        </p>
 
 
         <h1>
 
             Rent What You Need.
+
+            <br>
 
             <span>
                 Earn From What You Own.
@@ -216,83 +179,105 @@
 
         <p class="hero-text">
 
-            Find useful items, tools, books and equipment
-            near you. Rent easily, list your unused items
-            and earn money with Flex Rent.
+            Find useful items, tools, equipment and
+            electronics available for rent near you.
+            You can also list your own items and earn money.
 
         </p>
 
 
+        <!-- ================================================= -->
         <!-- SEARCH -->
+        <!-- ================================================= -->
 
-        <div class="search-box-container">
+        <div class="search-box">
 
+            <div class="search-input-wrapper">
 
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-
-
-            <input
-                type="search"
-                id="searchInput"
-                placeholder="Search tools, books, laptops, equipment..."
-                autocomplete="off"
-                onkeyup="searchItems()"
-            >
+                <span class="search-icon">
+                    🔍
+                </span>
 
 
-            <!-- GOOGLE STYLE MIC -->
-
-            <button
-                type="button"
-                class="google-mic-btn"
-                onclick="startVoiceSearch()"
-                title="Search by voice"
-                aria-label="Voice Search"
-            >
-
-                <svg
-                    viewBox="0 0 24 24"
-                    width="23"
-                    height="23"
-                    aria-hidden="true"
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search tools, books, laptop..."
+                    autocomplete="off"
+                    onkeyup="searchItems()"
                 >
 
-                    <path
-                        fill="#4285F4"
-                        d="M12 14.5a3.5 3.5 0 0 0 3.5-3.5V6a3.5 3.5 0 0 0-7 0v5a3.5 3.5 0 0 0 3.5 3.5z"
-                    />
 
-                    <path
-                        fill="#34A853"
-                        d="M17.5 11a5.5 5.5 0 0 1-11 0H5a7 7 0 0 0 14 0h-1.5z"
-                    />
+                <!-- GOOGLE STYLE MIC -->
+                <button
+                    type="button"
+                    class="mic-button"
+                    onclick="startVoiceSearch()"
+                    title="Search by voice"
+                    aria-label="Search by voice"
+                >
 
-                    <path
-                        fill="#FBBC05"
-                        d="M11 19h2v3h-2z"
-                    />
+                    <svg
+                        viewBox="0 0 24 24"
+                        width="23"
+                        height="23"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
 
-                    <path
-                        fill="#EA4335"
-                        d="M8 21h8v1H8z"
-                    />
+                        <rect
+                            x="9"
+                            y="2"
+                            width="6"
+                            height="12"
+                            rx="3"
+                        ></rect>
 
-                </svg>
+                        <path
+                            d="M5 10a7 7 0 0 0 14 0"
+                        ></path>
 
-            </button>
+                        <line
+                            x1="12"
+                            y1="19"
+                            x2="12"
+                            y2="22"
+                        ></line>
+
+                        <line
+                            x1="8"
+                            y1="22"
+                            x2="16"
+                            y2="22"
+                        ></line>
+
+                    </svg>
+
+                </button>
+
+            </div>
 
 
             <button
                 type="button"
-                class="search-btn"
+                class="search-button"
                 onclick="searchItems()"
             >
-
                 Search
-
             </button>
 
         </div>
+
+
+        <!-- VOICE STATUS -->
+
+        <p
+            id="voiceStatus"
+            class="voice-status"
+        ></p>
 
 
         <!-- HERO BUTTONS -->
@@ -300,51 +285,38 @@
         <div class="hero-buttons">
 
             <button
-                type="button"
-                class="btn btn-primary btn-large"
+                class="primary-btn"
                 onclick="scrollToItems()"
             >
-
-                <i class="fa-solid fa-magnifying-glass"></i>
-
                 Browse Items
-
             </button>
 
 
             <button
-                type="button"
-                class="btn btn-light btn-large"
+                class="secondary-btn"
                 onclick="openListForm()"
             >
-
-                <i class="fa-solid fa-plus"></i>
-
-                List Your Item
-
+                + List Your Item
             </button>
 
         </div>
 
 
-        <!-- TRUST -->
+        <!-- SMALL TRUST INFO -->
 
         <div class="hero-trust">
 
-            <span>
-                <i class="fa-solid fa-circle-check"></i>
-                Easy Booking
-            </span>
+            <div>
+                ✓ Easy Booking
+            </div>
 
-            <span>
-                <i class="fa-solid fa-location-dot"></i>
-                Nearby Items
-            </span>
+            <div>
+                ✓ Nearby Rentals
+            </div>
 
-            <span>
-                <i class="fa-solid fa-shield-halved"></i>
-                Secure Account
-            </span>
+            <div>
+                ✓ Secure Accounts
+            </div>
 
         </div>
 
@@ -353,138 +325,29 @@
 </section>
 
 
-<!-- =====================================================
-     FEATURES
-===================================================== -->
+
+<!-- ===================================================== -->
+<!-- CATEGORIES -->
+<!-- ===================================================== -->
 
 <section
-    class="features-section"
->
-
-    <div class="section-title">
-
-        <span>
-            WHY FLEX RENT
-        </span>
-
-        <h2>
-            Everything You Need in One Place
-        </h2>
-
-        <p>
-            A simple marketplace for renting and sharing
-            useful items with the community.
-        </p>
-
-    </div>
-
-
-    <div class="features-grid">
-
-
-        <div class="feature-card">
-
-            <div class="feature-icon">
-
-                <i class="fa-solid fa-location-crosshairs"></i>
-
-            </div>
-
-            <h3>
-                Find Nearby
-            </h3>
-
-            <p>
-                Discover rental items around your location
-                using the interactive map.
-            </p>
-
-        </div>
-
-
-        <div class="feature-card">
-
-            <div class="feature-icon">
-
-                <i class="fa-solid fa-calendar-check"></i>
-
-            </div>
-
-            <h3>
-                Easy Booking
-            </h3>
-
-            <p>
-                Select your rental dates and book items
-                in a few simple steps.
-            </p>
-
-        </div>
-
-
-        <div class="feature-card">
-
-            <div class="feature-icon">
-
-                <i class="fa-solid fa-wallet"></i>
-
-            </div>
-
-            <h3>
-                Flexible Payments
-            </h3>
-
-            <p>
-                Choose UPI, card or other available
-                payment options.
-            </p>
-
-        </div>
-
-
-        <div class="feature-card">
-
-            <div class="feature-icon">
-
-                <i class="fa-solid fa-hand-holding-dollar"></i>
-
-            </div>
-
-            <h3>
-                Earn From Items
-            </h3>
-
-            <p>
-                List unused items and earn by renting
-                them to other users.
-            </p>
-
-        </div>
-
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     CATEGORIES
-===================================================== -->
-
-<section
-    class="categories-section"
+    class="section"
     id="categories"
 >
 
-    <div class="section-title">
+    <div class="section-heading">
 
-        <span>
+        <p>
             EXPLORE
-        </span>
+        </p>
 
         <h2>
             Popular Categories
         </h2>
+
+        <span>
+            Find exactly what you need.
+        </span>
 
     </div>
 
@@ -492,8 +355,7 @@
     <div class="category-container">
 
 
-        <button
-            type="button"
+        <div
             class="category-card"
             onclick="filterCategory('Everyday')"
         >
@@ -507,14 +369,14 @@
             </h3>
 
             <p>
-                Books, electronics and useful items
+                Books, laptops and useful items
             </p>
 
-        </button>
+        </div>
 
 
-        <button
-            type="button"
+
+        <div
             class="category-card"
             onclick="filterCategory('Agriculture')"
         >
@@ -531,11 +393,11 @@
                 Farming tools and equipment
             </p>
 
-        </button>
+        </div>
 
 
-        <button
-            type="button"
+
+        <div
             class="category-card"
             onclick="filterCategory('Construction')"
         >
@@ -549,14 +411,14 @@
             </h3>
 
             <p>
-                Construction tools and machines
+                Professional construction tools
             </p>
 
-        </button>
+        </div>
 
 
-        <button
-            type="button"
+
+        <div
             class="category-card"
             onclick="filterCategory('Industrial')"
         >
@@ -570,14 +432,14 @@
             </h3>
 
             <p>
-                Industrial tools and equipment
+                Machines and industrial equipment
             </p>
 
-        </button>
+        </div>
 
 
-        <button
-            type="button"
+
+        <div
             class="category-card"
             onclick="filterCategory('Gardening')"
         >
@@ -594,61 +456,62 @@
                 Gardening tools and equipment
             </p>
 
-        </button>
-
+        </div>
 
     </div>
 
 </section>
 
 
-<!-- =====================================================
-     AVAILABLE ITEMS
-===================================================== -->
+
+<!-- ===================================================== -->
+<!-- ITEMS -->
+<!-- ===================================================== -->
 
 <section
-    class="listings-section"
+    class="section items-section"
     id="items"
 >
 
-    <div class="section-title">
+    <div class="section-heading">
 
-        <span>
+        <p>
             DISCOVER
-        </span>
+        </p>
 
         <h2>
             Available Items
         </h2>
 
-        <p>
-            Rent useful items from the Flex Rent community.
-        </p>
+        <span>
+            Rent useful products from people around you.
+        </span>
 
     </div>
 
 
     <div
-        class="listings-grid"
+        class="items-container"
         id="itemsContainer"
     >
 
 
         <!-- ITEM 1 -->
 
-        <article
+        <div
             class="item-card"
             data-category="Everyday"
+            data-location="Kolkata, India"
         >
 
             <div class="item-image">
 
-                <div class="item-image-placeholder">
+                <div class="item-emoji">
                     📚
                 </div>
 
-                <span class="item-badge">
-                    Everyday
+                <span class="available-badge">
+                    Available
                 </span>
 
             </div>
@@ -656,22 +519,20 @@
 
             <div class="item-info">
 
+                <span class="item-category">
+                    Everyday
+                </span>
+
                 <h3>
                     Engineering Books
                 </h3>
 
                 <p>
-                    First-year engineering books for
-                    students.
+                    First-year engineering books for students.
                 </p>
 
-
                 <div class="item-location">
-
-                    <i class="fa-solid fa-location-dot"></i>
-
-                    Available nearby
-
+                    📍 Kolkata
                 </div>
 
 
@@ -682,45 +543,47 @@
                         <small>/day</small>
                     </strong>
 
-
                     <button
                         type="button"
-                        class="btn btn-primary"
-                        onclick="openBooking('Engineering Books', 50)"
+                        onclick="openBooking('Engineering Books',50)"
                     >
-
                         Rent Now
-
                     </button>
 
                 </div>
 
             </div>
 
-        </article>
+        </div>
+
 
 
         <!-- ITEM 2 -->
 
-        <article
+        <div
             class="item-card"
             data-category="Agriculture"
+            data-location="Kolkata, India"
         >
 
             <div class="item-image">
 
-                <div class="item-image-placeholder">
+                <div class="item-emoji">
                     🌾
                 </div>
 
-                <span class="item-badge">
-                    Agriculture
+                <span class="available-badge">
+                    Available
                 </span>
 
             </div>
 
 
             <div class="item-info">
+
+                <span class="item-category">
+                    Agriculture
+                </span>
 
                 <h3>
                     Power Sprayer
@@ -730,13 +593,8 @@
                     Useful equipment for agricultural work.
                 </p>
 
-
                 <div class="item-location">
-
-                    <i class="fa-solid fa-location-dot"></i>
-
-                    Available nearby
-
+                    📍 Kolkata
                 </div>
 
 
@@ -747,39 +605,37 @@
                         <small>/day</small>
                     </strong>
 
-
                     <button
                         type="button"
-                        class="btn btn-primary"
-                        onclick="openBooking('Power Sprayer', 300)"
+                        onclick="openBooking('Power Sprayer',300)"
                     >
-
                         Rent Now
-
                     </button>
 
                 </div>
 
             </div>
 
-        </article>
+        </div>
+
 
 
         <!-- ITEM 3 -->
 
-        <article
+        <div
             class="item-card"
             data-category="Construction"
+            data-location="Kolkata, India"
         >
 
             <div class="item-image">
 
-                <div class="item-image-placeholder">
+                <div class="item-emoji">
                     🛠️
                 </div>
 
-                <span class="item-badge">
-                    Construction
+                <span class="available-badge">
+                    Available
                 </span>
 
             </div>
@@ -787,22 +643,20 @@
 
             <div class="item-info">
 
+                <span class="item-category">
+                    Construction
+                </span>
+
                 <h3>
                     Drilling Machine
                 </h3>
 
                 <p>
-                    Electric drilling machine for
-                    construction work.
+                    Electric drilling machine for construction.
                 </p>
 
-
                 <div class="item-location">
-
-                    <i class="fa-solid fa-location-dot"></i>
-
-                    Available nearby
-
+                    📍 Kolkata
                 </div>
 
 
@@ -813,39 +667,37 @@
                         <small>/day</small>
                     </strong>
 
-
                     <button
                         type="button"
-                        class="btn btn-primary"
-                        onclick="openBooking('Drilling Machine', 250)"
+                        onclick="openBooking('Drilling Machine',250)"
                     >
-
                         Rent Now
-
                     </button>
 
                 </div>
 
             </div>
 
-        </article>
+        </div>
+
 
 
         <!-- ITEM 4 -->
 
-        <article
+        <div
             class="item-card"
             data-category="Industrial"
+            data-location="Kolkata, India"
         >
 
             <div class="item-image">
 
-                <div class="item-image-placeholder">
+                <div class="item-emoji">
                     ⚙️
                 </div>
 
-                <span class="item-badge">
-                    Industrial
+                <span class="available-badge">
+                    Available
                 </span>
 
             </div>
@@ -853,22 +705,20 @@
 
             <div class="item-info">
 
+                <span class="item-category">
+                    Industrial
+                </span>
+
                 <h3>
                     Industrial Tool Kit
                 </h3>
 
                 <p>
-                    Professional tools for industrial
-                    applications.
+                    Professional tools for industrial applications.
                 </p>
 
-
                 <div class="item-location">
-
-                    <i class="fa-solid fa-location-dot"></i>
-
-                    Available nearby
-
+                    📍 Kolkata
                 </div>
 
 
@@ -879,45 +729,47 @@
                         <small>/day</small>
                     </strong>
 
-
                     <button
                         type="button"
-                        class="btn btn-primary"
-                        onclick="openBooking('Industrial Tool Kit', 400)"
+                        onclick="openBooking('Industrial Tool Kit',400)"
                     >
-
                         Rent Now
-
                     </button>
 
                 </div>
 
             </div>
 
-        </article>
+        </div>
+
 
 
         <!-- ITEM 5 -->
 
-        <article
+        <div
             class="item-card"
             data-category="Gardening"
+            data-location="Kolkata, India"
         >
 
             <div class="item-image">
 
-                <div class="item-image-placeholder">
+                <div class="item-emoji">
                     🌱
                 </div>
 
-                <span class="item-badge">
-                    Gardening
+                <span class="available-badge">
+                    Available
                 </span>
 
             </div>
 
 
             <div class="item-info">
+
+                <span class="item-category">
+                    Gardening
+                </span>
 
                 <h3>
                     Garden Tool Set
@@ -927,13 +779,8 @@
                     Complete basic tool set for gardening.
                 </p>
 
-
                 <div class="item-location">
-
-                    <i class="fa-solid fa-location-dot"></i>
-
-                    Available nearby
-
+                    📍 Kolkata
                 </div>
 
 
@@ -944,39 +791,37 @@
                         <small>/day</small>
                     </strong>
 
-
                     <button
                         type="button"
-                        class="btn btn-primary"
-                        onclick="openBooking('Garden Tool Set', 150)"
+                        onclick="openBooking('Garden Tool Set',150)"
                     >
-
                         Rent Now
-
                     </button>
 
                 </div>
 
             </div>
 
-        </article>
+        </div>
+
 
 
         <!-- ITEM 6 -->
 
-        <article
+        <div
             class="item-card"
             data-category="Everyday"
+            data-location="Kolkata, India"
         >
 
             <div class="item-image">
 
-                <div class="item-image-placeholder">
+                <div class="item-emoji">
                     💻
                 </div>
 
-                <span class="item-badge">
-                    Everyday
+                <span class="available-badge">
+                    Available
                 </span>
 
             </div>
@@ -984,22 +829,20 @@
 
             <div class="item-info">
 
+                <span class="item-category">
+                    Everyday
+                </span>
+
                 <h3>
                     Laptop
                 </h3>
 
                 <p>
-                    Laptop available for short-term
-                    academic use.
+                    Laptop available for short-term academic use.
                 </p>
 
-
                 <div class="item-location">
-
-                    <i class="fa-solid fa-location-dot"></i>
-
-                    Available nearby
-
+                    📍 Kolkata
                 </div>
 
 
@@ -1010,22 +853,18 @@
                         <small>/day</small>
                     </strong>
 
-
                     <button
                         type="button"
-                        class="btn btn-primary"
-                        onclick="openBooking('Laptop', 500)"
+                        onclick="openBooking('Laptop',500)"
                     >
-
                         Rent Now
-
                     </button>
 
                 </div>
 
             </div>
 
-        </article>
+        </div>
 
 
     </div>
@@ -1035,60 +874,60 @@
         id="noResults"
         class="no-results"
     >
-        No items found.
+        No rental items found.
     </p>
 
 </section>
 
 
-<!-- =====================================================
-     WORLD MAP
-===================================================== -->
+
+<!-- ===================================================== -->
+<!-- WORLD MAP -->
+<!-- ===================================================== -->
 
 <section
     class="map-section"
     id="location"
 >
 
-    <div class="section-title">
+    <div class="section-heading">
 
-        <span>
-            FIND NEARBY
-        </span>
+        <p>
+            EXPLORE THE WORLD
+        </p>
 
         <h2>
             Find Rental Items Near You
         </h2>
 
-        <p>
-            Search locations around the world and
-            discover available rental items.
-        </p>
+        <span>
+            Search any city or country and explore rental locations.
+        </span>
 
     </div>
 
 
-    <div class="map-tools">
+    <!-- MAP SEARCH -->
 
+    <div class="map-search-wrapper">
 
-        <div class="map-search">
+        <div class="map-search-box">
 
-            <i class="fa-solid fa-location-dot"></i>
+            <span>
+                🔍
+            </span>
 
             <input
                 type="text"
                 id="mapSearchInput"
-                placeholder="Search city, country or location..."
-                autocomplete="off"
+                placeholder="Search city, country or place..."
             >
 
             <button
                 type="button"
                 onclick="searchMapLocation()"
             >
-
                 Search
-
             </button>
 
         </div>
@@ -1096,54 +935,100 @@
 
         <button
             type="button"
-            class="location-btn"
-            onclick="getMyLocation()"
+            class="location-button"
+            onclick="findMyLocation()"
         >
-
-            <i class="fa-solid fa-location-crosshairs"></i>
-
-            Use My Location
-
+            📍 Use My Location
         </button>
 
     </div>
 
 
-    <div class="map-status">
+    <!-- LOCATION STATUS -->
 
-        <span id="locationStatus">
-            Choose a location or use your current location.
-        </span>
+    <div
+        id="locationStatus"
+        class="location-status"
+    >
+        Map is ready. Search any location.
+    </div>
+
+
+    <!-- REAL MAP -->
+
+    <div class="map-container">
+
+        <div
+            id="rentalMap"
+            class="rental-map"
+        ></div>
 
     </div>
 
 
-    <div
-        class="real-map"
-        id="rentalMap"
-    ></div>
+    <!-- MAP INFO -->
 
+    <div class="map-info-cards">
 
-    <div class="map-info">
-
-        <div>
-
-            <i class="fa-solid fa-circle-info"></i>
+        <div class="map-info-card">
 
             <span>
-                Click a rental marker to view item details.
+                🌍
             </span>
+
+            <div>
+
+                <strong>
+                    Worldwide
+                </strong>
+
+                <p>
+                    Search locations around the world
+                </p>
+
+            </div>
 
         </div>
 
 
-        <div>
-
-            <i class="fa-solid fa-globe"></i>
+        <div class="map-info-card">
 
             <span>
-                Worldwide map
+                📍
             </span>
+
+            <div>
+
+                <strong>
+                    Your Location
+                </strong>
+
+                <p>
+                    Find rentals near your current location
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="map-info-card">
+
+            <span>
+                🏠
+            </span>
+
+            <div>
+
+                <strong>
+                    Rental Locations
+                </strong>
+
+                <p>
+                    Explore available rental items
+                </p>
+
+            </div>
 
         </div>
 
@@ -1152,20 +1037,21 @@
 </section>
 
 
-<!-- =====================================================
-     HOW IT WORKS
-===================================================== -->
+
+<!-- ===================================================== -->
+<!-- HOW IT WORKS -->
+<!-- ===================================================== -->
 
 <section
     class="how-section"
     id="how-it-works"
 >
 
-    <div class="section-title">
+    <div class="section-heading">
 
-        <span>
+        <p>
             SIMPLE PROCESS
-        </span>
+        </p>
 
         <h2>
             How Flex Rent Works
@@ -1188,10 +1074,11 @@
             </h3>
 
             <p>
-                Find the item you need.
+                Search for the item you need.
             </p>
 
         </div>
+
 
 
         <div class="step">
@@ -1205,10 +1092,11 @@
             </h3>
 
             <p>
-                Check its location on the map.
+                Find the item near your location.
             </p>
 
         </div>
+
 
 
         <div class="step">
@@ -1222,10 +1110,11 @@
             </h3>
 
             <p>
-                Select your rental dates.
+                Select rental days and book.
             </p>
 
         </div>
+
 
 
         <div class="step">
@@ -1239,10 +1128,11 @@
             </h3>
 
             <p>
-                Select your payment method.
+                Choose your preferred payment method.
             </p>
 
         </div>
+
 
 
         <div class="step">
@@ -1256,30 +1146,28 @@
             </h3>
 
             <p>
-                Return the item after use.
+                Return the item after rental period.
             </p>
 
         </div>
-
 
     </div>
 
 </section>
 
 
-<!-- =====================================================
-     LIST ITEM CTA
-===================================================== -->
 
-<section
-    class="list-section"
->
+<!-- ===================================================== -->
+<!-- EARN SECTION -->
+<!-- ===================================================== -->
+
+<section class="list-section">
 
     <div class="list-content">
 
-        <span>
+        <p>
             START EARNING
-        </span>
+        </p>
 
         <h2>
             Have something others need?
@@ -1287,20 +1175,15 @@
 
         <p>
             List your unused items and earn money
-            by renting them to other users.
+            by renting them out to other users.
         </p>
-
 
         <button
             type="button"
-            class="btn btn-primary btn-large"
+            class="primary-btn"
             onclick="openListForm()"
         >
-
-            <i class="fa-solid fa-plus"></i>
-
-            List Your Item
-
+            + List Your Item
         </button>
 
     </div>
@@ -1308,12 +1191,10 @@
 </section>
 
 
-</main>
 
-
-<!-- =====================================================
-     FOOTER
-===================================================== -->
+<!-- ===================================================== -->
+<!-- FOOTER -->
+<!-- ===================================================== -->
 
 <footer>
 
@@ -1334,217 +1215,10 @@
 </footer>
 
 
-<!-- =====================================================
-     LOGIN MODAL
-===================================================== -->
 
-<div
-    class="modal"
-    id="loginModal"
->
-
-    <div class="modal-content">
-
-        <button
-            type="button"
-            class="close-btn"
-            onclick="closeLogin()"
-        >
-            ×
-        </button>
-
-
-        <div class="modal-icon">
-            <i class="fa-solid fa-user"></i>
-        </div>
-
-
-        <h2>
-            Welcome Back
-        </h2>
-
-        <p>
-            Login to continue to Flex Rent.
-        </p>
-
-
-        <div class="form-group">
-
-            <label>
-                Email
-            </label>
-
-            <input
-                type="email"
-                id="loginEmail"
-                placeholder="Enter your email"
-                autocomplete="email"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Password
-            </label>
-
-            <input
-                type="password"
-                id="loginPassword"
-                placeholder="Enter your password"
-                autocomplete="current-password"
-            >
-
-        </div>
-
-
-        <button
-            type="button"
-            class="btn btn-primary full-btn"
-            onclick="loginUser()"
-        >
-
-            Login
-
-        </button>
-
-
-        <p class="signup-text">
-
-            Don't have an account?
-
-            <button
-                type="button"
-                class="link-btn"
-                onclick="showSignup()"
-            >
-                Sign Up
-            </button>
-
-        </p>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     SIGNUP MODAL
-===================================================== -->
-
-<div
-    class="modal"
-    id="signupModal"
->
-
-    <div class="modal-content">
-
-        <button
-            type="button"
-            class="close-btn"
-            onclick="closeSignup()"
-        >
-            ×
-        </button>
-
-
-        <div class="modal-icon">
-            <i class="fa-solid fa-user-plus"></i>
-        </div>
-
-
-        <h2>
-            Create Account
-        </h2>
-
-        <p>
-            Join the Flex Rent community.
-        </p>
-
-
-        <div class="form-group">
-
-            <label>
-                Full Name
-            </label>
-
-            <input
-                type="text"
-                id="signupName"
-                placeholder="Enter your name"
-                autocomplete="name"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Email
-            </label>
-
-            <input
-                type="email"
-                id="signupEmail"
-                placeholder="Enter your email"
-                autocomplete="email"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Password
-            </label>
-
-            <input
-                type="password"
-                id="signupPassword"
-                placeholder="Create password"
-                autocomplete="new-password"
-            >
-
-        </div>
-
-
-        <button
-            type="button"
-            class="btn btn-primary full-btn"
-            onclick="signupUser()"
-        >
-
-            Create Account
-
-        </button>
-
-
-        <p class="signup-text">
-
-            Already have an account?
-
-            <button
-                type="button"
-                class="link-btn"
-                onclick="showLogin()"
-            >
-                Login
-            </button>
-
-        </p>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     BOOKING MODAL
-===================================================== -->
+<!-- ===================================================== -->
+<!-- BOOKING MODAL -->
+<!-- ===================================================== -->
 
 <div
     class="modal"
@@ -1562,58 +1236,42 @@
         </button>
 
 
-        <div class="modal-icon">
-            <i class="fa-solid fa-calendar-check"></i>
-        </div>
-
-
         <h2>
             Book Your Item
         </h2>
 
 
-        <div class="booking-item">
-
-            <h3 id="bookingItemName">
-                Item Name
-            </h3>
-
-            <span id="bookingItemPrice">
-                ₹0/day
-            </span>
-
-        </div>
+        <p id="bookingItemName">
+            Rental Item
+        </p>
 
 
-        <div class="form-group">
-
-            <label>
-                Start Date
-            </label>
-
-            <input
-                type="date"
-                id="startDate"
-            >
-
-        </div>
+        <p id="bookingItemPrice">
+            ₹0/day
+        </p>
 
 
-        <div class="form-group">
+        <label>
+            Start Date
+        </label>
 
-            <label>
-                Number of Days
-            </label>
+        <input
+            type="date"
+            id="startDate"
+        >
 
-            <input
-                type="number"
-                id="rentalDays"
-                value="1"
-                min="1"
-                onchange="calculateTotal()"
-            >
 
-        </div>
+        <label>
+            Number of Days
+        </label>
+
+        <input
+            type="number"
+            id="rentalDays"
+            value="1"
+            min="1"
+            onchange="calculateTotal()"
+        >
 
 
         <div class="booking-total">
@@ -1631,12 +1289,10 @@
 
         <button
             type="button"
-            class="btn btn-primary full-btn"
+            class="primary-btn"
             onclick="proceedToPayment()"
         >
-
             Proceed to Payment
-
         </button>
 
     </div>
@@ -1644,9 +1300,10 @@
 </div>
 
 
-<!-- =====================================================
-     PAYMENT MODAL
-===================================================== -->
+
+<!-- ===================================================== -->
+<!-- PAYMENT MODAL -->
+<!-- ===================================================== -->
 
 <div
     class="modal"
@@ -1664,17 +1321,13 @@
         </button>
 
 
-        <div class="modal-icon">
-            <i class="fa-solid fa-credit-card"></i>
-        </div>
-
-
         <h2>
             Complete Payment
         </h2>
 
+
         <p>
-            Choose your preferred payment method.
+            Select your preferred payment method.
         </p>
 
 
@@ -1722,7 +1375,7 @@
 
 
         <h3 class="payment-title">
-            Select Payment Method
+            Payment Method
         </h3>
 
 
@@ -1735,13 +1388,13 @@
                 onclick="selectPaymentMethod('UPI')"
             >
 
-                <div class="payment-logo upi-logo">
-                    UPI
-                </div>
-
                 <span>
-                    UPI
+                    📱
                 </span>
+
+                <strong>
+                    UPI
+                </strong>
 
             </button>
 
@@ -1752,15 +1405,13 @@
                 onclick="selectPaymentMethod('Card')"
             >
 
-                <div class="payment-logo card-logo">
-
-                    <i class="fa-solid fa-credit-card"></i>
-
-                </div>
-
                 <span>
-                    Card
+                    💳
                 </span>
+
+                <strong>
+                    Card
+                </strong>
 
             </button>
 
@@ -1771,18 +1422,15 @@
                 onclick="selectPaymentMethod('Net Banking')"
             >
 
-                <div class="payment-logo bank-logo">
-
-                    <i class="fa-solid fa-building-columns"></i>
-
-                </div>
-
                 <span>
-                    Net Banking
+                    🏦
                 </span>
 
-            </button>
+                <strong>
+                    Net Banking
+                </strong>
 
+            </button>
 
         </div>
 
@@ -1797,14 +1445,10 @@
 
         <button
             type="button"
-            class="btn btn-primary full-btn pay-btn"
+            class="primary-btn pay-btn"
             onclick="makePayment()"
         >
-
-            <i class="fa-solid fa-lock"></i>
-
             Pay Now
-
         </button>
 
     </div>
@@ -1812,9 +1456,182 @@
 </div>
 
 
-<!-- =====================================================
-     DASHBOARD MODAL
-===================================================== -->
+
+<!-- ===================================================== -->
+<!-- LOGIN MODAL -->
+<!-- ===================================================== -->
+
+<div
+    class="modal"
+    id="loginModal"
+>
+
+    <div class="modal-content">
+
+        <button
+            type="button"
+            class="close-btn"
+            onclick="closeLogin()"
+        >
+            ×
+        </button>
+
+
+        <h2>
+            Welcome to Flex Rent
+        </h2>
+
+
+        <p>
+            Login to continue.
+        </p>
+
+
+        <input
+            type="email"
+            id="loginEmail"
+            placeholder="Email address"
+            autocomplete="email"
+        >
+
+
+        <input
+            type="password"
+            id="loginPassword"
+            placeholder="Password"
+            autocomplete="current-password"
+        >
+
+
+        <button
+            type="button"
+            class="primary-btn"
+            onclick="loginUser()"
+        >
+            Login
+        </button>
+
+
+        <button
+            type="button"
+            class="google-login-btn modal-google"
+            onclick="googleLogin()"
+        >
+            <span>
+                G
+            </span>
+
+            Continue with Google
+
+        </button>
+
+
+        <p class="signup-text">
+
+            Don't have an account?
+
+            <button
+                type="button"
+                class="link-btn"
+                onclick="showSignup()"
+            >
+                Sign Up
+            </button>
+
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- ===================================================== -->
+<!-- SIGNUP MODAL -->
+<!-- ===================================================== -->
+
+<div
+    class="modal"
+    id="signupModal"
+>
+
+    <div class="modal-content">
+
+        <button
+            type="button"
+            class="close-btn"
+            onclick="closeSignup()"
+        >
+            ×
+        </button>
+
+
+        <h2>
+            Create Account
+        </h2>
+
+
+        <p>
+            Join Flex Rent.
+        </p>
+
+
+        <input
+            type="text"
+            id="signupName"
+            placeholder="Full Name"
+            autocomplete="name"
+        >
+
+
+        <input
+            type="email"
+            id="signupEmail"
+            placeholder="Email address"
+            autocomplete="email"
+        >
+
+
+        <input
+            type="password"
+            id="signupPassword"
+            placeholder="Create password"
+            autocomplete="new-password"
+        >
+
+
+        <button
+            type="button"
+            class="primary-btn"
+            onclick="signupUser()"
+        >
+            Create Account
+        </button>
+
+
+        <p class="signup-text">
+
+            Already have an account?
+
+            <button
+                type="button"
+                class="link-btn"
+                onclick="showLogin()"
+            >
+                Login
+            </button>
+
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- ===================================================== -->
+<!-- DASHBOARD MODAL -->
+<!-- ===================================================== -->
 
 <div
     class="modal"
@@ -1832,26 +1649,20 @@
         </button>
 
 
-        <div class="modal-icon">
-            <i class="fa-solid fa-gauge-high"></i>
-        </div>
-
-
         <h2>
             My Dashboard
         </h2>
 
+
         <p>
-            Manage your Flex Rent activity.
+            Manage your Flex Rent account.
         </p>
 
 
         <div class="dashboard-profile">
 
             <div class="profile-icon">
-
-                <i class="fa-solid fa-user"></i>
-
+                👤
             </div>
 
 
@@ -1908,13 +1719,9 @@
             <button
                 type="button"
                 class="dashboard-action"
-                onclick="openListForm(); closeDashboard()"
+                onclick="openListForm();closeDashboard()"
             >
-
-                <i class="fa-solid fa-box"></i>
-
-                List New Item
-
+                📦 List New Item
             </button>
 
 
@@ -1923,26 +1730,26 @@
                 class="dashboard-action"
                 onclick="openMyListings()"
             >
-
-                <i class="fa-solid fa-tags"></i>
-
-                My Listings
-
+                🏷️ My Listings
             </button>
 
 
             <button
                 type="button"
                 class="dashboard-action"
-                onclick="alert('My Bookings will be available here.')"
+                onclick="alert('Your bookings will appear here.')"
             >
-
-                <i class="fa-solid fa-calendar"></i>
-
-                My Bookings
-
+                📅 My Bookings
             </button>
 
+
+            <button
+                type="button"
+                class="dashboard-action"
+                onclick="logoutUser()"
+            >
+                🚪 Logout
+            </button>
 
         </div>
 
@@ -1951,9 +1758,10 @@
 </div>
 
 
-<!-- =====================================================
-     MY LISTINGS MODAL
-===================================================== -->
+
+<!-- ===================================================== -->
+<!-- MY LISTINGS -->
+<!-- ===================================================== -->
 
 <div
     class="modal"
@@ -1975,14 +1783,15 @@
             My Listings
         </h2>
 
+
         <p>
-            Items you have listed for rent.
+            Items you have listed.
         </p>
 
 
         <div id="myListingsContainer">
 
-            <p class="empty-message">
+            <p>
                 No items listed yet.
             </p>
 
@@ -1993,9 +1802,10 @@
 </div>
 
 
-<!-- =====================================================
-     LIST ITEM MODAL
-===================================================== -->
+
+<!-- ===================================================== -->
+<!-- LIST ITEM MODAL -->
+<!-- ===================================================== -->
 
 <div
     class="modal"
@@ -2013,153 +1823,90 @@
         </button>
 
 
-        <div class="modal-icon">
-            <i class="fa-solid fa-box-open"></i>
-        </div>
-
-
         <h2>
             List Your Item
         </h2>
 
+
         <p>
-            Enter your item details.
+            Add your item to Flex Rent.
         </p>
 
 
-        <div class="form-group">
-
-            <label>
-                Item Name
-            </label>
-
-            <input
-                type="text"
-                id="itemName"
-                placeholder="e.g. Laptop"
-            >
-
-        </div>
+        <input
+            type="text"
+            id="itemName"
+            placeholder="Item name"
+        >
 
 
-        <div class="form-group">
-
-            <label>
-                Item Photo
-            </label>
-
-            <input
-                type="file"
-                id="itemImage"
-                accept="image/*"
-            >
-
-        </div>
+        <input
+            type="file"
+            id="itemImage"
+            accept="image/*"
+        >
 
 
-        <div class="form-group">
-
-            <label>
-                Location
-            </label>
-
-            <div class="location-input">
-
-                <input
-                    type="text"
-                    id="itemLocation"
-                    placeholder="City / Area"
-                >
-
-                <button
-                    type="button"
-                    onclick="getListingLocation()"
-                    title="Detect location"
-                >
-
-                    <i class="fa-solid fa-location-crosshairs"></i>
-
-                </button>
-
-            </div>
-
-        </div>
+        <input
+            type="text"
+            id="itemLocation"
+            placeholder="Item location"
+        >
 
 
-        <div class="form-group">
-
-            <label>
-                Description
-            </label>
-
-            <textarea
-                id="itemDescription"
-                placeholder="Describe your item..."
-                rows="4"
-            ></textarea>
-
-        </div>
+        <textarea
+            id="itemDescription"
+            rows="4"
+            placeholder="Describe your item"
+        ></textarea>
 
 
-        <div class="form-group">
-
-            <label>
-                Price Per Day
-            </label>
-
-            <input
-                type="number"
-                id="itemPrice"
-                placeholder="500"
-                min="1"
-            >
-
-        </div>
+        <input
+            type="number"
+            id="itemPrice"
+            placeholder="Price per day"
+            min="1"
+        >
 
 
-        <div class="form-group">
+        <select id="itemCategory">
 
-            <label>
-                Category
-            </label>
+            <option value="Everyday">
+                Everyday
+            </option>
 
-            <select id="itemCategory">
+            <option value="Agriculture">
+                Agriculture
+            </option>
 
-                <option value="Everyday">
-                    Everyday
-                </option>
+            <option value="Construction">
+                Construction
+            </option>
 
-                <option value="Agriculture">
-                    Agriculture
-                </option>
+            <option value="Industrial">
+                Industrial
+            </option>
 
-                <option value="Construction">
-                    Construction
-                </option>
+            <option value="Gardening">
+                Gardening
+            </option>
 
-                <option value="Industrial">
-                    Industrial
-                </option>
+        </select>
 
-                <option value="Gardening">
-                    Gardening
-                </option>
 
-            </select>
-
-        </div>
+        <input
+            type="tel"
+            id="itemOwnerPhone"
+            placeholder="Owner phone number"
+        >
 
 
         <button
             type="button"
-            class="btn btn-primary full-btn"
+            class="primary-btn"
             onclick="submitItem()"
         >
-
-            <i class="fa-solid fa-cloud-arrow-up"></i>
-
             Publish Item
-
         </button>
 
     </div>
@@ -2167,32 +1914,63 @@
 </div>
 
 
-<!-- =====================================================
-     JAVASCRIPT LIBRARIES
-===================================================== -->
 
-<!-- Leaflet Map FIRST -->
-
-<script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-</script>
-
-
-<!-- Supabase Library SECOND -->
+<!-- ===================================================== -->
+<!-- LEAFLET JS -->
+<!-- ===================================================== -->
 
 <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-</script>
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
 
 
-<!-- Your Supabase Configuration -->
+<!-- ===================================================== -->
+<!-- SUPABASE JS -->
+<!-- ===================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
+
+<!-- ===================================================== -->
+<!-- SUPABASE CONFIG -->
+<!-- ===================================================== -->
 
 <script src="./supabase.js"></script>
 
 
-<!-- Your Main JavaScript LAST -->
+<!-- ===================================================== -->
+<!-- MAIN JAVASCRIPT -->
+<!-- ===================================================== -->
 
 <script src="./script.js"></script>
+
+
+<!-- ===================================================== -->
+<!-- PAGE LOADER SCRIPT -->
+<!-- ===================================================== -->
+
+<script>
+
+    window.addEventListener("load", function () {
+
+        setTimeout(function () {
+
+            const loader =
+                document.getElementById("pageLoader");
+
+            if (loader) {
+
+                loader.classList.add("hide");
+
+            }
+
+        }, 900);
+
+    });
+
+</script>
 
 
 </body>
