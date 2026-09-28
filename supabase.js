@@ -1,14 +1,10 @@
-.mic-button {
-    width: 48px;
-    border: none;
-    background: white;
-    color: #555;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+const SUPABASE_URL = "https://ztjclizjijlgskxdyvvc.supabase.co";
 
-.mic-button:hover {
-    color: #16a085;
-}
+const SUPABASE_ANON_KEY = "sb_publishable_HpN-JfR1xpMxCJqzJHpK4A_mPicSh4m";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
+
+console.log("Flex Rent: Supabase connected successfully.");
