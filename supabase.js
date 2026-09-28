@@ -2,11 +2,9 @@
 // FLEX RENT - SUPABASE CONFIGURATION
 // ======================================================
 
-// Supabase Project URL
 const SUPABASE_URL =
     "https://ztjclizjijlgskxdyvvc.supabase.co";
 
-// Supabase Publishable Key
 const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_HpN-JfR1xpMxCJqzJHpK4A_mPicSh4m";
 
@@ -23,12 +21,8 @@ const supabaseClient =
 
 
 // ======================================================
-// CHECK CONNECTION
+// CONNECTION CHECK
 // ======================================================
 
-console.log("Flex Rent Supabase connected successfully.");
-
-console.log(
-    "Supabase URL:",
-    SUPABASE_URL
-);
+console.log("Flex Rent Supabase connected.");
+console.log("Supabase URL:", SUPABASE_URL);
