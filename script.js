@@ -49,7 +49,62 @@ let phoneOTPNumber = "";
 // =====================================================
 
 function formatINR(amount) {
+// ============================================
+// DISTANCE CALCULATOR
+// ============================================
 
+function calculateDistance(lat1, lng1, lat2, lng2) {
+    if (
+        !Number.isFinite(Number(lat1)) ||
+        !Number.isFinite(Number(lng1)) ||
+        !Number.isFinite(Number(lat2)) ||
+        !Number.isFinite(Number(lng2))
+    ) {
+        return null;
+    }
+
+    const R = 6371;
+
+    const dLat =
+        (Number(lat2) - Number(lat1)) *
+        Math.PI / 180;
+
+    const dLng =
+        (Number(lng2) - Number(lng1)) *
+        Math.PI / 180;
+
+    const a =
+        Math.sin(dLat / 2) *
+        Math.sin(dLat / 2) +
+        Math.cos(Number(lat1) * Math.PI / 180) *
+        Math.cos(Number(lat2) * Math.PI / 180) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+
+    const c =
+        2 * Math.atan2(
+            Math.sqrt(a),
+            Math.sqrt(1 - a)
+        );
+
+    return R * c;
+}
+
+function formatDistance(distance) {
+    if (distance === null || !Number.isFinite(distance)) {
+        return '';
+    }
+
+    if (distance < 1) {
+        return `${Math.round(distance * 1000)} m away`;
+    }
+
+    if (distance < 10) {
+        return `${distance.toFixed(1)} km away`;
+    }
+
+    return `${Math.round(distance)} km away`;
+}
   const number = Number(amount) || 0;
 
   return `₹${number.toLocaleString("en-IN")}`;
