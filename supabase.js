@@ -280,4 +280,55 @@ async function uploadListingImage(file) {
 
   return data.publicUrl;
 }
+// ==========================================
+// IMAGE UPLOAD
+// ==========================================
 
+async function uploadListingImage(file) {
+
+  if (!file) {
+    throw new Error("Please select an image.");
+  }
+
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Only image files are allowed.");
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("Image size must be less than 5 MB.");
+  }
+
+  const fileExt = file.name
+    .split(".")
+    .pop()
+    .toLowerCase();
+
+  const fileName =
+    `${crypto.randomUUID()}.${fileExt}`;
+
+  const filePath =
+    `${Date.now()}-${fileName}`;
+
+  const { error: uploadError } =
+    await supabase.storage
+      .from("listing-images")
+      .upload(
+        filePath,
+        file,
+        {
+          cacheControl: "3600",
+          upsert: false
+        }
+      );
+
+  if (uploadError) {
+    throw uploadError;
+  }
+
+  const { data } =
+    supabase.storage
+      .from("listing-images")
+      .getPublicUrl(filePath);
+
+  return data.publicUrl;
+}
