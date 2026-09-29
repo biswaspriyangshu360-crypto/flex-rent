@@ -3763,6 +3763,54 @@ document.addEventListener(
 
   }
 );
+// ================================
+// STEP 1D - QUICK CATEGORY FILTER
+// ================================
+
+function setupQuickCategoryCards() {
+    const categoryCards = document.querySelectorAll(".category-showcase-card");
+
+    categoryCards.forEach(card => {
+        card.addEventListener("click", () => {
+            const category = card.dataset.category;
+
+            if (!category) return;
+
+            // Activate matching category chip
+            const categoryChips = document.querySelectorAll(".category-chip");
+
+            categoryChips.forEach(chip => {
+                chip.classList.remove("active");
+
+                if (
+                    chip.dataset.category &&
+                    chip.dataset.category.toLowerCase() === category.toLowerCase()
+                ) {
+                    chip.classList.add("active");
+                }
+            });
+
+            // Filter listings
+            filterListings();
+
+            // Scroll to marketplace
+            const marketplace = document.querySelector(".marketplace");
+
+            if (marketplace) {
+                marketplace.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            }
+        });
+    });
+}
+
+
+// Initialize Quick Category Cards
+document.addEventListener("DOMContentLoaded", () => {
+    setupQuickCategoryCards();
+});
 // =====================================================
 // END OF FLEX RENT SCRIPT
 // =====================================================
