@@ -163,7 +163,6 @@
           <input type="text" id="item-location" required placeholder="New York, NY">
         </div>
         <div class="form-group">
-          <div class="form-group">
   <label>Item Image</label>
   <input 
     type="file" 
@@ -173,8 +172,15 @@
   >
   <small>Upload a clear image of your item. Maximum size: 5 MB.</small>
 </div>
-        <div class="form-group">
-          <label>Description</label>
+
+<div class="form-group">
+  <label>Description</label>
+  <textarea 
+    id="item-description" 
+    rows="3" 
+    placeholder="Provide details about condition, pickup, etc."
+  ></textarea>
+</div>
           <textarea id="item-description" rows="3" placeholder="Provide details about condition, pickup, etc."></textarea>
         </div>
         <button type="submit" class="btn btn-primary btn-block">Publish Listing</button>
