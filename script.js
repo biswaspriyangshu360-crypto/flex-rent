@@ -37,7 +37,7 @@ let map = null;
 let mapMarkers = [];
 let selectedLocationMarker = null;
 
-let selectedListingForBooking = null;
+let selectedListingFor = null;
 
 let selectedLocation = null;
 let selectedListingLocation = null;
@@ -371,7 +371,7 @@ function updateMapMarkers(items) {
                 <br>
 
                 <button
-                    onclick="openBookingModal('${escapeAttribute(item.id)}')"
+                    onclick="openModal('${escapeAttribute(item.id)}')"
                     style="
                         margin-top:8px;
                         background:#4F46E5;
@@ -891,7 +891,7 @@ function renderListings(items) {
                     <button
                         type="button"
                         class="btn btn-primary listing-rent-btn"
-                        data-booking-id="${escapeAttribute(item.id)}"
+                        data--id="${escapeAttribute(item.id)}"
                         ${!available ? "disabled" : ""}
                     >
                         <i class="fa-solid fa-calendar-check"></i>
@@ -952,15 +952,15 @@ function renderListings(items) {
            RENT NOW BUTTON
         ----------------------------- */
 
-        const bookingButton =
-            card.querySelector("[data-booking-id]");
+        const Button =
+            card.querySelector("[data--id]");
 
 
-        bookingButton?.addEventListener(
+        Button?.addEventListener(
             "click",
             () => {
 
-                openBookingModal(item.id);
+                openModal(item.id);
 
             }
         );
@@ -1335,7 +1335,7 @@ function setupEventListeners() {
 
     setupListingForm();
 
-    setupBooking();
+    setup();
 
 }
 
@@ -2356,9 +2356,9 @@ function setupDashboardTabs() {
 
                     if (
                         tabId ===
-                        "tab-bookings"
+                        "tab-s"
                     ) {
-                        await loadMyBookings();
+                        await loadMys();
                     }
 
 
@@ -2708,7 +2708,529 @@ async function loadMyBookings() {
     }
 
 }
+// =====================================================
+// OPEN LISTING DETAILS
+// =====================================================
 
+window.openListingDetails =
+    function (id) {
+
+        const item =
+            listings.find(
+                listing =>
+                    String(listing.id) ===
+                    String(id)
+            );
+
+        if (!item) {
+            alert("Listing not found.");
+            return;
+        }
+
+        const image =
+            item.image_url ||
+            "https://via.placeholder.com/800x550?text=No+Image";
+
+        const title =
+            item.title ||
+            "Unnamed Item";
+
+        const category =
+            item.category ||
+            "Other";
+
+        const price =
+            Number(item.price_per_day) || 0;
+
+        const location =
+            item.location ||
+            "Location not specified";
+
+        const description =
+            item.description ||
+            "No description provided.";
+
+        const available =
+            item.available !== false &&
+            item.is_available !== false;
+
+        const condition =
+            item.condition ||
+            "Not specified";
+
+        const itemAge =
+            item.item_age ||
+            "Not specified";
+
+        const brand =
+            item.brand ||
+            "Not specified";
+
+        const model =
+            item.model ||
+            "Not specified";
+
+        const usage =
+            item.usage_count !== undefined &&
+            item.usage_count !== null
+                ? `${item.usage_count} times`
+                : "Not specified";
+
+        const deposit =
+            item.security_deposit !== undefined &&
+            item.security_deposit !== null
+                ? formatINR(item.security_deposit)
+                : "Not specified";
+
+
+        // =================================================
+        // RATING
+        // =================================================
+
+        const ratingElement =
+            document.getElementById(
+                "details-item-rating"
+            );
+
+        if (ratingElement) {
+
+            if (
+                item.rating !== undefined &&
+                item.rating !== null
+            ) {
+
+                const rating =
+                    Number(item.rating).toFixed(1);
+
+                ratingElement.innerHTML = `
+                    <i class="fa-solid fa-star"></i>
+                    <strong>${escapeHTML(rating)}</strong>
+                `;
+
+            } else {
+
+                ratingElement.innerHTML = `
+                    <i class="fa-regular fa-star"></i>
+                    <strong>New</strong>
+                `;
+
+            }
+        }
+
+
+        // =================================================
+        // RENTAL COUNT
+        // =================================================
+
+        const rentalsElement =
+            document.getElementById(
+                "details-item-rentals"
+            );
+
+        if (rentalsElement) {
+
+            const count =
+                Number(item.rental_count) || 0;
+
+            rentalsElement.textContent =
+                count > 0
+                    ? `${count} rental${count > 1 ? "s" : ""}`
+                    : "New listing";
+        }
+
+
+        // =================================================
+        // IMAGE
+        // =================================================
+
+        const imageElement =
+            document.getElementById(
+                "details-item-image"
+            );
+
+        if (imageElement) {
+
+            imageElement.src = image;
+            imageElement.alt = title;
+
+        }
+
+
+        // =================================================
+        // CATEGORY
+        // =================================================
+
+        const categoryElement =
+            document.getElementById(
+                "details-item-category"
+            );
+
+        if (categoryElement) {
+
+            categoryElement.textContent =
+                category;
+
+        }
+
+
+        // =================================================
+        // TITLE
+        // =================================================
+
+        const titleElement =
+            document.getElementById(
+                "details-item-title"
+            );
+
+        if (titleElement) {
+
+            titleElement.textContent =
+                title;
+
+        }
+
+
+        // =================================================
+        // PRICE
+        // =================================================
+
+        const priceElement =
+            document.getElementById(
+                "details-item-price"
+            );
+
+        if (priceElement) {
+
+            priceElement.textContent =
+                formatINR(price);
+
+        }
+
+
+        // =================================================
+        // LOCATION
+        // =================================================
+
+        const locationElement =
+            document.getElementById(
+                "details-item-location"
+            );
+
+        if (locationElement) {
+
+            locationElement.textContent =
+                location;
+
+        }
+
+
+        // =================================================
+        // CONDITION
+        // =================================================
+
+        const conditionElement =
+            document.getElementById(
+                "details-item-condition"
+            );
+
+        if (conditionElement) {
+
+            conditionElement.textContent =
+                condition;
+
+        }
+
+
+        // =================================================
+        // ITEM AGE
+        // =================================================
+
+        const ageElement =
+            document.getElementById(
+                "details-item-age"
+            );
+
+        if (ageElement) {
+
+            ageElement.textContent =
+                itemAge;
+
+        }
+
+
+        // =================================================
+        // BRAND
+        // =================================================
+
+        const brandElement =
+            document.getElementById(
+                "details-item-brand"
+            );
+
+        if (brandElement) {
+
+            brandElement.textContent =
+                brand;
+
+        }
+
+
+        // =================================================
+        // MODEL
+        // =================================================
+
+        const modelElement =
+            document.getElementById(
+                "details-item-model"
+            );
+
+        if (modelElement) {
+
+            modelElement.textContent =
+                model;
+
+        }
+
+
+        // =================================================
+        // USAGE
+        // =================================================
+
+        const usageElement =
+            document.getElementById(
+                "details-item-usage"
+            );
+
+        if (usageElement) {
+
+            usageElement.textContent =
+                usage;
+
+        }
+
+
+        // =================================================
+        // SECURITY DEPOSIT
+        // =================================================
+
+        const depositElement =
+            document.getElementById(
+                "details-item-deposit"
+            );
+
+        if (depositElement) {
+
+            depositElement.textContent =
+                deposit;
+
+        }
+
+
+        // =================================================
+        // DESCRIPTION
+        // =================================================
+
+        const descriptionElement =
+            document.getElementById(
+                "details-item-description"
+            );
+
+        if (descriptionElement) {
+
+            descriptionElement.textContent =
+                description;
+
+        }
+
+
+        // =================================================
+        // AVAILABILITY
+        // =================================================
+
+        const availabilityElement =
+            document.getElementById(
+                "details-availability"
+            );
+
+        if (availabilityElement) {
+
+            availabilityElement.className =
+                `details-availability-badge ${
+                    available
+                        ? "available"
+                        : "unavailable"
+                }`;
+
+            availabilityElement.innerHTML = `
+                <i class="fa-solid fa-circle"></i>
+                ${
+                    available
+                        ? "Available"
+                        : "Unavailable"
+                }
+            `;
+        }
+
+
+        // =================================================
+        // OWNER
+        // =================================================
+
+        const ownerName =
+            item.owner_name ||
+            item.owner?.name ||
+            "Item Owner";
+
+        const ownerElement =
+            document.getElementById(
+                "details-owner-name"
+            );
+
+        if (ownerElement) {
+
+            ownerElement.textContent =
+                ownerName;
+
+        }
+
+
+        const ownerRatingElement =
+            document.getElementById(
+                "details-owner-rating"
+            );
+
+        if (ownerRatingElement) {
+
+            if (
+                item.owner_rating !== undefined &&
+                item.owner_rating !== null
+            ) {
+
+                ownerRatingElement.innerHTML = `
+                    <i class="fa-solid fa-star"></i>
+                    ${Number(
+                        item.owner_rating
+                    ).toFixed(1)}
+                    Trusted owner
+                `;
+
+            } else {
+
+                ownerRatingElement.innerHTML = `
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Flex Rent owner
+                `;
+
+            }
+        }
+
+
+        // =================================================
+        // RENT NOW BUTTON
+        // =================================================
+
+        const rentButton =
+            document.getElementById(
+                "details-rent-btn"
+            );
+
+        if (rentButton) {
+
+            rentButton.disabled =
+                !available;
+
+            rentButton.innerHTML = `
+                <i class="fa-solid fa-calendar-check"></i>
+                ${
+                    available
+                        ? "Rent Now"
+                        : "Unavailable"
+                }
+            `;
+
+            rentButton.onclick =
+                function () {
+
+                    if (!available) {
+                        return;
+                    }
+
+                    document
+                        .getElementById(
+                            "listing-details-modal"
+                        )
+                        ?.classList.add(
+                            "hidden"
+                        );
+
+                    openBookingModal(
+                        item.id
+                    );
+                };
+        }
+
+
+        // =================================================
+        // CONTACT OWNER BUTTON
+        // =================================================
+
+        const contactButton =
+            document.getElementById(
+                "details-contact-owner-btn"
+            );
+
+        if (contactButton) {
+
+            contactButton.onclick =
+                function () {
+
+                    if (!currentUser) {
+
+                        alert(
+                            "Please login first to contact the owner."
+                        );
+
+                        document
+                            .getElementById(
+                                "listing-details-modal"
+                            )
+                            ?.classList.add(
+                                "hidden"
+                            );
+
+                        document
+                            .getElementById(
+                                "auth-modal"
+                            )
+                            ?.classList.remove(
+                                "hidden"
+                            );
+
+                        return;
+                    }
+
+
+                    alert(
+                        "Chat feature will be available in the next stage."
+                    );
+
+                };
+        }
+
+
+        // =================================================
+        // SHOW MODAL
+        // =================================================
+
+        document
+            .getElementById(
+                "listing-details-modal"
+            )
+            ?.classList.remove(
+                "hidden"
+            );
+
+    };
 
 // =====================================================
 // PROFILE
