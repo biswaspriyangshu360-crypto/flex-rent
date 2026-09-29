@@ -945,19 +945,115 @@
       </div>
 
 
-      <!-- My Bookings -->
+     <!-- =========================================================
+     ADVANCED MY BOOKINGS / ORDERS
+========================================================= -->
 
-      <div
-        class="tab-content hidden"
-        id="tab-bookings"
-      >
+<div class="orders-section">
 
-        <div
-          id="my-bookings-list"
-          class="bookings-list"
-        ></div>
+    <!-- Orders Header -->
 
-      </div>
+    <div class="orders-header">
+
+        <div class="orders-heading">
+
+            <span class="orders-heading-icon">
+                <i class="fa-solid fa-receipt"></i>
+            </span>
+
+            <div>
+                <h3>My Orders</h3>
+
+                <p>
+                    Track and manage all your rental orders
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ORDER FILTER TABS
+    ====================================================== -->
+
+    <div class="order-tabs">
+
+        <button
+            type="button"
+            class="order-tab active"
+            data-order-filter="all"
+        >
+            <i class="fa-solid fa-layer-group"></i>
+            <span>All</span>
+        </button>
+
+
+        <button
+            type="button"
+            class="order-tab"
+            data-order-filter="pending"
+        >
+            <i class="fa-solid fa-clock"></i>
+            <span>Pending</span>
+        </button>
+
+
+        <button
+            type="button"
+            class="order-tab"
+            data-order-filter="active"
+        >
+            <i class="fa-solid fa-play"></i>
+            <span>Active</span>
+        </button>
+
+
+        <button
+            type="button"
+            class="order-tab"
+            data-order-filter="completed"
+        >
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Completed</span>
+        </button>
+
+
+        <button
+            type="button"
+            class="order-tab"
+            data-order-filter="cancelled"
+        >
+            <i class="fa-solid fa-circle-xmark"></i>
+            <span>Cancelled</span>
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         ORDERS LIST
+    ====================================================== -->
+
+    <div
+        id="my-bookings-list"
+        class="advanced-orders-list"
+    >
+
+        <div class="orders-loading">
+
+            <i class="fa-solid fa-spinner fa-spin"></i>
+
+            <p>
+                Loading your orders...
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
 
 
       <!-- Profile -->
