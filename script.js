@@ -1335,8 +1335,6 @@ function setupEventListeners() {
 
     setupListingForm();
 
-    setup();
-
 }
 
 
