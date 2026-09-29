@@ -1,46 +1,47 @@
 // =====================================================
 // FLEX RENT - MAIN JAVASCRIPT
 // =====================================================
-// Features:
-// - Email + Password Authentication
-// - Google Authentication
-// - Phone OTP Authentication
-// - User Session
-// - Profile Creation
-// - Marketplace Listings
-// - Image Upload
-// - INR Currency
-// - Search
-// - Category Filter
-// - Voice Search
-// - Leaflet Map
-// - GPS Location
-// - Location Selector
-// - Saved Addresses
-// - Address Management
-// - Listing Location
-// - Booking
-// - Payment Record
-// - Dashboard
-// - Logout
-// - Forgot Password
+// Authentication
+// Google Login
+// Phone OTP
+// Profile
+// Marketplace
+// Image Upload
+// Search
+// Category Filter
+// Voice Search
+// Leaflet Map
+// GPS Location
+// Reverse Geocoding
+// Saved Addresses
+// Manual Address Geocoding
+// Listing Location
+// Distance Calculation
+// Booking
+// Payment Record
+// Dashboard
+// Forgot Password
 // =====================================================
 
 
 // =====================================================
-// STATE MANAGEMENT
+// STATE
 // =====================================================
 
 let currentUser = null;
-let listings = [];
-let map = null;
-let mapMarkers = [];
-let selectedListingForBooking = null;
 let currentUserProfile = null;
 
-// Location state
+let listings = [];
+
+let map = null;
+let mapMarkers = [];
+let selectedLocationMarker = null;
+
+let selectedListingForBooking = null;
+
 let selectedLocation = null;
 let selectedListingLocation = null;
+
 let phoneOTPNumber = "";
 
 
@@ -49,11 +50,17 @@ let phoneOTPNumber = "";
 // =====================================================
 
 function formatINR(amount) {
-// ============================================
+    const number = Number(amount) || 0;
+    return `₹${number.toLocaleString("en-IN")}`;
+}
+
+
+// =====================================================
 // DISTANCE CALCULATOR
-// ============================================
+// =====================================================
 
 function calculateDistance(lat1, lng1, lat2, lng2) {
+
     if (
         !Number.isFinite(Number(lat1)) ||
         !Number.isFinite(Number(lng1)) ||
@@ -74,12 +81,10 @@ function calculateDistance(lat1, lng1, lat2, lng2) {
         Math.PI / 180;
 
     const a =
-        Math.sin(dLat / 2) *
-        Math.sin(dLat / 2) +
+        Math.sin(dLat / 2) ** 2 +
         Math.cos(Number(lat1) * Math.PI / 180) *
         Math.cos(Number(lat2) * Math.PI / 180) *
-        Math.sin(dLng / 2) *
-        Math.sin(dLng / 2);
+        Math.sin(dLng / 2) ** 2;
 
     const c =
         2 * Math.atan2(
@@ -90,9 +95,14 @@ function calculateDistance(lat1, lng1, lat2, lng2) {
     return R * c;
 }
 
+
 function formatDistance(distance) {
-    if (distance === null || !Number.isFinite(distance)) {
-        return '';
+
+    if (
+        distance === null ||
+        !Number.isFinite(distance)
+    ) {
+        return "";
     }
 
     if (distance < 1) {
@@ -105,11 +115,6 @@ function formatDistance(distance) {
 
     return `${Math.round(distance)} km away`;
 }
-  const number = Number(amount) || 0;
-
-  return `₹${number.toLocaleString("en-IN")}`;
-
-}
 
 
 // =====================================================
@@ -118,89 +123,89 @@ function formatDistance(distance) {
 
 const mockListings = [
 
-  {
-    id: "mock-1",
-    title: "Caterpillar Mini Excavator",
-    category: "Construction",
-    description:
-      "Heavy-duty compact excavator for digging and trenching.",
-    price_per_day: 5000,
-    location: "Kolkata, India",
-    lat: 22.5726,
-    lng: 88.3639,
-    image_url:
-      "https://images.unsplash.com/photo-1579412690850-bd41cd0af397?auto=format&fit=crop&w=600&q=80"
-  },
+    {
+        id: "mock-1",
+        title: "Caterpillar Mini Excavator",
+        category: "Construction",
+        description:
+            "Heavy-duty compact excavator for digging and trenching.",
+        price_per_day: 5000,
+        location: "Kolkata, India",
+        lat: 22.5726,
+        lng: 88.3639,
+        image_url:
+            "https://images.unsplash.com/photo-1579412690850-bd41cd0af397?auto=format&fit=crop&w=600&q=80"
+    },
 
-  {
-    id: "mock-2",
-    title: "John Deere Farm Tractor",
-    category: "Agriculture",
-    description:
-      "75HP tractor with multiple attachment capabilities.",
-    price_per_day: 4000,
-    location: "Guwahati, India",
-    lat: 26.1445,
-    lng: 91.7362,
-    image_url:
-      "https://images.unsplash.com/photo-1530267981375-f0de937f5f13?auto=format&fit=crop&w=600&q=80"
-  },
+    {
+        id: "mock-2",
+        title: "John Deere Farm Tractor",
+        category: "Agriculture",
+        description:
+            "75HP tractor with multiple attachment capabilities.",
+        price_per_day: 4000,
+        location: "Guwahati, India",
+        lat: 26.1445,
+        lng: 91.7362,
+        image_url:
+            "https://images.unsplash.com/photo-1530267981375-f0de937f5f13?auto=format&fit=crop&w=600&q=80"
+    },
 
-  {
-    id: "mock-3",
-    title: "Bosch Professional Power Drill",
-    category: "Everyday",
-    description:
-      "18V cordless hammer drill with battery kit.",
-    price_per_day: 500,
-    location: "Guwahati, India",
-    lat: 26.1445,
-    lng: 91.7362,
-    image_url:
-      "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=600&q=80"
-  },
+    {
+        id: "mock-3",
+        title: "Bosch Professional Power Drill",
+        category: "Everyday",
+        description:
+            "18V cordless hammer drill with battery kit.",
+        price_per_day: 500,
+        location: "Guwahati, India",
+        lat: 26.1445,
+        lng: 91.7362,
+        image_url:
+            "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=600&q=80"
+    },
 
-  {
-    id: "mock-4",
-    title: "Electric Lawn Mower",
-    category: "Gardening",
-    description:
-      "Easy-to-use electric lawn mower for home gardens.",
-    price_per_day: 800,
-    location: "Kolkata, India",
-    lat: 22.5726,
-    lng: 88.3639,
-    image_url:
-      "https://images.unsplash.com/photo-1599685315640-3f3a2b9e1c0a?auto=format&fit=crop&w=600&q=80"
-  },
+    {
+        id: "mock-4",
+        title: "Electric Lawn Mower",
+        category: "Gardening",
+        description:
+            "Easy-to-use electric lawn mower for home gardens.",
+        price_per_day: 800,
+        location: "Kolkata, India",
+        lat: 22.5726,
+        lng: 88.3639,
+        image_url:
+            "https://images.unsplash.com/photo-1599685315640-3f3a2b9e1c0a?auto=format&fit=crop&w=600&q=80"
+    },
 
-  {
-    id: "mock-5",
-    title: "Heavy Duty Ladder",
-    category: "Everyday",
-    description:
-      "Strong aluminium ladder suitable for home and work.",
-    price_per_day: 300,
-    location: "Siliguri, India",
-    lat: 26.7271,
-    lng: 88.3953,
-    image_url:
-      "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80"
-  },
+    {
+        id: "mock-5",
+        title: "Heavy Duty Ladder",
+        category: "Everyday",
+        description:
+            "Strong aluminium ladder suitable for home and work.",
+        price_per_day: 300,
+        location: "Siliguri, India",
+        lat: 26.7271,
+        lng: 88.3953,
+        image_url:
+            "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80"
+    },
 
-  {
-    id: "mock-6",
-    title: "Industrial Welding Machine",
-    category: "Industrial",
-    description:
-      "Professional welding machine for industrial applications.",
-    price_per_day: 1500,
-    location: "Durgapur, India",
-    lat: 23.5204,
-    lng: 87.3119,
-    image_url:
-      "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=600&q=80"
-  }
+    {
+        id: "mock-6",
+        title: "Industrial Welding Machine",
+        category: "Industrial",
+        description:
+            "Professional welding machine for industrial applications.",
+        price_per_day: 1500,
+        location: "Durgapur, India",
+        lat: 23.5204,
+        lng: 87.3119,
+        image_url:
+            "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=600&q=80"
+    }
 
 ];
 
@@ -211,31 +216,33 @@ const mockListings = [
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  hideLoadingScreen();
+    hideLoadingScreen();
 
-  initMap();
+    initMap();
 
-  setupVoiceSearch();
+    setupVoiceSearch();
 
-  setupEventListeners();
+    setupEventListeners();
 
-  setupGoogleLoginButton();
+    setupGoogleLoginButton();
 
-  setupPhoneLogin();
+    setupPhoneLogin();
 
-  setupHeroControls();
+    setupForgotPassword();
 
-  setupQuickCategoryCards();
+    setupHeroControls();
 
-  setupLocationSystem();
+    setupQuickCategoryCards();
 
-  setupDashboard();
+    setupLocationSystem();
 
-  loadSavedLocation();
+    setupDashboard();
 
-  loadListings();
+    loadSavedLocation();
 
-  checkSession();
+    loadListings();
+
+    checkSession();
 
 });
 
@@ -246,60 +253,59 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function hideLoadingScreen() {
 
-  setTimeout(() => {
-
-    const loader =
-      document.getElementById("loading-screen");
-
-    if (!loader) return;
-
-    loader.style.opacity = "0";
-
     setTimeout(() => {
 
-      loader.style.display = "none";
+        const loader =
+            document.getElementById("loading-screen");
 
-    }, 500);
+        if (!loader) return;
 
-  }, 1000);
+        loader.style.opacity = "0";
+
+        setTimeout(() => {
+            loader.style.display = "none";
+        }, 500);
+
+    }, 700);
 
 }
 
 
 // =====================================================
-// LEAFLET MAP
+// MAP
 // =====================================================
 
 function initMap() {
 
-  const mapElement =
-    document.getElementById("map");
+    const mapElement =
+        document.getElementById("map");
 
-  if (!mapElement) return;
+    if (!mapElement) return;
 
-  try {
+    try {
 
-    map = L.map("map").setView(
-      [20.5937, 78.9629],
-      5
-    );
+        map =
+            L.map("map").setView(
+                [20.5937, 78.9629],
+                5
+            );
 
-    L.tileLayer(
-      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      {
-        attribution:
-          "© OpenStreetMap contributors"
-      }
-    ).addTo(map);
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                attribution:
+                    "© OpenStreetMap contributors"
+            }
+        ).addTo(map);
 
-  } catch (error) {
+    } catch (error) {
 
-    console.warn(
-      "Map initialization failed:",
-      error
-    );
+        console.warn(
+            "Map initialization failed:",
+            error
+        );
 
-  }
+    }
 
 }
 
@@ -310,146 +316,145 @@ function initMap() {
 
 function updateMapMarkers(items) {
 
-  if (!map) return;
+    if (!map) return;
 
-  mapMarkers.forEach(marker => {
+    mapMarkers.forEach(marker => {
 
-    try {
+        try {
+            map.removeLayer(marker);
+        } catch (error) {}
 
-      map.removeLayer(marker);
+    });
 
-    } catch (error) {}
+    mapMarkers = [];
 
-  });
+    items.forEach(item => {
 
-  mapMarkers = [];
+        const lat =
+            Number(item.lat);
 
+        const lng =
+            Number(item.lng);
 
-  items.forEach(item => {
+        if (
+            !Number.isFinite(lat) ||
+            !Number.isFinite(lng)
+        ) {
+            return;
+        }
 
-    const lat = Number(item.lat);
-    const lng = Number(item.lng);
+        const marker =
+            L.marker([lat, lng])
+                .addTo(map);
 
-    if (
-      Number.isFinite(lat) &&
-      Number.isFinite(lng)
-    ) {
+        marker.bindPopup(`
 
-      const marker =
-        L.marker([lat, lng])
-          .addTo(map);
+            <div style="min-width:180px">
 
+                <strong>
+                    ${escapeHTML(item.title)}
+                </strong>
 
-      marker.bindPopup(`
+                <br>
 
-        <div style="min-width:180px">
+                <span>
+                    ${formatINR(item.price_per_day)}
+                    / day
+                </span>
 
-          <strong>
-            ${escapeHTML(item.title)}
-          </strong>
+                <br>
 
-          <br>
+                <small>
+                    ${escapeHTML(item.location || "")}
+                </small>
 
-          <span>
-            ${formatINR(item.price_per_day)}
-            / day
-          </span>
+                <br>
 
-          <br>
+                <button
+                    onclick="openBookingModal('${escapeAttribute(item.id)}')"
+                    style="
+                        margin-top:8px;
+                        background:#4F46E5;
+                        color:#fff;
+                        border:none;
+                        padding:7px 12px;
+                        border-radius:6px;
+                        cursor:pointer;
+                    "
+                >
+                    Rent Now
+                </button>
 
-          <small>
-            ${escapeHTML(item.location || "")}
-          </small>
+            </div>
 
-          <br>
+        `);
 
-          <button
-            onclick="openBookingModal('${escapeAttribute(item.id)}')"
-            style="
-              margin-top:8px;
-              background:#4F46E5;
-              color:#fff;
-              border:none;
-              padding:7px 12px;
-              border-radius:6px;
-              cursor:pointer;
-            "
-          >
-            Rent Now
-          </button>
+        mapMarkers.push(marker);
 
-        </div>
-
-      `);
-
-      mapMarkers.push(marker);
-
-    }
-
-  });
+    });
 
 }
 
 
 // =====================================================
-// DATABASE LISTING → UI FORMAT
+// NORMALIZE LISTING
 // =====================================================
 
 function normalizeListing(item) {
 
-  return {
+    return {
 
-    id: item.id,
+        id: item.id,
 
-    title:
-      item.title ||
-      item.name ||
-      "Unnamed Item",
+        title:
+            item.title ||
+            item.name ||
+            "Unnamed Item",
 
-    category:
-      item.category ||
-      "Other",
+        category:
+            item.category ||
+            "Other",
 
-    description:
-      item.description ||
-      "",
+        description:
+            item.description ||
+            "",
 
-    price_per_day:
-      Number(
-        item.price ??
-        item.price_per_day ??
-        0
-      ),
+        price_per_day:
+            Number(
+                item.price ??
+                item.price_per_day ??
+                0
+            ),
 
-    location:
-      item.location ||
-      "Location unavailable",
+        location:
+            item.location ||
+            "Location unavailable",
 
-    lat:
-      item.latitude ??
-      item.lat ??
-      null,
+        lat:
+            item.latitude ??
+            item.lat ??
+            null,
 
-    lng:
-      item.longitude ??
-      item.lng ??
-      null,
+        lng:
+            item.longitude ??
+            item.lng ??
+            null,
 
-    image_url:
-      item.image_url ||
-      "",
+        image_url:
+            item.image_url ||
+            "",
 
-    owner_id:
-      item.owner_id,
+        owner_id:
+            item.owner_id,
 
-    available:
-      item.is_available !== undefined
-        ? item.is_available
-        : item.available !== undefined
-          ? item.available
-          : true
+        available:
+            item.is_available !== undefined
+                ? item.is_available
+                : item.available !== undefined
+                    ? item.available
+                    : true
 
-  };
+    };
 
 }
 
@@ -460,39 +465,47 @@ function normalizeListing(item) {
 
 async function loadListings() {
 
-  try {
+    try {
 
-    const dbListings =
-      await fetchListings();
+        const dbListings =
+            await fetchListings();
 
-    if (
-      dbListings &&
-      dbListings.length > 0
-    ) {
+        if (
+            Array.isArray(dbListings) &&
+            dbListings.length > 0
+        ) {
 
-      listings =
-        dbListings.map(normalizeListing);
+            listings =
+                dbListings.map(
+                    normalizeListing
+                );
 
-    } else {
+        } else {
 
-      listings = mockListings;
+            listings =
+                mockListings.map(
+                    normalizeListing
+                );
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Supabase listings unavailable:",
+            error
+        );
+
+        listings =
+            mockListings.map(
+                normalizeListing
+            );
 
     }
 
-  } catch (error) {
+    renderListings(listings);
 
-    console.warn(
-      "Supabase listings unavailable:",
-      error
-    );
-
-    listings = mockListings;
-
-  }
-
-  renderListings(listings);
-
-  updateMapMarkers(listings);
+    updateMapMarkers(listings);
 
 }
 
@@ -503,73 +516,195 @@ async function loadListings() {
 
 function renderListings(items) {
 
-  const container =
-    document.getElementById(
-      "listings-grid"
-    );
+    const container =
+        document.getElementById(
+            "listings-grid"
+        );
 
-  if (!container) return;
+    if (!container) return;
 
-  container.innerHTML = "";
-
-
-  if (
-    !items ||
-    items.length === 0
-  ) {
-
-    container.innerHTML = `
-
-      <div class="empty-state">
-
-        <i class="fa-solid fa-box-open"></i>
-
-        <p>
-          No rental items found.
-        </p>
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-
-  // User's currently selected location
-  const userLocation =
-    selectedLocation &&
-    Number.isFinite(Number(selectedLocation.lat)) &&
-    Number.isFinite(Number(selectedLocation.lng))
-      ? selectedLocation
-      : null;
-
-
-  items.forEach(item => {
-
-    const card =
-      document.createElement("div");
-
-    card.className = "card";
-
-
-    const image =
-      item.image_url ||
-      "https://via.placeholder.com/600x400?text=No+Image";
-
-
-    const availability =
-      item.available !== false;
-
-
-    // Calculate distance between user and listing
-    let distanceText = "";
+    container.innerHTML = "";
 
     if (
-      userLocation &&
-      Number.isFinite(Number(item.latitude)) &&
-      Number
+        !Array.isArray(items) ||
+        items.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <div class="empty-state">
+
+                <i class="fa-solid fa-box-open"></i>
+
+                <p>
+                    No rental items found.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    const userLocation =
+        selectedLocation &&
+        Number.isFinite(
+            Number(selectedLocation.lat)
+        ) &&
+        Number.isFinite(
+            Number(selectedLocation.lng)
+        )
+            ? selectedLocation
+            : null;
+
+
+    items.forEach(item => {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "card";
+
+
+        const image =
+            item.image_url ||
+            "https://via.placeholder.com/600x400?text=No+Image";
+
+
+        const available =
+            item.available !== false;
+
+
+        let distanceText = "";
+
+        if (
+            userLocation &&
+            Number.isFinite(Number(item.lat)) &&
+            Number.isFinite(Number(item.lng))
+        ) {
+
+            const distance =
+                calculateDistance(
+                    userLocation.lat,
+                    userLocation.lng,
+                    item.lat,
+                    item.lng
+                );
+
+            distanceText =
+                formatDistance(distance);
+
+        }
+
+
+        card.innerHTML = `
+
+            <div class="card-image-wrapper">
+
+                <img
+                    src="${escapeAttribute(image)}"
+                    alt="${escapeAttribute(item.title)}"
+                    class="card-image"
+                    loading="lazy"
+                >
+
+            </div>
+
+            <div class="card-body">
+
+                <span class="card-category">
+                    ${escapeHTML(item.category)}
+                </span>
+
+                <h3 class="card-title">
+                    ${escapeHTML(item.title)}
+                </h3>
+
+                <p class="card-description">
+                    ${escapeHTML(item.description)}
+                </p>
+
+                <p class="card-location">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                    ${escapeHTML(item.location)}
+
+                    ${
+                        distanceText
+                            ? `
+                                <span class="distance-badge">
+                                    ${escapeHTML(distanceText)}
+                                </span>
+                              `
+                            : ""
+                    }
+
+                </p>
+
+                <div class="card-price">
+
+                    ${formatINR(item.price_per_day)}
+
+                    <small>/ day</small>
+
+                </div>
+
+                <div
+                    style="
+                        margin:8px 0;
+                        font-size:.85rem;
+                        color:${available ? "#10B981" : "#EF4444"};
+                    "
+                >
+
+                    <i class="fa-solid fa-circle"></i>
+
+                    ${available ? " Available" : " Unavailable"}
+
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    type="button"
+                    data-booking-id="${escapeAttribute(item.id)}"
+                    ${!available ? "disabled" : ""}
+                >
+                    <i class="fa-solid fa-calendar-check"></i>
+                    ${available ? "Rent Now" : "Unavailable"}
+                </button>
+
+            </div>
+
+        `;
+
+
+        const bookingButton =
+            card.querySelector(
+                "[data-booking-id]"
+            );
+
+
+        bookingButton?.addEventListener(
+            "click",
+            () => {
+
+                openBookingModal(
+                    item.id
+                );
+
+            }
+        );
+
+
+        container.appendChild(card);
+
+    });
+
+}
+
 
 // =====================================================
 // SEARCH
@@ -577,70 +712,76 @@ function renderListings(items) {
 
 function filterListings() {
 
-  const searchInput =
-    document.getElementById(
-      "search-input"
-    );
+    const searchInput =
+        document.getElementById(
+            "search-input"
+        );
 
-  if (!searchInput) return;
-
-
-  const query =
-    searchInput.value
-      .toLowerCase()
-      .trim();
+    if (!searchInput) return;
 
 
-  const activeChip =
-    document.querySelector(
-      ".category-chip.active"
-    );
+    const query =
+        searchInput.value
+            .toLowerCase()
+            .trim();
 
 
-  const activeCategory =
-    activeChip
-      ? activeChip.dataset.category
-      : "All";
+    const activeChip =
+        document.querySelector(
+            ".category-chip.active"
+        );
 
 
-  const filtered =
-    listings.filter(item => {
-
-      const title =
-        (item.title || "")
-          .toLowerCase();
-
-      const location =
-        (item.location || "")
-          .toLowerCase();
-
-      const description =
-        (item.description || "")
-          .toLowerCase();
+    const activeCategory =
+        activeChip
+            ? activeChip.dataset.category
+            : "All";
 
 
-      const matchesSearch =
-        title.includes(query) ||
-        location.includes(query) ||
-        description.includes(query);
+    const filtered =
+        listings.filter(item => {
+
+            const title =
+                String(item.title || "")
+                    .toLowerCase();
+
+            const location =
+                String(item.location || "")
+                    .toLowerCase();
+
+            const description =
+                String(item.description || "")
+                    .toLowerCase();
+
+            const category =
+                String(item.category || "")
+                    .toLowerCase();
 
 
-      const matchesCategory =
-        activeCategory === "All" ||
-        item.category === activeCategory;
+            const matchesSearch =
+                !query ||
+                title.includes(query) ||
+                location.includes(query) ||
+                description.includes(query) ||
+                category.includes(query);
 
 
-      return (
-        matchesSearch &&
-        matchesCategory
-      );
-
-    });
+            const matchesCategory =
+                activeCategory === "All" ||
+                item.category === activeCategory;
 
 
-  renderListings(filtered);
+            return (
+                matchesSearch &&
+                matchesCategory
+            );
 
-  updateMapMarkers(filtered);
+        });
+
+
+    renderListings(filtered);
+
+    updateMapMarkers(filtered);
 
 }
 
@@ -651,107 +792,98 @@ function filterListings() {
 
 function setupVoiceSearch() {
 
-  const micBtn =
-    document.getElementById("mic-btn");
+    const micBtn =
+        document.getElementById("mic-btn");
 
-  const searchInput =
-    document.getElementById(
-      "search-input"
-    );
+    const searchInput =
+        document.getElementById("search-input");
 
-  if (
-    !micBtn ||
-    !searchInput
-  ) return;
-
-
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
+    if (
+        !micBtn ||
+        !searchInput
+    ) {
+        return;
+    }
 
 
-  if (!SpeechRecognition) {
-
-    micBtn.style.display = "none";
-
-    return;
-
-  }
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
 
 
-  const recognition =
-    new SpeechRecognition();
+    if (!SpeechRecognition) {
 
+        micBtn.style.display = "none";
 
-  recognition.continuous = false;
-
-  recognition.lang = "en-IN";
-
-
-  micBtn.addEventListener(
-    "click",
-    () => {
-
-      try {
-
-        micBtn.classList.add(
-          "listening"
-        );
-
-        recognition.start();
-
-      } catch (error) {
-
-        console.warn(
-          "Voice recognition already running."
-        );
-
-      }
+        return;
 
     }
-  );
 
 
-  recognition.onresult =
-    event => {
+    const recognition =
+        new SpeechRecognition();
 
-      const transcript =
-        event.results[0][0]
-          .transcript;
-
-
-      searchInput.value =
-        transcript;
+    recognition.continuous = false;
+    recognition.lang = "en-IN";
 
 
-      micBtn.classList.remove(
-        "listening"
-      );
+    micBtn.addEventListener(
+        "click",
+        () => {
+
+            try {
+
+                micBtn.classList.add(
+                    "listening"
+                );
+
+                recognition.start();
+
+            } catch (error) {
+
+                console.warn(
+                    "Voice recognition already running."
+                );
+
+            }
+
+        }
+    );
 
 
-      filterListings();
+    recognition.onresult =
+        event => {
 
-    };
+            const transcript =
+                event.results[0][0]
+                    .transcript;
+
+            searchInput.value =
+                transcript;
+
+            filterListings();
+
+        };
 
 
-  recognition.onerror =
-    () => {
+    recognition.onerror =
+        () => {
 
-      micBtn.classList.remove(
-        "listening"
-      );
+            micBtn.classList.remove(
+                "listening"
+            );
 
-    };
+        };
 
 
-  recognition.onend =
-    () => {
+    recognition.onend =
+        () => {
 
-      micBtn.classList.remove(
-        "listening"
-      );
+            micBtn.classList.remove(
+                "listening"
+            );
 
-    };
+        };
 
 }
 
@@ -762,256 +894,161 @@ function setupVoiceSearch() {
 
 function setupEventListeners() {
 
-  // ---------------------------------------------------
-  // SEARCH
-  // ---------------------------------------------------
+    const searchInput =
+        document.getElementById(
+            "search-input"
+        );
 
-  const searchInput =
-    document.getElementById(
-      "search-input"
+
+    searchInput?.addEventListener(
+        "input",
+        filterListings
     );
 
 
-  if (searchInput) {
-
-    searchInput.addEventListener(
-      "input",
-      filterListings
-    );
-
-    searchInput.addEventListener(
-      "keydown",
-      event => {
-
-        if (event.key === "Enter") {
-
-          event.preventDefault();
-
-          filterListings();
-
-        }
-
-      }
-    );
-
-  }
-
-
-  // ---------------------------------------------------
-  // CATEGORY FILTER
-  // ---------------------------------------------------
-
-  document
-    .querySelectorAll(".category-chip")
-    .forEach(chip => {
-
-      chip.addEventListener(
-        "click",
+    searchInput?.addEventListener(
+        "keydown",
         event => {
 
-          document
-            .querySelectorAll(
-              ".category-chip"
-            )
-            .forEach(c => {
+            if (event.key === "Enter") {
 
-              c.classList.remove(
-                "active"
-              );
+                event.preventDefault();
 
-            });
+                filterListings();
 
-
-          event.currentTarget
-            .classList.add("active");
-
-
-          filterListings();
+            }
 
         }
-      );
-
-    });
-
-
-  // ---------------------------------------------------
-  // MODALS
-  // ---------------------------------------------------
-
-  const authModal =
-    document.getElementById(
-      "auth-modal"
-    );
-
-  const listItemModal =
-    document.getElementById(
-      "list-item-modal"
-    );
-
-  const bookingModal =
-    document.getElementById(
-      "booking-modal"
     );
 
 
-  // ---------------------------------------------------
-  // LOGIN BUTTON
-  // ---------------------------------------------------
+    document
+        .querySelectorAll(".category-chip")
+        .forEach(chip => {
 
-  const authNavBtn =
-    document.getElementById(
-      "auth-nav-btn"
-    );
+            chip.addEventListener(
+                "click",
+                event => {
 
+                    document
+                        .querySelectorAll(
+                            ".category-chip"
+                        )
+                        .forEach(c =>
+                            c.classList.remove(
+                                "active"
+                            )
+                        );
 
-  if (authNavBtn) {
+                    event.currentTarget
+                        .classList.add("active");
 
-    authNavBtn.addEventListener(
-      "click",
-      () => {
+                    filterListings();
 
-        if (authModal) {
+                }
+            );
 
-          authModal.classList.remove(
-            "hidden"
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-  // ---------------------------------------------------
-  // LIST ITEM BUTTON
-  // ---------------------------------------------------
-
-  const listItemNavBtn =
-    document.getElementById(
-      "list-item-nav-btn"
-    );
+        });
 
 
-  if (listItemNavBtn) {
-
-    listItemNavBtn.addEventListener(
-      "click",
-      () => {
-
-        openListItemModal();
-
-      }
-    );
-
-  }
+    const authNavBtn =
+        document.getElementById(
+            "auth-nav-btn"
+        );
 
 
-  // ---------------------------------------------------
-  // CLOSE MODALS
-  // ---------------------------------------------------
-
-  document
-    .querySelectorAll(".close-modal")
-    .forEach(btn => {
-
-      btn.addEventListener(
+    authNavBtn?.addEventListener(
         "click",
         () => {
 
-          closeAllModals();
+            document
+                .getElementById("auth-modal")
+                ?.classList.remove("hidden");
 
         }
-      );
-
-    });
+    );
 
 
-  // ---------------------------------------------------
-  // CLICK OUTSIDE MODAL
-  // ---------------------------------------------------
+    const listItemNavBtn =
+        document.getElementById(
+            "list-item-nav-btn"
+        );
 
-  document
-    .querySelectorAll(".modal")
-    .forEach(modal => {
 
-      modal.addEventListener(
+    listItemNavBtn?.addEventListener(
         "click",
-        event => {
+        openListItemModal
+    );
 
-          if (
-            event.target === modal
-          ) {
 
-            modal.classList.add(
-              "hidden"
+    document
+        .querySelectorAll(".close-modal")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                closeAllModals
             );
 
-          }
+        });
+
+
+    document
+        .querySelectorAll(".modal")
+        .forEach(modal => {
+
+            modal.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target === modal
+                    ) {
+                        modal.classList.add(
+                            "hidden"
+                        );
+                    }
+
+                }
+            );
+
+        });
+
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Escape"
+            ) {
+                closeAllModals();
+            }
 
         }
-      );
-
-    });
+    );
 
 
-  // ---------------------------------------------------
-  // ESCAPE KEY
-  // ---------------------------------------------------
+    setupAuthentication();
 
-  document.addEventListener(
-    "keydown",
-    event => {
+    setupListingForm();
 
-      if (event.key === "Escape") {
-
-        closeAllModals();
-
-      }
-
-    }
-  );
-
-
-  // ---------------------------------------------------
-  // AUTH FORM
-  // ---------------------------------------------------
-
-  setupAuthentication();
-
-
-  // ---------------------------------------------------
-  // LISTING FORM
-  // ---------------------------------------------------
-
-  setupListingForm();
-
-
-  // ---------------------------------------------------
-  // BOOKING
-  // ---------------------------------------------------
-
-  setupBooking();
+    setupBooking();
 
 }
 
 
 // =====================================================
-// CLOSE ALL MODALS
+// CLOSE MODALS
 // =====================================================
 
 function closeAllModals() {
 
-  document
-    .querySelectorAll(".modal")
-    .forEach(modal => {
-
-      modal.classList.add(
-        "hidden"
-      );
-
-    });
+    document
+        .querySelectorAll(".modal")
+        .forEach(modal =>
+            modal.classList.add("hidden")
+        );
 
 }
 
@@ -1022,251 +1059,234 @@ function closeAllModals() {
 
 function setupAuthentication() {
 
-  let isRegistering = false;
+    let isRegistering = false;
 
-
-  const toggleBtn =
-    document.getElementById(
-      "auth-toggle-btn"
-    );
-
-
-  const authForm =
-    document.getElementById(
-      "auth-form"
-    );
-
-
-  if (toggleBtn) {
-
-    toggleBtn.addEventListener(
-      "click",
-      event => {
-
-        event.preventDefault();
-
-        isRegistering =
-          !isRegistering;
-
-
-        const title =
-          document.getElementById(
-            "auth-title"
-          );
-
-
-        const submitBtn =
-          document.getElementById(
-            "auth-submit-btn"
-          );
-
-
-        const nameGroup =
-          document.getElementById(
-            "name-group"
-          );
-
-
-        const phoneGroup =
-          document.getElementById(
-            "phone-group"
-          );
-
-
-        if (title) {
-
-          title.innerText =
-            isRegistering
-              ? "Create Flex Rent Account"
-              : "Login to Flex Rent";
-
-        }
-
-
-        if (submitBtn) {
-
-          submitBtn.innerText =
-            isRegistering
-              ? "Create Account"
-              : "Login";
-
-        }
-
-
-        if (nameGroup) {
-
-          nameGroup.classList.toggle(
-            "hidden",
-            !isRegistering
-          );
-
-        }
-
-
-        if (phoneGroup) {
-
-          phoneGroup.classList.toggle(
-            "hidden",
-            !isRegistering
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-  if (!authForm) return;
-
-
-  authForm.addEventListener(
-    "submit",
-    async event => {
-
-      event.preventDefault();
-
-
-      const email =
+    const toggleBtn =
         document.getElementById(
-          "auth-email"
-        ).value.trim();
+            "auth-toggle-btn"
+        );
 
-
-      const password =
+    const authForm =
         document.getElementById(
-          "auth-password"
-        ).value;
-
-
-      if (!email || !password) {
-
-        alert(
-          "Please enter email and password."
+            "auth-form"
         );
 
-        return;
 
-      }
+    toggleBtn?.addEventListener(
+        "click",
+        event => {
 
+            event.preventDefault();
 
-      try {
-
-        // REGISTER
-
-        if (isRegistering) {
-
-          const name =
-            document.getElementById(
-              "auth-name"
-            ).value.trim();
+            isRegistering =
+                !isRegistering;
 
 
-          const phone =
-            document.getElementById(
-              "auth-phone"
-            ).value.trim();
+            const title =
+                document.getElementById(
+                    "auth-title"
+                );
+
+            const submitBtn =
+                document.getElementById(
+                    "auth-submit-btn"
+                );
+
+            const nameGroup =
+                document.getElementById(
+                    "name-group"
+                );
+
+            const phoneGroup =
+                document.getElementById(
+                    "phone-group"
+                );
 
 
-          const data =
-            await signUpUser(
-              email,
-              password,
-              name,
-              phone
+            if (title) {
+
+                title.innerText =
+                    isRegistering
+                        ? "Create Flex Rent Account"
+                        : "Login to Flex Rent";
+
+            }
+
+
+            if (submitBtn) {
+
+                submitBtn.innerText =
+                    isRegistering
+                        ? "Create Account"
+                        : "Login";
+
+            }
+
+
+            nameGroup?.classList.toggle(
+                "hidden",
+                !isRegistering
             );
 
-
-          if (data.session) {
-
-            currentUser =
-              data.user;
-
-            await ensureUserProfile();
-
-            updateUIForUser();
-
-            document
-              .getElementById("auth-modal")
-              ?.classList.add("hidden");
-
-
-            alert(
-              "Account created successfully!"
+            phoneGroup?.classList.toggle(
+                "hidden",
+                !isRegistering
             );
-
-          } else {
-
-            alert(
-              "Account created. Please check your email for verification, then login."
-            );
-
-          }
-
-
-          return;
 
         }
+    );
 
 
-        // LOGIN
-
-        const data =
-          await signInUser(
-            email,
-            password
-          );
+    if (!authForm) return;
 
 
-        if (
-          !data ||
-          !data.user
-        ) {
+    authForm.addEventListener(
+        "submit",
+        async event => {
 
-          throw new Error(
-            "Login failed. Please try again."
-          );
+            event.preventDefault();
+
+
+            const email =
+                document
+                    .getElementById("auth-email")
+                    ?.value
+                    .trim();
+
+
+            const password =
+                document
+                    .getElementById("auth-password")
+                    ?.value;
+
+
+            if (!email || !password) {
+
+                alert(
+                    "Please enter email and password."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                if (isRegistering) {
+
+                    const name =
+                        document
+                            .getElementById("auth-name")
+                            ?.value
+                            .trim() || "";
+
+
+                    const phone =
+                        document
+                            .getElementById("auth-phone")
+                            ?.value
+                            .trim() || "";
+
+
+                    const data =
+                        await signUpUser(
+                            email,
+                            password,
+                            name,
+                            phone
+                        );
+
+
+                    if (data?.session) {
+
+                        currentUser =
+                            data.user;
+
+                        await ensureUserProfile();
+
+                        updateUIForUser();
+
+                        document
+                            .getElementById(
+                                "auth-modal"
+                            )
+                            ?.classList.add(
+                                "hidden"
+                            );
+
+                        alert(
+                            "Account created successfully!"
+                        );
+
+                    } else {
+
+                        alert(
+                            "Account created. Please verify your email and then login."
+                        );
+
+                    }
+
+                    return;
+
+                }
+
+
+                const data =
+                    await signInUser(
+                        email,
+                        password
+                    );
+
+
+                if (
+                    !data ||
+                    !data.user
+                ) {
+
+                    throw new Error(
+                        "Login failed."
+                    );
+
+                }
+
+
+                currentUser =
+                    data.user;
+
+                await ensureUserProfile();
+
+                updateUIForUser();
+
+
+                document
+                    .getElementById("auth-modal")
+                    ?.classList.add(
+                        "hidden"
+                    );
+
+
+                alert(
+                    "Logged in successfully!"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Authentication error:",
+                    error
+                );
+
+                alert(
+                    error.message ||
+                    "Authentication failed."
+                );
+
+            }
 
         }
-
-
-        currentUser =
-          data.user;
-
-
-        await ensureUserProfile();
-
-        updateUIForUser();
-
-
-        document
-          .getElementById("auth-modal")
-          ?.classList.add("hidden");
-
-
-        alert(
-          "Logged in successfully!"
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "Authentication error:",
-          error
-        );
-
-
-        alert(
-          error.message ||
-          "Authentication failed."
-        );
-
-      }
-
-    }
-  );
+    );
 
 }
 
@@ -1277,525 +1297,465 @@ function setupAuthentication() {
 
 function setupGoogleLoginButton() {
 
-  const authModal =
-    document.getElementById(
-      "auth-modal"
-    );
+    const button =
+        document.getElementById(
+            "google-login-btn"
+        );
+
+    if (!button) return;
 
 
-  if (!authModal) return;
+    button.addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                const redirectUrl =
+                    window.location.origin +
+                    window.location.pathname;
 
 
-  const googleButton =
-    document.getElementById(
-      "google-login-btn"
-    );
+                const {
+                    error
+                } =
+                    await supabase.auth
+                        .signInWithOAuth({
+                            provider: "google",
+                            options: {
+                                redirectTo:
+                                    redirectUrl
+                            }
+                        });
 
 
-  if (!googleButton) return;
+                if (error) {
+                    throw error;
+                }
 
 
-  googleButton.addEventListener(
-    "click",
-    async () => {
+            } catch (error) {
 
-      try {
+                console.error(
+                    "Google login error:",
+                    error
+                );
 
-        const redirectUrl =
-          window.location.origin +
-          window.location.pathname;
+                alert(
+                    error.message ||
+                    "Google login could not be started."
+                );
 
-
-        const { error } =
-          await supabase.auth
-            .signInWithOAuth({
-
-              provider: "google",
-
-              options: {
-                redirectTo:
-                  redirectUrl
-              }
-
-            });
-
-
-        if (error) {
-
-          throw error;
+            }
 
         }
-
-      } catch (error) {
-
-        console.error(
-          "Google login error:",
-          error
-        );
-
-
-        alert(
-          error.message ||
-          "Google login could not be started."
-        );
-
-      }
-
-    }
-  );
+    );
 
 }
 
 
 // =====================================================
-// PHONE OTP LOGIN
+// PHONE OTP
 // =====================================================
 
 function setupPhoneLogin() {
 
-  const phoneButton =
-    document.getElementById(
-      "phone-login-btn"
-    );
-
-  const otpSection =
-    document.getElementById(
-      "phone-otp-section"
-    );
-
-  const verifyButton =
-    document.getElementById(
-      "verify-phone-otp-btn"
-    );
-
-  const resendButton =
-    document.getElementById(
-      "resend-phone-otp-btn"
-    );
-
-  const phoneInput =
-    document.getElementById(
-      "auth-phone"
-    );
-
-
-  if (!phoneButton) return;
-
-
-  // SEND OTP
-
-  phoneButton.addEventListener(
-    "click",
-    async () => {
-
-      const phone =
-        phoneInput
-          ? phoneInput.value.trim()
-          : "";
-
-
-      if (!phone) {
-
-        alert(
-          "Please enter your phone number first."
+    const phoneButton =
+        document.getElementById(
+            "phone-login-btn"
         );
 
-        phoneInput?.focus();
-
-        return;
-
-      }
-
-
-      if (!phone.startsWith("+")) {
-
-        alert(
-          "Please enter your phone number with country code.\nExample: +919876543210"
+    const otpSection =
+        document.getElementById(
+            "phone-otp-section"
         );
 
-        phoneInput?.focus();
+    const verifyButton =
+        document.getElementById(
+            "verify-phone-otp-btn"
+        );
 
-        return;
+    const resendButton =
+        document.getElementById(
+            "resend-phone-otp-btn"
+        );
 
-      }
-
-
-      try {
-
-        phoneButton.disabled = true;
-
-        phoneButton.innerText =
-          "Sending OTP...";
-
-
-        const { error } =
-          await supabase.auth
-            .signInWithOtp({
-
-              phone:
-                phone
-
-            });
-
-
-        if (error) {
-
-          throw error;
-
-        }
-
-
-        phoneOTPNumber =
-          phone;
-
-
-        if (otpSection) {
-
-          otpSection.classList.remove(
-            "hidden"
-          );
-
-        }
-
-
-        alert(
-          "OTP sent successfully to your phone."
+    const phoneInput =
+        document.getElementById(
+            "auth-phone"
         );
 
 
-      } catch (error) {
-
-        console.error(
-          "Phone OTP error:",
-          error
-        );
+    if (!phoneButton) return;
 
 
-        alert(
-          "OTP could not be sent: " +
-          error.message
-        );
+    phoneButton.addEventListener(
+        "click",
+        async () => {
+
+            const phone =
+                phoneInput?.value.trim() || "";
 
 
-      } finally {
+            if (!phone) {
 
-        phoneButton.disabled = false;
+                alert(
+                    "Please enter your phone number first."
+                );
 
-        phoneButton.innerHTML =
-          `<i class="fa-solid fa-mobile-screen-button"></i>
-           Continue with Phone`;
+                phoneInput?.focus();
 
-      }
+                return;
 
-    }
-  );
-
-
-  // VERIFY OTP
-
-  if (verifyButton) {
-
-    verifyButton.addEventListener(
-      "click",
-      async () => {
-
-        const otpInput =
-          document.getElementById(
-            "phone-otp"
-          );
+            }
 
 
-        const otp =
-          otpInput
-            ? otpInput.value.trim()
-            : "";
+            if (!phone.startsWith("+")) {
+
+                alert(
+                    "Please enter your phone number with country code.\nExample: +919876543210"
+                );
+
+                return;
+
+            }
 
 
-        if (!phoneOTPNumber) {
+            try {
 
-          alert(
-            "Please request an OTP first."
-          );
+                phoneButton.disabled = true;
 
-          return;
-
-        }
+                phoneButton.innerText =
+                    "Sending OTP...";
 
 
-        if (
-          !otp ||
-          otp.length < 4
-        ) {
-
-          alert(
-            "Please enter the OTP."
-          );
-
-          return;
-
-        }
+                const {
+                    error
+                } =
+                    await supabase.auth
+                        .signInWithOtp({
+                            phone
+                        });
 
 
-        try {
-
-          verifyButton.disabled = true;
-
-          verifyButton.innerText =
-            "Verifying...";
+                if (error) {
+                    throw error;
+                }
 
 
-          const { data, error } =
-            await supabase.auth
-              .verifyOtp({
-
-                phone:
-                  phoneOTPNumber,
-
-                token:
-                  otp,
-
-                type:
-                  "sms"
-
-              });
+                phoneOTPNumber =
+                    phone;
 
 
-          if (error) {
-
-            throw error;
-
-          }
+                otpSection?.classList.remove(
+                    "hidden"
+                );
 
 
-          if (
-            !data ||
-            !data.user
-          ) {
-
-            throw new Error(
-              "Phone verification failed."
-            );
-
-          }
+                alert(
+                    "OTP sent successfully."
+                );
 
 
-          currentUser =
-            data.user;
+            } catch (error) {
 
+                console.error(
+                    "Phone OTP error:",
+                    error
+                );
 
-          await ensureUserProfile();
+                alert(
+                    "OTP could not be sent: " +
+                    error.message
+                );
 
-          updateUIForUser();
+            } finally {
 
+                phoneButton.disabled = false;
 
-          document
-            .getElementById("auth-modal")
-            ?.classList.add("hidden");
+                phoneButton.innerHTML =
+                    `<i class="fa-solid fa-mobile-screen-button"></i>
+                    Continue with Phone`;
 
-
-          alert(
-            "Phone login successful!"
-          );
-
-
-        } catch (error) {
-
-          console.error(
-            "OTP verification error:",
-            error
-          );
-
-
-          alert(
-            "OTP verification failed: " +
-            error.message
-          );
-
-
-        } finally {
-
-          verifyButton.disabled = false;
-
-          verifyButton.innerText =
-            "Verify OTP";
+            }
 
         }
-
-      }
     );
 
-  }
+
+    verifyButton?.addEventListener(
+        "click",
+        async () => {
+
+            const otp =
+                document
+                    .getElementById("phone-otp")
+                    ?.value
+                    .trim() || "";
 
 
-  // RESEND OTP
+            if (!phoneOTPNumber) {
 
-  if (resendButton) {
+                alert(
+                    "Please request OTP first."
+                );
 
-    resendButton.addEventListener(
-      "click",
-      async () => {
+                return;
 
-        if (!phoneOTPNumber) {
+            }
 
-          alert(
-            "Please enter your phone number first."
-          );
 
-          return;
+            if (!otp) {
+
+                alert(
+                    "Please enter OTP."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                verifyButton.disabled = true;
+
+                verifyButton.innerText =
+                    "Verifying...";
+
+
+                const {
+                    data,
+                    error
+                } =
+                    await supabase.auth
+                        .verifyOtp({
+                            phone:
+                                phoneOTPNumber,
+                            token:
+                                otp,
+                            type:
+                                "sms"
+                        });
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                if (!data?.user) {
+
+                    throw new Error(
+                        "Phone verification failed."
+                    );
+
+                }
+
+
+                currentUser =
+                    data.user;
+
+                await ensureUserProfile();
+
+                updateUIForUser();
+
+
+                document
+                    .getElementById(
+                        "auth-modal"
+                    )
+                    ?.classList.add(
+                        "hidden"
+                    );
+
+
+                alert(
+                    "Phone login successful!"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "OTP verification error:",
+                    error
+                );
+
+                alert(
+                    "OTP verification failed: " +
+                    error.message
+                );
+
+            } finally {
+
+                verifyButton.disabled = false;
+
+                verifyButton.innerText =
+                    "Verify OTP";
+
+            }
 
         }
-
-
-        try {
-
-          resendButton.disabled = true;
-
-          resendButton.innerText =
-            "Sending...";
-
-
-          const { error } =
-            await supabase.auth
-              .signInWithOtp({
-
-                phone:
-                  phoneOTPNumber
-
-              });
-
-
-          if (error) {
-
-            throw error;
-
-          }
-
-
-          alert(
-            "New OTP has been sent."
-          );
-
-
-        } catch (error) {
-
-          console.error(
-            "Resend OTP error:",
-            error
-          );
-
-
-          alert(
-            "Could not resend OTP: " +
-            error.message
-          );
-
-
-        } finally {
-
-          resendButton.disabled = false;
-
-          resendButton.innerText =
-            "Resend OTP";
-
-        }
-
-      }
     );
 
-  }
+
+    resendButton?.addEventListener(
+        "click",
+        async () => {
+
+            if (!phoneOTPNumber) {
+
+                alert(
+                    "Please enter your phone number first."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                resendButton.disabled = true;
+
+                resendButton.innerText =
+                    "Sending...";
+
+
+                const {
+                    error
+                } =
+                    await supabase.auth
+                        .signInWithOtp({
+                            phone:
+                                phoneOTPNumber
+                        });
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                alert(
+                    "New OTP has been sent."
+                );
+
+
+            } catch (error) {
+
+                alert(
+                    "Could not resend OTP: " +
+                    error.message
+                );
+
+            } finally {
+
+                resendButton.disabled = false;
+
+                resendButton.innerText =
+                    "Resend OTP";
+
+            }
+
+        }
+    );
 
 }
 
 
 // =====================================================
-// ENSURE USER PROFILE
+// PROFILE
 // =====================================================
 
 async function ensureUserProfile() {
 
-  if (!currentUser) return;
+    if (!currentUser) return;
 
 
-  try {
+    try {
 
-    const profile =
-      await fetchUserProfile(
-        currentUser.id
-      );
+        const profile =
+            await fetchUserProfile(
+                currentUser.id
+            );
 
 
-    if (profile) {
+        if (profile) {
 
-      currentUserProfile =
-        profile;
+            currentUserProfile =
+                profile;
 
-      return;
+            return;
+
+        }
+
+
+        const metadata =
+            currentUser.user_metadata || {};
+
+
+        const fullName =
+            metadata.full_name ||
+            metadata.name ||
+            currentUser.email
+                ?.split("@")[0] ||
+            "Flex Rent User";
+
+
+        const phone =
+            metadata.phone || "";
+
+
+        const {
+            data,
+            error
+        } =
+            await supabase
+                .from("profiles")
+                .upsert(
+                    {
+                        id:
+                            currentUser.id,
+                        email:
+                            currentUser.email || "",
+                        full_name:
+                            fullName,
+                        phone
+                    },
+                    {
+                        onConflict:
+                            "id"
+                    }
+                )
+                .select()
+                .maybeSingle();
+
+
+        if (error) {
+
+            console.warn(
+                "Profile creation failed:",
+                error
+            );
+
+            return;
+
+        }
+
+
+        currentUserProfile =
+            data;
+
+    } catch (error) {
+
+        console.warn(
+            "Profile check failed:",
+            error
+        );
 
     }
-
-
-    const metadata =
-      currentUser.user_metadata ||
-      {};
-
-
-    const fullName =
-      metadata.full_name ||
-      metadata.name ||
-      currentUser.email
-        ?.split("@")[0] ||
-      "Flex Rent User";
-
-
-    const phone =
-      metadata.phone ||
-      "";
-
-
-    const { data, error } =
-      await supabase
-        .from("profiles")
-        .upsert(
-          {
-            id: currentUser.id,
-            email:
-              currentUser.email || "",
-            full_name:
-              fullName,
-            phone:
-              phone
-          },
-          {
-            onConflict: "id"
-          }
-        )
-        .select()
-        .maybeSingle();
-
-
-    if (error) {
-
-      console.warn(
-        "Could not create profile:",
-        error
-      );
-
-      return;
-
-    }
-
-
-    currentUserProfile =
-      data;
-
-  } catch (error) {
-
-    console.warn(
-      "Profile check failed:",
-      error
-    );
-
-  }
 
 }
 
@@ -1806,116 +1766,110 @@ async function ensureUserProfile() {
 
 async function checkSession() {
 
-  try {
+    try {
 
-    const { data } =
-      await supabase.auth
-        .getSession();
-
-
-    if (
-      data &&
-      data.session &&
-      data.session.user
-    ) {
-
-      currentUser =
-        data.session.user;
+        const {
+            data
+        } =
+            await supabase.auth
+                .getSession();
 
 
-      await ensureUserProfile();
+        if (
+            data?.session?.user
+        ) {
 
-      updateUIForUser();
+            currentUser =
+                data.session.user;
 
-    } else {
+            await ensureUserProfile();
 
-      currentUser = null;
+            updateUIForUser();
 
-      updateUIForUser();
+        } else {
+
+            currentUser = null;
+
+            updateUIForUser();
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Session check failed:",
+            error
+        );
 
     }
 
-  } catch (error) {
 
-    console.error(
-      "Session check failed:",
-      error
+    supabase.auth.onAuthStateChange(
+        async (event, session) => {
+
+            if (session?.user) {
+
+                currentUser =
+                    session.user;
+
+                await ensureUserProfile();
+
+                updateUIForUser();
+
+            } else {
+
+                currentUser = null;
+
+                currentUserProfile = null;
+
+                updateUIForUser();
+
+            }
+
+        }
     );
-
-  }
-
-
-  supabase.auth.onAuthStateChange(
-    async (event, session) => {
-
-      if (
-        session &&
-        session.user
-      ) {
-
-        currentUser =
-          session.user;
-
-
-        await ensureUserProfile();
-
-        updateUIForUser();
-
-      } else {
-
-        currentUser = null;
-
-        currentUserProfile = null;
-
-        updateUIForUser();
-
-      }
-
-    }
-  );
 
 }
 
 
 // =====================================================
-// UPDATE UI AFTER LOGIN
+// UPDATE USER UI
 // =====================================================
 
 function updateUIForUser() {
 
-  const authButton =
-    document.getElementById(
-      "auth-nav-btn"
-    );
+    const authButton =
+        document.getElementById(
+            "auth-nav-btn"
+        );
+
+    const dashboardButton =
+        document.getElementById(
+            "dashboard-nav-btn"
+        );
 
 
-  const dashboardButton =
-    document.getElementById(
-      "dashboard-nav-btn"
-    );
+    if (currentUser) {
 
+        authButton?.classList.add(
+            "hidden"
+        );
 
-  if (currentUser) {
+        dashboardButton?.classList.remove(
+            "hidden"
+        );
 
-    authButton?.classList.add(
-      "hidden"
-    );
+    } else {
 
-    dashboardButton?.classList.remove(
-      "hidden"
-    );
+        authButton?.classList.remove(
+            "hidden"
+        );
 
-  } else {
+        dashboardButton?.classList.add(
+            "hidden"
+        );
 
-    authButton?.classList.remove(
-      "hidden"
-    );
-
-    dashboardButton?.classList.add(
-      "hidden"
-    );
-
-  }
+    }
 
 }
 
@@ -1926,130 +1880,114 @@ function updateUIForUser() {
 
 function setupDashboard() {
 
-  const dashboardButton =
-    document.getElementById(
-      "dashboard-nav-btn"
-    );
+    const dashboardButton =
+        document.getElementById(
+            "dashboard-nav-btn"
+        );
 
+    const dashboardSection =
+        document.getElementById(
+            "dashboard-section"
+        );
 
-  const dashboardSection =
-    document.getElementById(
-      "dashboard-section"
-    );
-
-
-  const logoutButton =
-    document.getElementById(
-      "logout-btn"
-    );
-
-
-  if (
-    dashboardButton &&
-    dashboardSection
-  ) {
-
-    dashboardButton.addEventListener(
-      "click",
-      async () => {
-
-        if (!currentUser) {
-
-          alert(
-            "Please login first."
-          );
-
-          return;
-
-        }
-
-
-        dashboardSection
-          .classList
-          .remove("hidden");
-
-
-        const marketplace =
-          document.querySelector(
-            ".marketplace"
-          );
-
-
-        marketplace?.classList.add(
-          "hidden"
+    const logoutButton =
+        document.getElementById(
+            "logout-btn"
         );
 
 
-        await loadDashboard();
+    dashboardButton?.addEventListener(
+        "click",
+        async () => {
+
+            if (!currentUser) {
+
+                alert(
+                    "Please login first."
+                );
+
+                return;
+
+            }
 
 
-        dashboardSection.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-
-      }
-    );
-
-  }
+            dashboardSection
+                ?.classList.remove(
+                    "hidden"
+                );
 
 
-  if (logoutButton) {
-
-    logoutButton.addEventListener(
-      "click",
-      async () => {
-
-        try {
-
-          await signOutUser();
+            document
+                .querySelector(".marketplace")
+                ?.classList.add(
+                    "hidden"
+                );
 
 
-          currentUser = null;
-
-          currentUserProfile = null;
+            await loadDashboard();
 
 
-          updateUIForUser();
-
-
-          dashboardSection?.classList.add(
-            "hidden"
-          );
-
-
-          document
-            .querySelector(".marketplace")
-            ?.classList.remove("hidden");
-
-
-          window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-          });
-
-
-          alert(
-            "Logged out successfully."
-          );
-
-
-        } catch (error) {
-
-          alert(
-            error.message ||
-            "Logout failed."
-          );
+            dashboardSection?.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
 
         }
-
-      }
     );
 
-  }
+
+    logoutButton?.addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                await signOutUser();
+
+                currentUser = null;
+                currentUserProfile = null;
+
+                updateUIForUser();
 
 
-  setupDashboardTabs();
+                dashboardSection
+                    ?.classList.add(
+                        "hidden"
+                    );
+
+
+                document
+                    .querySelector(".marketplace")
+                    ?.classList.remove(
+                        "hidden"
+                    );
+
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+
+
+                alert(
+                    "Logged out successfully."
+                );
+
+
+            } catch (error) {
+
+                alert(
+                    error.message ||
+                    "Logout failed."
+                );
+
+            }
+
+        }
+    );
+
+
+    setupDashboardTabs();
 
 }
 
@@ -2060,91 +1998,79 @@ function setupDashboard() {
 
 function setupDashboardTabs() {
 
-  const tabs =
-    document.querySelectorAll(
-      ".tab-btn"
-    );
+    document
+        .querySelectorAll(".tab-btn")
+        .forEach(tab => {
+
+            tab.addEventListener(
+                "click",
+                async () => {
+
+                    document
+                        .querySelectorAll(
+                            ".tab-btn"
+                        )
+                        .forEach(t =>
+                            t.classList.remove(
+                                "active"
+                            )
+                        );
 
 
-  tabs.forEach(tab => {
-
-    tab.addEventListener(
-      "click",
-      async () => {
-
-        tabs.forEach(t =>
-          t.classList.remove(
-            "active"
-          )
-        );
+                    tab.classList.add(
+                        "active"
+                    );
 
 
-        tab.classList.add(
-          "active"
-        );
+                    const tabId =
+                        tab.dataset.tab;
 
 
-        const tabId =
-          tab.dataset.tab;
+                    document
+                        .querySelectorAll(
+                            ".tab-content"
+                        )
+                        .forEach(content =>
+                            content.classList.add(
+                                "hidden"
+                            )
+                        );
 
 
-        document
-          .querySelectorAll(
-            ".tab-content"
-          )
-          .forEach(content => {
+                    document
+                        .getElementById(tabId)
+                        ?.classList.remove(
+                            "hidden"
+                        );
 
-            content.classList.add(
-              "hidden"
+
+                    if (
+                        tabId ===
+                        "tab-listings"
+                    ) {
+                        await loadMyListings();
+                    }
+
+
+                    if (
+                        tabId ===
+                        "tab-bookings"
+                    ) {
+                        await loadMyBookings();
+                    }
+
+
+                    if (
+                        tabId ===
+                        "tab-profile"
+                    ) {
+                        await loadProfile();
+                    }
+
+                }
             );
 
-          });
-
-
-        const selected =
-          document.getElementById(
-            tabId
-          );
-
-
-        selected?.classList.remove(
-          "hidden"
-        );
-
-
-        if (
-          tabId ===
-          "tab-listings"
-        ) {
-
-          await loadMyListings();
-
-        }
-
-
-        if (
-          tabId ===
-          "tab-bookings"
-        ) {
-
-          await loadMyBookings();
-
-        }
-
-
-        if (
-          tabId ===
-          "tab-profile"
-        ) {
-
-          await loadProfile();
-
-        }
-
-      }
-    );
-
-  });
+        });
 
 }
 
@@ -2155,9 +2081,9 @@ function setupDashboardTabs() {
 
 async function loadDashboard() {
 
-  await loadMyListings();
+    await loadMyListings();
 
-  await loadProfile();
+    await loadProfile();
 
 }
 
@@ -2168,172 +2094,167 @@ async function loadDashboard() {
 
 async function loadMyListings() {
 
-  const container =
-    document.getElementById(
-      "my-listings-grid"
-    );
+    const container =
+        document.getElementById(
+            "my-listings-grid"
+        );
 
 
-  if (!container) return;
+    if (!container) return;
 
 
-  container.innerHTML =
-    `<p>Loading your listings...</p>`;
+    if (!currentUser) {
 
+        container.innerHTML =
+            `<p>Please login first.</p>`;
 
-  if (!currentUser) {
-
-    container.innerHTML =
-      `<p>Please login first.</p>`;
-
-    return;
-
-  }
-
-
-  try {
-
-    const data =
-      await fetchUserListings(
-        currentUser.id
-      );
-
-
-    if (
-      !data ||
-      data.length === 0
-    ) {
-
-      container.innerHTML = `
-
-        <div class="empty-state">
-
-          <i class="fa-solid fa-box-open"></i>
-
-          <p>
-            You have not listed any items yet.
-          </p>
-
-          <button
-            class="btn btn-primary"
-            onclick="openListItemModal()"
-          >
-            List Your First Item
-          </button>
-
-        </div>
-
-      `;
-
-      return;
+        return;
 
     }
 
 
-    const normalized =
-      data.map(normalizeListing);
+    container.innerHTML =
+        `<p>Loading your listings...</p>`;
 
 
-    container.innerHTML = "";
+    try {
+
+        const data =
+            await fetchUserListings(
+                currentUser.id
+            );
 
 
-    normalized.forEach(item => {
+        if (
+            !data ||
+            data.length === 0
+        ) {
 
-      const card =
-        document.createElement("div");
+            container.innerHTML = `
 
+                <div class="empty-state">
 
-      card.className =
-        "card";
+                    <i class="fa-solid fa-box-open"></i>
 
+                    <p>
+                        You have not listed any items yet.
+                    </p>
 
-      card.innerHTML = `
+                    <button
+                        class="btn btn-primary"
+                        onclick="openListItemModal()"
+                    >
+                        List Your First Item
+                    </button>
 
-        <img
-          src="${escapeAttribute(
-            item.image_url ||
-            "https://via.placeholder.com/600x400?text=No+Image"
-          )}"
-          alt="${escapeAttribute(
-            item.title
-          )}"
-        >
+                </div>
 
-        <div class="card-body">
+            `;
 
-          <span class="card-category">
-            ${escapeHTML(item.category)}
-          </span>
+            return;
 
-          <h3 class="card-title">
-            ${escapeHTML(item.title)}
-          </h3>
-
-          <p class="card-location">
-
-            <i class="fa-solid fa-location-dot"></i>
-
-            ${escapeHTML(item.location)}
-
-          </p>
-
-          <div class="card-price">
-
-            ${formatINR(item.price_per_day)}
-
-            <small>/ day</small>
-
-          </div>
-
-          <span style="
-            color:#10B981;
-            font-size:0.85rem;
-          ">
-
-            <i class="fa-solid fa-circle"></i>
-
-            ${item.available !== false
-              ? " Available"
-              : " Unavailable"}
-
-          </span>
-
-        </div>
-
-      `;
+        }
 
 
-      container.appendChild(card);
-
-    });
-
-  } catch (error) {
-
-    console.error(
-      "My listings error:",
-      error
-    );
+        container.innerHTML = "";
 
 
-    container.innerHTML = `
+        data
+            .map(normalizeListing)
+            .forEach(item => {
 
-      <div class="empty-state">
+                const card =
+                    document.createElement("div");
 
-        <p>
-          Could not load your listings.
-        </p>
+                card.className = "card";
 
-        <small>
-          ${escapeHTML(
-            error.message || ""
-          )}
-        </small>
 
-      </div>
+                card.innerHTML = `
 
-    `;
+                    <img
+                        src="${escapeAttribute(
+                            item.image_url ||
+                            "https://via.placeholder.com/600x400?text=No+Image"
+                        )}"
+                        alt="${escapeAttribute(item.title)}"
+                    >
 
-  }
+                    <div class="card-body">
+
+                        <span class="card-category">
+                            ${escapeHTML(item.category)}
+                        </span>
+
+                        <h3 class="card-title">
+                            ${escapeHTML(item.title)}
+                        </h3>
+
+                        <p class="card-location">
+
+                            <i class="fa-solid fa-location-dot"></i>
+
+                            ${escapeHTML(item.location)}
+
+                        </p>
+
+                        <div class="card-price">
+
+                            ${formatINR(item.price_per_day)}
+
+                            <small>/ day</small>
+
+                        </div>
+
+                        <p style="
+                            color:${item.available !== false ? "#10B981" : "#EF4444"};
+                            font-size:.85rem;
+                        ">
+
+                            <i class="fa-solid fa-circle"></i>
+
+                            ${
+                                item.available !== false
+                                    ? " Available"
+                                    : " Unavailable"
+                            }
+
+                        </p>
+
+                    </div>
+
+                `;
+
+
+                container.appendChild(card);
+
+            });
+
+
+    } catch (error) {
+
+        console.error(
+            "My listings error:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="empty-state">
+
+                <p>
+                    Could not load your listings.
+                </p>
+
+                <small>
+                    ${escapeHTML(error.message || "")}
+                </small>
+
+            </div>
+
+        `;
+
+    }
 
 }
 
@@ -2344,147 +2265,145 @@ async function loadMyListings() {
 
 async function loadMyBookings() {
 
-  const container =
-    document.getElementById(
-      "my-bookings-list"
-    );
+    const container =
+        document.getElementById(
+            "my-bookings-list"
+        );
 
 
-  if (!container) return;
+    if (!container) return;
 
 
-  container.innerHTML =
-    `<p>Loading your bookings...</p>`;
+    if (!currentUser) {
 
+        container.innerHTML =
+            `<p>Please login first.</p>`;
 
-  if (!currentUser) {
-
-    container.innerHTML =
-      `<p>Please login first.</p>`;
-
-    return;
-
-  }
-
-
-  try {
-
-    const bookings =
-      await fetchUserBookings(
-        currentUser.id
-      );
-
-
-    if (
-      !bookings ||
-      bookings.length === 0
-    ) {
-
-      container.innerHTML = `
-
-        <div class="empty-state">
-
-          <i class="fa-solid fa-calendar-xmark"></i>
-
-          <p>
-            You have no bookings yet.
-          </p>
-
-        </div>
-
-      `;
-
-      return;
+        return;
 
     }
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        `<p>Loading your bookings...</p>`;
 
 
-    bookings.forEach(booking => {
+    try {
 
-      const card =
-        document.createElement("div");
-
-
-      card.className =
-        "booking-card";
+        const bookings =
+            await fetchUserBookings(
+                currentUser.id
+            );
 
 
-      card.innerHTML = `
+        if (
+            !bookings ||
+            bookings.length === 0
+        ) {
 
-        <h3>
-          ${escapeHTML(
-            booking.item_name ||
-            "Rental Item"
-          )}
-        </h3>
+            container.innerHTML = `
 
-        <p>
-          <strong>Start Date:</strong>
-          ${escapeHTML(
-            booking.start_date || "-"
-          )}
-        </p>
+                <div class="empty-state">
 
-        <p>
-          <strong>Duration:</strong>
-          ${booking.rental_days || 1}
-          day(s)
-        </p>
+                    <i class="fa-solid fa-calendar-xmark"></i>
 
-        <p>
-          <strong>Total:</strong>
-          ${formatINR(
-            booking.total_amount || 0
-          )}
-        </p>
+                    <p>
+                        You have no bookings yet.
+                    </p>
 
-        <p>
-          <strong>Payment:</strong>
-          ${escapeHTML(
-            booking.payment_method ||
-            "-"
-          )}
-        </p>
+                </div>
 
-        <p>
-          <strong>Status:</strong>
-          ${escapeHTML(
-            booking.status ||
-            "pending"
-          )}
-        </p>
+            `;
 
-      `;
+            return;
+
+        }
 
 
-      container.appendChild(card);
-
-    });
-
-  } catch (error) {
-
-    console.error(
-      "Bookings error:",
-      error
-    );
+        container.innerHTML = "";
 
 
-    container.innerHTML = `
+        bookings.forEach(booking => {
 
-      <div class="empty-state">
+            const card =
+                document.createElement("div");
 
-        <p>
-          Could not load your bookings.
-        </p>
+            card.className =
+                "booking-card";
 
-      </div>
 
-    `;
+            card.innerHTML = `
 
-  }
+                <h3>
+                    ${escapeHTML(
+                        booking.item_name ||
+                        "Rental Item"
+                    )}
+                </h3>
+
+                <p>
+                    <strong>Start Date:</strong>
+                    ${escapeHTML(
+                        booking.start_date || "-"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Duration:</strong>
+                    ${booking.rental_days || 1}
+                    day(s)
+                </p>
+
+                <p>
+                    <strong>Total:</strong>
+                    ${formatINR(
+                        booking.total_amount || 0
+                    )}
+                </p>
+
+                <p>
+                    <strong>Payment:</strong>
+                    ${escapeHTML(
+                        booking.payment_method || "-"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    ${escapeHTML(
+                        booking.status || "pending"
+                    )}
+                </p>
+
+            `;
+
+
+            container.appendChild(card);
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Bookings error:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="empty-state">
+
+                <p>
+                    Could not load your bookings.
+                </p>
+
+            </div>
+
+        `;
+
+    }
 
 }
 
@@ -2495,103 +2414,86 @@ async function loadMyBookings() {
 
 async function loadProfile() {
 
-  const container =
-    document.getElementById(
-      "profile-info"
-    );
+    const container =
+        document.getElementById(
+            "profile-info"
+        );
 
 
-  if (!container) return;
+    if (!container) return;
 
 
-  if (!currentUser) {
+    if (!currentUser) {
 
-    container.innerHTML =
-      `<p>Please login first.</p>`;
+        container.innerHTML =
+            `<p>Please login first.</p>`;
 
-    return;
-
-  }
-
-
-  try {
-
-    if (!currentUserProfile) {
-
-      await ensureUserProfile();
+        return;
 
     }
 
 
-    const profile =
-      currentUserProfile;
+    try {
+
+        if (!currentUserProfile) {
+            await ensureUserProfile();
+        }
 
 
-    container.innerHTML = `
+        const profile =
+            currentUserProfile;
 
-      <h3>
 
-        <i class="fa-solid fa-user"></i>
+        container.innerHTML = `
 
-        Profile Information
+            <h3>
 
-      </h3>
+                <i class="fa-solid fa-user"></i>
 
-      <br>
+                Profile Information
 
-      <p>
+            </h3>
 
-        <strong>Name:</strong>
+            <br>
 
-        ${escapeHTML(
-          profile?.full_name ||
-          "Not provided"
-        )}
+            <p>
+                <strong>Name:</strong>
+                ${escapeHTML(
+                    profile?.full_name ||
+                    "Not provided"
+                )}
+            </p>
 
-      </p>
+            <p>
+                <strong>Email:</strong>
+                ${escapeHTML(
+                    currentUser.email || ""
+                )}
+            </p>
 
-      <p>
+            <p>
+                <strong>Phone:</strong>
+                ${escapeHTML(
+                    profile?.phone ||
+                    "Not provided"
+                )}
+            </p>
 
-        <strong>Email:</strong>
+            <p>
+                <strong>Account ID:</strong>
+                ${escapeHTML(
+                    currentUser.id
+                )}
+            </p>
 
-        ${escapeHTML(
-          currentUser.email || ""
-        )}
+        `;
 
-      </p>
+    } catch (error) {
 
-      <p>
+        container.innerHTML =
+            `<p>Could not load profile.</p>`;
 
-        <strong>Phone:</strong>
-
-        ${escapeHTML(
-          profile?.phone ||
-          "Not provided"
-        )}
-
-      </p>
-
-      <p>
-
-        <strong>Account ID:</strong>
-
-        ${escapeHTML(
-          currentUser.id
-        )}
-
-      </p>
-
-    `;
-
-  } catch (error) {
-
-    container.innerHTML = `
-      <p>
-        Could not load profile.
-      </p>
-    `;
-
-  }
+    }
 
 }
 
@@ -2601,46 +2503,45 @@ async function loadProfile() {
 // =====================================================
 
 window.openListItemModal =
-  function () {
+    function () {
 
-    const modal =
-      document.getElementById(
-        "list-item-modal"
-      );
+        if (!currentUser) {
 
+            alert(
+                "Please login first."
+            );
 
-    if (!currentUser) {
+            document
+                .getElementById("auth-modal")
+                ?.classList.remove(
+                    "hidden"
+                );
 
-      alert(
-        "Please login first."
-      );
+            return;
 
-      document
-        .getElementById("auth-modal")
-        ?.classList.remove("hidden");
-
-      return;
-
-    }
+        }
 
 
-    // If user already selected a location,
-    // show it in listing form.
-
-    if (selectedLocation) {
-
-      applyListingLocation(
-        selectedLocation
-      );
-
-    }
+        const modal =
+            document.getElementById(
+                "list-item-modal"
+            );
 
 
-    modal?.classList.remove(
-      "hidden"
-    );
+        if (selectedLocation) {
 
-  };
+            applyListingLocation(
+                selectedLocation
+            );
+
+        }
+
+
+        modal?.classList.remove(
+            "hidden"
+        );
+
+    };
 
 
 // =====================================================
@@ -2649,481 +2550,459 @@ window.openListItemModal =
 
 function setupListingForm() {
 
-  const listingForm =
-    document.getElementById(
-      "listing-form"
-    );
-
-
-  if (!listingForm) return;
-
-
-  listingForm.addEventListener(
-    "submit",
-    async event => {
-
-      event.preventDefault();
-
-
-      if (!currentUser) {
-
-        alert(
-          "Please login first."
-        );
-
-        return;
-
-      }
-
-
-      const imageInput =
+    const listingForm =
         document.getElementById(
-          "item-image"
+            "listing-form"
         );
 
 
-      const imageFile =
-        imageInput &&
-        imageInput.files
-          ? imageInput.files[0]
-          : null;
+    if (!listingForm) return;
 
 
-      if (!imageFile) {
+    listingForm.addEventListener(
+        "submit",
+        async event => {
 
-        alert(
-          "Please select an image."
-        );
-
-        return;
-
-      }
+            event.preventDefault();
 
 
-      try {
+            if (!currentUser) {
 
-        // Upload image
+                alert(
+                    "Please login first."
+                );
 
-        alert(
-          "Uploading image..."
-        );
+                return;
 
-
-        const imageUrl =
-          await uploadListingImage(
-            imageFile
-          );
+            }
 
 
-        // Form values
+            try {
 
-        const title =
-          document.getElementById(
-            "item-title"
-          ).value.trim();
-
-
-        const category =
-          document.getElementById(
-            "item-category"
-          ).value;
+                const imageInput =
+                    document.getElementById(
+                        "item-image"
+                    );
 
 
-        const price =
-          parseFloat(
-            document.getElementById(
-              "item-price"
-            ).value
-          );
+                const imageFile =
+                    imageInput?.files?.[0];
 
 
-        const locationInput =
-          document.getElementById(
-            "item-location"
-          );
+                if (!imageFile) {
+
+                    throw new Error(
+                        "Please select an image."
+                    );
+
+                }
 
 
-        let location =
-          locationInput
-            ? locationInput.value.trim()
-            : "";
+                const title =
+                    document
+                        .getElementById("item-title")
+                        ?.value
+                        .trim();
 
 
-        const description =
-          document.getElementById(
-            "item-description"
-          ).value.trim();
+                const category =
+                    document
+                        .getElementById("item-category")
+                        ?.value;
 
 
-        if (!title) {
+                const price =
+                    parseFloat(
+                        document
+                            .getElementById("item-price")
+                            ?.value
+                    );
 
-          throw new Error(
-            "Please enter item name."
-          );
+
+                const locationInput =
+                    document.getElementById(
+                        "item-location"
+                    );
+
+
+                let location =
+                    locationInput?.value.trim() ||
+                    "";
+
+
+                const description =
+                    document
+                        .getElementById(
+                            "item-description"
+                        )
+                        ?.value
+                        .trim() || "";
+
+
+                if (!title) {
+                    throw new Error(
+                        "Please enter item name."
+                    );
+                }
+
+
+                if (
+                    !Number.isFinite(price) ||
+                    price <= 0
+                ) {
+                    throw new Error(
+                        "Please enter a valid price."
+                    );
+                }
+
+
+                if (
+                    selectedListingLocation
+                        ?.display
+                ) {
+
+                    location =
+                        selectedListingLocation.display;
+
+                }
+
+
+                if (!location) {
+
+                    throw new Error(
+                        "Please select the item location."
+                    );
+
+                }
+
+
+                alert(
+                    "Uploading image..."
+                );
+
+
+                const imageUrl =
+                    await uploadListingImage(
+                        imageFile
+                    );
+
+
+                let coordinates = null;
+
+
+                if (
+                    selectedListingLocation &&
+                    Number.isFinite(
+                        Number(
+                            selectedListingLocation.lat
+                        )
+                    ) &&
+                    Number.isFinite(
+                        Number(
+                            selectedListingLocation.lng
+                        )
+                    )
+                ) {
+
+                    coordinates = {
+
+                        lat:
+                            Number(
+                                selectedListingLocation.lat
+                            ),
+
+                        lng:
+                            Number(
+                                selectedListingLocation.lng
+                            )
+
+                    };
+
+                } else {
+
+                    coordinates =
+                        await getCurrentLocation();
+
+                }
+
+
+                const listingData = {
+
+                    owner_id:
+                        currentUser.id,
+
+                    name:
+                        title,
+
+                    category:
+                        category,
+
+                    price:
+                        price,
+
+                    location:
+                        location,
+
+                    latitude:
+                        coordinates?.lat ??
+                        null,
+
+                    longitude:
+                        coordinates?.lng ??
+                        null,
+
+                    image_url:
+                        imageUrl,
+
+                    description:
+                        description,
+
+                    is_available:
+                        true
+
+                };
+
+
+                const created =
+                    await createListing(
+                        listingData
+                    );
+
+
+                const normalized =
+                    normalizeListing(
+                        created
+                    );
+
+
+                listings.unshift(
+                    normalized
+                );
+
+
+                renderListings(
+                    listings
+                );
+
+                updateMapMarkers(
+                    listings
+                );
+
+
+                document
+                    .getElementById(
+                        "list-item-modal"
+                    )
+                    ?.classList.add(
+                        "hidden"
+                    );
+
+
+                listingForm.reset();
+
+                selectedListingLocation =
+                    null;
+
+
+                const locationText =
+                    document.getElementById(
+                        "listing-location-text"
+                    );
+
+
+                if (locationText) {
+
+                    locationText.innerText =
+                        "Select where this item is available";
+
+                }
+
+
+                alert(
+                    "Item published successfully!"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Listing error:",
+                    error
+                );
+
+
+                alert(
+                    error.message ||
+                    "Failed to publish listing."
+                );
+
+            }
 
         }
-
-
-        if (
-          !Number.isFinite(price) ||
-          price <= 0
-        ) {
-
-          throw new Error(
-            "Please enter a valid price."
-          );
-
-        }
-
-
-        // If location has been selected,
-        // use that address.
-
-        if (
-          selectedListingLocation &&
-          selectedListingLocation.display
-        ) {
-
-          location =
-            selectedListingLocation.display;
-
-        }
-
-
-        if (!location) {
-
-          throw new Error(
-            "Please select the item location."
-          );
-
-        }
-
-
-        // GPS
-
-        let coordinates = null;
-
-
-        if (
-          selectedListingLocation &&
-          Number.isFinite(
-            Number(
-              selectedListingLocation.lat
-            )
-          ) &&
-          Number.isFinite(
-            Number(
-              selectedListingLocation.lng
-            )
-          )
-        ) {
-
-          coordinates = {
-
-            lat:
-              Number(
-                selectedListingLocation.lat
-              ),
-
-            lng:
-              Number(
-                selectedListingLocation.lng
-              )
-
-          };
-
-        } else {
-
-          coordinates =
-            await getCurrentLocation();
-
-        }
-
-
-        // Listing data
-
-        const listingData = {
-
-          owner_id:
-            currentUser.id,
-
-          name:
-            title,
-
-          category:
-            category,
-
-          price:
-            price,
-
-          location:
-            location,
-
-          latitude:
-            coordinates
-              ? coordinates.lat
-              : null,
-
-          longitude:
-            coordinates
-              ? coordinates.lng
-              : null,
-
-          image_url:
-            imageUrl,
-
-          description:
-            description,
-
-          is_available:
-            true
-
-        };
-
-
-        // Save
-
-        const created =
-          await createListing(
-            listingData
-          );
-
-
-        const normalized =
-          normalizeListing(
-            created
-          );
-
-
-        listings.unshift(
-          normalized
-        );
-
-
-        renderListings(
-          listings
-        );
-
-
-        updateMapMarkers(
-          listings
-        );
-
-
-        document
-          .getElementById(
-            "list-item-modal"
-          )
-          ?.classList.add("hidden");
-
-
-        listingForm.reset();
-
-
-        selectedListingLocation =
-          null;
-
-
-        const listingText =
-          document.getElementById(
-            "listing-location-text"
-          );
-
-
-        if (listingText) {
-
-          listingText.innerText =
-            "Select where this item is available";
-
-        }
-
-
-        alert(
-          "Item published successfully!"
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "Listing error:",
-          error
-        );
-
-
-        alert(
-          error.message ||
-          "Failed to publish listing."
-        );
-
-      }
-
-    }
-  );
+    );
 
 }
 
 
 // =====================================================
-// GPS LOCATION
+// GPS
 // =====================================================
 
 function getCurrentLocation() {
 
-  return new Promise(resolve => {
+    return new Promise(resolve => {
 
-    if (
-      !navigator.geolocation
-    ) {
+        if (!navigator.geolocation) {
 
-      resolve(null);
+            resolve(null);
 
-      return;
+            return;
 
-    }
+        }
 
 
-    navigator.geolocation.getCurrentPosition(
+        navigator.geolocation.getCurrentPosition(
 
-      position => {
+            position => {
 
-        resolve({
+                resolve({
 
-          lat:
-            position.coords.latitude,
+                    lat:
+                        position.coords.latitude,
 
-          lng:
-            position.coords.longitude
+                    lng:
+                        position.coords.longitude,
 
-        });
+                    accuracy:
+                        position.coords.accuracy
 
-      },
+                });
 
-      error => {
+            },
 
-        console.warn(
-          "Location permission not available:",
-          error.message
+            error => {
+
+                console.warn(
+                    "Location permission error:",
+                    error.message
+                );
+
+                resolve(null);
+
+            },
+
+            {
+                enableHighAccuracy:
+                    true,
+
+                timeout:
+                    15000,
+
+                maximumAge:
+                    0
+            }
+
         );
 
-        resolve(null);
-
-      },
-
-      {
-
-        enableHighAccuracy: true,
-
-        timeout: 10000,
-
-        maximumAge: 0
-
-      }
-
-    );
-
-  });
+    });
 
 }
 
 
 // =====================================================
 // REVERSE GEOCODING
-// Converts GPS coordinates into readable address
 // =====================================================
 
 async function reverseGeocode(
-  lat,
-  lng
+    lat,
+    lng
 ) {
 
-  try {
+    try {
 
-    const response =
-      await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&zoom=18&addressdetails=1`
-      );
+        const response =
+            await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&zoom=18&addressdetails=1`
+            );
 
 
-    if (!response.ok) {
+        if (!response.ok) {
+            throw new Error(
+                "Unable to find address."
+            );
+        }
 
-      throw new Error(
-        "Unable to find address."
-      );
+
+        const data =
+            await response.json();
+
+
+        const address =
+            data.address || {};
+
+
+        const parts = [
+
+            address.house_number,
+
+            address.road,
+
+            address.neighbourhood,
+
+            address.suburb,
+
+            address.city ||
+            address.town ||
+            address.village,
+
+            address.state,
+
+            address.postcode
+
+        ].filter(Boolean);
+
+
+        return {
+
+            display:
+                parts.length
+                    ? parts.join(", ")
+                    : data.display_name ||
+                      `${lat}, ${lng}`,
+
+            lat:
+                Number(lat),
+
+            lng:
+                Number(lng),
+
+            raw:
+                data
+
+        };
+
+    } catch (error) {
+
+        console.warn(
+            "Reverse geocoding failed:",
+            error
+        );
+
+
+        return {
+
+            display:
+                `Current Location (${Number(lat).toFixed(5)}, ${Number(lng).toFixed(5)})`,
+
+            lat:
+                Number(lat),
+
+            lng:
+                Number(lng)
+
+        };
 
     }
-
-
-    const data =
-      await response.json();
-
-
-    const address =
-      data.address || {};
-
-
-    const parts = [
-
-      address.house_number,
-
-      address.road,
-
-      address.neighbourhood,
-
-      address.suburb,
-
-      address.city ||
-      address.town ||
-      address.village,
-
-      address.state,
-
-      address.postcode
-
-    ].filter(Boolean);
-
-
-    return {
-
-      display:
-        parts.length
-          ? parts.join(", ")
-          : data.display_name ||
-            `${lat}, ${lng}`,
-
-      lat:
-        Number(lat),
-
-      lng:
-        Number(lng),
-
-      raw:
-        data
-
-    };
-
-  } catch (error) {
-
-    console.warn(
-      "Reverse geocoding failed:",
-      error
-    );
-
-
-    return {
-
-      display:
-        `Current Location (${Number(lat).toFixed(5)}, ${Number(lng).toFixed(5)})`,
-
-      lat:
-        Number(lat),
-
-      lng:
-        Number(lng)
-
-    };
-
-  }
 
 }
 
@@ -3134,189 +3013,160 @@ async function reverseGeocode(
 
 function setupLocationSystem() {
 
-  const selectorButton =
-    document.getElementById(
-      "location-selector-btn"
+    const selectorButton =
+        document.getElementById(
+            "location-selector-btn"
+        );
+
+
+    const changeLocationButton =
+        document.getElementById(
+            "change-location-btn"
+        );
+
+
+    const currentLocationButton =
+        document.getElementById(
+            "use-current-location-btn"
+        );
+
+
+    const addAddressButton =
+        document.getElementById(
+            "add-new-address-btn"
+        );
+
+
+    const saveAddressForm =
+        document.getElementById(
+            "address-form"
+        );
+
+
+    const listingLocationButton =
+        document.getElementById(
+            "select-listing-location-btn"
+        );
+
+
+    selectorButton?.addEventListener(
+        "click",
+        () => openLocationModal()
     );
 
 
-  const changeLocationButton =
-    document.getElementById(
-      "change-location-btn"
+    changeLocationButton?.addEventListener(
+        "click",
+        () => openLocationModal()
     );
 
 
-  const currentLocationButton =
-    document.getElementById(
-      "use-current-location-btn"
+    currentLocationButton?.addEventListener(
+        "click",
+        useMyCurrentLocation
     );
 
 
-  const addAddressButton =
-    document.getElementById(
-      "add-new-address-btn"
+    addAddressButton?.addEventListener(
+        "click",
+        openAddressForm
     );
 
 
-  const saveAddressForm =
-    document.getElementById(
-      "address-form"
+    saveAddressForm?.addEventListener(
+        "submit",
+        saveNewAddress
     );
 
 
-  const listingLocationButton =
-    document.getElementById(
-      "select-listing-location-btn"
-    );
+    document
+        .querySelectorAll(
+            ".address-type-btn"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    document
+                        .querySelectorAll(
+                            ".address-type-btn"
+                        )
+                        .forEach(btn =>
+                            btn.classList.remove(
+                                "active"
+                            )
+                        );
 
 
-  // Open location modal
-
-  selectorButton?.addEventListener(
-    "click",
-    () => {
-
-      openLocationModal();
-
-    }
-  );
+                    button.classList.add(
+                        "active"
+                    );
 
 
-  changeLocationButton?.addEventListener(
-    "click",
-    () => {
-
-      openLocationModal();
-
-    }
-  );
+                    const typeInput =
+                        document.getElementById(
+                            "address-type"
+                        );
 
 
-  // Current GPS
+                    if (typeInput) {
 
-  currentLocationButton?.addEventListener(
-    "click",
-    useMyCurrentLocation
-  );
+                        typeInput.value =
+                            button.dataset.addressType ||
+                            button.dataset.type ||
+                            "Home";
 
+                    }
 
-  // Add address
+                }
+            );
 
-  addAddressButton?.addEventListener(
-    "click",
-    () => {
-
-      openAddressForm();
-
-    }
-  );
+        });
 
 
-  // Address form
-
-  saveAddressForm?.addEventListener(
-    "submit",
-    saveNewAddress
-  );
-
-
-  // Address type
-
-  document
-    .querySelectorAll(".address-type-btn")
-    .forEach(button => {
-
-      button.addEventListener(
+    listingLocationButton?.addEventListener(
         "click",
         () => {
 
-          document
-            .querySelectorAll(
-              ".address-type-btn"
-            )
-            .forEach(btn => {
+            if (!currentUser) {
 
-              btn.classList.remove(
-                "active"
-              );
+                alert(
+                    "Please login first."
+                );
 
-            });
+                return;
 
+            }
 
-          button.classList.add(
-            "active"
-          );
-
-
-          const typeInput =
-            document.getElementById(
-              "address-type"
-            );
-
-
-          if (typeInput) {
-
-            typeInput.value =
-              button.dataset.addressType ||
-              "Home";
-
-          }
+            openLocationModal(true);
 
         }
-      );
-
-    });
-
-
-  // Listing location
-
-  listingLocationButton?.addEventListener(
-    "click",
-    () => {
-
-      if (!currentUser) {
-
-        alert(
-          "Please login first."
-        );
-
-        return;
-
-      }
-
-
-      openLocationModal(
-        true
-      );
-
-    }
-  );
-
-
-  // Marketplace View All
-
-  document
-    .getElementById(
-      "marketplace-explore-btn"
-    )
-    ?.addEventListener(
-      "click",
-      () => {
-
-        document
-          .querySelector(".marketplace")
-          ?.scrollIntoView({
-
-            behavior:
-              "smooth",
-
-            block:
-              "start"
-
-          });
-
-      }
     );
+
+
+    document
+        .getElementById(
+            "marketplace-explore-btn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .querySelector(
+                        ".marketplace"
+                    )
+                    ?.scrollIntoView({
+                        behavior:
+                            "smooth",
+                        block:
+                            "start"
+                    });
+
+            }
+        );
 
 }
 
@@ -3326,242 +3176,239 @@ function setupLocationSystem() {
 // =====================================================
 
 function openLocationModal(
-  forListing = false
+    forListing = false
 ) {
 
-  const modal =
-    document.getElementById(
-      "location-modal"
+    const modal =
+        document.getElementById(
+            "location-modal"
+        );
+
+
+    if (!modal) return;
+
+
+    modal.dataset.forListing =
+        forListing
+            ? "true"
+            : "false";
+
+
+    renderSavedAddresses();
+
+    modal.classList.remove(
+        "hidden"
     );
-
-
-  if (!modal) return;
-
-
-  modal.dataset.forListing =
-    forListing
-      ? "true"
-      : "false";
-
-
-  renderSavedAddresses();
-
-
-  modal.classList.remove(
-    "hidden"
-  );
 
 }
 
 
 // =====================================================
-// OPEN ADDRESS FORM
+// ADDRESS FORM
 // =====================================================
 
 function openAddressForm() {
 
-  const locationModal =
-    document.getElementById(
-      "location-modal"
-    );
+    document
+        .getElementById(
+            "location-modal"
+        )
+        ?.classList.add(
+            "hidden"
+        );
 
 
-  const addressModal =
-    document.getElementById(
-      "address-form-modal"
-    );
-
-
-  if (locationModal) {
-
-    locationModal.classList.add(
-      "hidden"
-    );
-
-  }
-
-
-  if (addressModal) {
-
-    addressModal.classList.remove(
-      "hidden"
-    );
-
-  }
+    document
+        .getElementById(
+            "address-form-modal"
+        )
+        ?.classList.remove(
+            "hidden"
+        );
 
 }
 
 
 // =====================================================
-// USE MY CURRENT LOCATION
+// USE CURRENT LOCATION
 // =====================================================
 
 async function useMyCurrentLocation() {
 
-  const button =
-    document.getElementById(
-      "use-current-location-btn"
-    );
+    const button =
+        document.getElementById(
+            "use-current-location-btn"
+        );
 
 
-  if (!button) return;
+    if (!button) return;
 
 
-  try {
+    try {
 
-    button.disabled = true;
-
-
-    button.innerHTML = `
-
-      <div class="current-location-icon">
-
-        <i class="fa-solid fa-spinner fa-spin"></i>
-
-      </div>
-
-      <div class="current-location-text">
-
-        <strong>
-          Detecting location...
-        </strong>
-
-        <span>
-          Please allow location access.
-        </span>
-
-      </div>
-
-      <i class="fa-solid fa-location-crosshairs"></i>
-
-    `;
+        button.disabled = true;
 
 
-    const coordinates =
-      await getCurrentLocation();
+        button.innerHTML = `
+
+            <div class="current-location-icon">
+
+                <i class="fa-solid fa-spinner fa-spin"></i>
+
+            </div>
+
+            <div class="current-location-text">
+
+                <strong>
+                    Detecting location...
+                </strong>
+
+                <span>
+                    Please allow location access.
+                </span>
+
+            </div>
+
+        `;
 
 
-    if (!coordinates) {
+        const coordinates =
+            await getCurrentLocation();
 
-      throw new Error(
-        "Current location could not be detected. Please allow location permission or add an address manually."
-      );
+
+        if (!coordinates) {
+
+            throw new Error(
+                "Current location could not be detected. Please allow location permission or add an address manually."
+            );
+
+        }
+
+
+        const location =
+            await reverseGeocode(
+                coordinates.lat,
+                coordinates.lng
+            );
+
+
+        const locationData = {
+
+            id:
+                "current-" +
+                Date.now(),
+
+            type:
+                "Current Location",
+
+            name:
+                "Current Location",
+
+            display:
+                location.display,
+
+            lat:
+                location.lat,
+
+            lng:
+                location.lng,
+
+            accuracy:
+                coordinates.accuracy,
+
+            isCurrent:
+                true
+
+        };
+
+
+        selectLocation(
+            locationData
+        );
+
+
+        const locationModal =
+            document.getElementById(
+                "location-modal"
+            );
+
+
+        const forListing =
+            locationModal?.dataset.forListing ===
+            "true";
+
+
+        if (forListing) {
+
+            applyListingLocation(
+                locationData
+            );
+
+        }
+
+
+        locationModal?.classList.add(
+            "hidden"
+        );
+
+
+        const accuracyText =
+            coordinates.accuracy
+                ? ` GPS accuracy: approximately ${Math.round(coordinates.accuracy)} m.`
+                : "";
+
+
+        showToast(
+            "Current location selected." +
+            accuracyText,
+            "success"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Current location error:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Could not detect your location.",
+            "error"
+        );
+
+    } finally {
+
+        button.disabled = false;
+
+
+        button.innerHTML = `
+
+            <div class="current-location-icon">
+
+                <i class="fa-solid fa-location-crosshairs"></i>
+
+            </div>
+
+            <div class="current-location-text">
+
+                <strong>
+                    Use My Current Location
+                </strong>
+
+                <span>
+                    Automatically detect your location using GPS
+                </span>
+
+            </div>
+
+            <i class="fa-solid fa-chevron-right"></i>
+
+        `;
 
     }
-
-
-    const location =
-      await reverseGeocode(
-        coordinates.lat,
-        coordinates.lng
-      );
-
-
-    const locationData = {
-
-      id:
-        "current-" +
-        Date.now(),
-
-      type:
-        "Current Location",
-
-      name:
-        "Current Location",
-
-      display:
-        location.display,
-
-      lat:
-        location.lat,
-
-      lng:
-        location.lng,
-
-      isCurrent:
-        true
-
-    };
-
-
-    selectLocation(
-      locationData
-    );
-
-
-    const locationModal =
-      document.getElementById(
-        "location-modal"
-      );
-
-
-    const forListing =
-      locationModal?.dataset.forListing ===
-      "true";
-
-
-    if (forListing) {
-
-      applyListingLocation(
-        locationData
-      );
-
-    }
-
-
-    locationModal?.classList.add(
-      "hidden"
-    );
-
-
-    alert(
-      "Your current location has been selected."
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      "Current location error:",
-      error
-    );
-
-
-    alert(
-      error.message ||
-      "Could not detect your location."
-    );
-
-  } finally {
-
-    button.disabled = false;
-
-
-    button.innerHTML = `
-
-      <div class="current-location-icon">
-
-        <i class="fa-solid fa-location-crosshairs"></i>
-
-      </div>
-
-      <div class="current-location-text">
-
-        <strong>
-          Use My Current Location
-        </strong>
-
-        <span>
-          Automatically detect your location using GPS
-        </span>
-
-      </div>
-
-      <i class="fa-solid fa-chevron-right"></i>
-
-    `;
-
-  }
 
 }
 
@@ -3570,192 +3417,159 @@ async function useMyCurrentLocation() {
 // SELECT LOCATION
 // =====================================================
 
-function selectLocation(
-  location
-) {
+function selectLocation(location) {
 
-  if (!location) return;
+    if (!location) return;
 
 
-  selectedLocation =
-    location;
+    selectedLocation =
+        location;
 
 
-  localStorage.setItem(
-    "flexRentSelectedLocation",
-    JSON.stringify(location)
-  );
-
-
-  updateLocationUI(
-    location
-  );
-
-
-  if (
-    Number.isFinite(
-      Number(location.lat)
-    ) &&
-    Number.isFinite(
-      Number(location.lng)
-    )
-  ) {
-
-    focusMapOnLocation(
-      Number(location.lat),
-      Number(location.lng)
-    );
-
-  }
-
-}
-
-
-// =====================================================
-// UPDATE LOCATION UI
-// =====================================================
-
-function updateLocationUI(
-  location
-) {
-
-  if (!location) return;
-
-
-  const shortText =
-    getShortLocationName(
-      location
+    localStorage.setItem(
+        "flexRentSelectedLocation",
+        JSON.stringify(location)
     );
 
 
-  const selectedText =
-    document.getElementById(
-      "selected-location-text"
+    updateLocationUI(
+        location
     );
 
 
-  const summaryText =
-    document.getElementById(
-      "location-summary-text"
-    );
-
-
-  if (selectedText) {
-
-    selectedText.innerText =
-      shortText;
-
-  }
-
-
-  if (summaryText) {
-
-    summaryText.innerText =
-      location.display ||
-      shortText;
-
-  }
-
-
-  updateListingLocationText(
-    location
-  );
-
-}
-
-
-// =====================================================
-// SHORT LOCATION NAME
-// =====================================================
-
-function getShortLocationName(
-  location
-) {
-
-  if (!location) {
-
-    return "Select your location";
-
-  }
-
-
-  if (
-    location.name &&
-    location.name !==
-      "Current Location"
-  ) {
-
-    return location.name;
-
-  }
-
-
-  const display =
-    location.display ||
-    "";
-
-
-  const parts =
-    display
-      .split(",")
-      .map(
-        part =>
-          part.trim()
-      )
-      .filter(Boolean);
-
-
-  if (parts.length >= 2) {
-
-    return parts
-      .slice(
-        Math.max(
-          0,
-          parts.length - 2
+    if (
+        Number.isFinite(
+            Number(location.lat)
+        ) &&
+        Number.isFinite(
+            Number(location.lng)
         )
-      )
-      .join(", ");
+    ) {
 
-  }
+        focusMapOnLocation(
+            Number(location.lat),
+            Number(location.lng)
+        );
+
+    }
 
 
-  return (
-    display ||
-    "Selected location"
-  );
+    renderListings(
+        listings
+    );
 
 }
 
 
 // =====================================================
-// UPDATE LISTING LOCATION TEXT
+// LOCATION UI
 // =====================================================
 
-function updateListingLocationText(
-  location
-) {
+function updateLocationUI(location) {
 
-  const text =
-    document.getElementById(
-      "listing-location-text"
+    if (!location) return;
+
+
+    const shortText =
+        getShortLocationName(
+            location
+        );
+
+
+    document
+        .getElementById(
+            "selected-location-text"
+        )
+        ?.replaceChildren(
+            document.createTextNode(
+                shortText
+            )
+        );
+
+
+    document
+        .getElementById(
+            "location-summary-text"
+        )
+        ?.replaceChildren(
+            document.createTextNode(
+                location.display ||
+                shortText
+            )
+        );
+
+
+    updateListingLocationText(
+        location
     );
 
+}
 
-  if (!text) return;
+
+// =====================================================
+// SHORT LOCATION
+// =====================================================
+
+function getShortLocationName(location) {
+
+    if (!location) {
+        return "Select your location";
+    }
 
 
-  if (location) {
+    if (
+        location.name &&
+        location.name !==
+            "Current Location"
+    ) {
+        return location.name;
+    }
+
+
+    const display =
+        location.display || "";
+
+
+    const parts =
+        display
+            .split(",")
+            .map(x => x.trim())
+            .filter(Boolean);
+
+
+    if (parts.length >= 2) {
+
+        return parts
+            .slice(-2)
+            .join(", ");
+
+    }
+
+
+    return display ||
+        "Selected location";
+
+}
+
+
+// =====================================================
+// LISTING LOCATION UI
+// =====================================================
+
+function updateListingLocationText(location) {
+
+    const text =
+        document.getElementById(
+            "listing-location-text"
+        );
+
+
+    if (!text) return;
+
 
     text.innerText =
-      location.display ||
-      "Selected location";
-
-  } else {
-
-    text.innerText =
-      "Select where this item is available";
-
-  }
+        location?.display ||
+        "Select where this item is available";
 
 }
 
@@ -3764,82 +3578,90 @@ function updateListingLocationText(
 // APPLY LISTING LOCATION
 // =====================================================
 
-function applyListingLocation(
-  location
-) {
+function applyListingLocation(location) {
 
-  if (!location) return;
+    if (!location) return;
 
 
-  selectedListingLocation =
-    location;
+    selectedListingLocation =
+        location;
 
 
-  const input =
-    document.getElementById(
-      "item-location"
+    const input =
+        document.getElementById(
+            "item-location"
+        );
+
+
+    if (input) {
+
+        input.value =
+            location.display || "";
+
+    }
+
+
+    updateListingLocationText(
+        location
     );
-
-
-  if (input) {
-
-    input.value =
-      location.display ||
-      "";
-
-  }
-
-
-  updateListingLocationText(
-    location
-  );
 
 }
 
 
 // =====================================================
-// FOCUS MAP ON LOCATION
+// MAP LOCATION
 // =====================================================
 
 function focusMapOnLocation(
-  lat,
-  lng
+    lat,
+    lng
 ) {
 
-  if (!map) return;
+    if (!map) return;
 
 
-  try {
+    try {
 
-    map.setView(
-      [lat, lng],
-      13,
-      {
-        animate: true
-      }
-    );
+        map.setView(
+            [lat, lng],
+            13,
+            {
+                animate: true
+            }
+        );
 
 
-    L.circleMarker(
-      [lat, lng],
-      {
-        radius: 9
-      }
-    )
-      .addTo(map)
-      .bindPopup(
-        "Your selected location"
-      )
-      .openPopup();
+        if (selectedLocationMarker) {
 
-  } catch (error) {
+            try {
+                map.removeLayer(
+                    selectedLocationMarker
+                );
+            } catch (error) {}
 
-    console.warn(
-      "Could not focus map:",
-      error
-    );
+        }
 
-  }
+
+        selectedLocationMarker =
+            L.circleMarker(
+                [lat, lng],
+                {
+                    radius: 9
+                }
+            )
+                .addTo(map)
+                .bindPopup(
+                    "Your selected location"
+                );
+
+    } catch (error) {
+
+        console.warn(
+            "Map location error:",
+            error
+        );
+
+    }
 
 }
 
@@ -3850,64 +3672,107 @@ function focusMapOnLocation(
 
 function getSavedAddresses() {
 
-  try {
+    try {
 
-    const saved =
-      localStorage.getItem(
-        "flexRentSavedAddresses"
-      );
-
-
-    if (!saved) return [];
+        const saved =
+            localStorage.getItem(
+                "flexRentSavedAddresses"
+            );
 
 
-    const parsed =
-      JSON.parse(saved);
+        if (!saved) return [];
 
 
-    return Array.isArray(parsed)
-      ? parsed
-      : [];
+        const parsed =
+            JSON.parse(saved);
 
-  } catch (error) {
 
-    console.warn(
-      "Saved address read error:",
-      error
-    );
+        return Array.isArray(parsed)
+            ? parsed
+            : [];
 
-    return [];
+    } catch (error) {
 
-  }
+        console.warn(
+            "Saved address read error:",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+function saveAddresses(addresses) {
+
+    try {
+
+        localStorage.setItem(
+            "flexRentSavedAddresses",
+            JSON.stringify(addresses)
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Saved address write error:",
+            error
+        );
+
+    }
 
 }
 
 
 // =====================================================
-// SAVE ADDRESSES
+// MIGRATE OLD ADDRESS KEY
 // =====================================================
 
-function saveAddresses(
-  addresses
-) {
+function migrateOldAddresses() {
 
-  try {
+    try {
 
-    localStorage.setItem(
-      "flexRentSavedAddresses",
-      JSON.stringify(
-        addresses
-      )
-    );
+        const correctKey =
+            "flexRentSavedAddresses";
 
-  } catch (error) {
+        const oldKey =
+            "flexRentAddresses";
 
-    console.warn(
-      "Saved address write error:",
-      error
-    );
 
-  }
+        const existing =
+            localStorage.getItem(
+                correctKey
+            );
+
+
+        if (existing) return;
+
+
+        const old =
+            localStorage.getItem(
+                oldKey
+            );
+
+
+        if (old) {
+
+            localStorage.setItem(
+                correctKey,
+                old
+            );
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Address migration failed:",
+            error
+        );
+
+    }
 
 }
 
@@ -3918,201 +3783,186 @@ function saveAddresses(
 
 function renderSavedAddresses() {
 
-  const container =
-    document.getElementById(
-      "saved-addresses-list"
-    );
+    migrateOldAddresses();
 
 
-  const count =
-    document.getElementById(
-      "saved-address-count"
-    );
-
-
-  if (!container) return;
-
-
-  const addresses =
-    getSavedAddresses();
-
-
-  if (count) {
-
-    count.innerText =
-      `${addresses.length} saved`;
-
-  }
-
-
-  if (addresses.length === 0) {
-
-    container.innerHTML = `
-
-      <div class="no-saved-address">
-
-        <i class="fa-regular fa-address-book"></i>
-
-        <p>
-          No saved addresses yet
-        </p>
-
-        <small>
-          Add an address to quickly select it later.
-        </small>
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-
-  container.innerHTML = "";
-
-
-  addresses.forEach(address => {
-
-    const card =
-      document.createElement(
-        "div"
-      );
-
-
-    card.className =
-      "saved-address-card";
-
-
-    card.innerHTML = `
-
-      <div class="saved-address-icon">
-
-        <i class="${
-          address.type === "College"
-            ? "fa-solid fa-graduation-cap"
-            : address.type === "Other"
-              ? "fa-solid fa-location-dot"
-              : "fa-solid fa-house"
-        }"></i>
-
-      </div>
-
-      <div class="saved-address-info">
-
-        <strong>
-          ${escapeHTML(
-            address.name ||
-            address.type ||
-            "Address"
-          )}
-        </strong>
-
-        <span class="saved-address-badge">
-
-          ${escapeHTML(
-            address.type ||
-            "Other"
-          )}
-
-        </span>
-
-        <p>
-
-          ${escapeHTML(
-            address.display ||
-            ""
-          )}
-
-        </p>
-
-      </div>
-
-      <div>
-
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-address-id="${escapeAttribute(address.id)}"
-        >
-          Select
-        </button>
-
-      </div>
-
-    `;
-
-
-    const selectButton =
-      card.querySelector(
-        "button[data-address-id]"
-      );
-
-
-    selectButton?.addEventListener(
-      "click",
-      event => {
-
-        event.stopPropagation();
-
-
-        const selected =
-          addresses.find(
-            item =>
-              String(item.id) ===
-              String(
-                address.id
-              )
-          );
-
-
-        if (!selected) return;
-
-
-        selectLocation(
-          selected
+    const container =
+        document.getElementById(
+            "saved-addresses-list"
         );
 
 
-        const locationModal =
-          document.getElementById(
-            "location-modal"
-          );
-
-
-        const forListing =
-          locationModal?.dataset.forListing ===
-          "true";
-
-
-        if (forListing) {
-
-          applyListingLocation(
-            selected
-          );
-
-        }
-
-
-        locationModal?.classList.add(
-          "hidden"
+    const count =
+        document.getElementById(
+            "saved-address-count"
         );
 
 
-        alert(
-          "Location selected successfully."
+    if (!container) return;
+
+
+    const addresses =
+        getSavedAddresses();
+
+
+    if (count) {
+
+        count.innerText =
+            `${addresses.length} saved`;
+
+    }
+
+
+    if (addresses.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="no-saved-address">
+
+                <i class="fa-regular fa-address-book"></i>
+
+                <p>
+                    No saved addresses yet
+                </p>
+
+                <small>
+                    Add an address to quickly select it later.
+                </small>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    addresses.forEach(address => {
+
+        const card =
+            document.createElement(
+                "div"
+            );
+
+
+        card.className =
+            "saved-address-card";
+
+
+        const icon =
+            address.type === "College"
+                ? "fa-solid fa-graduation-cap"
+                : address.type === "Other"
+                    ? "fa-solid fa-location-dot"
+                    : "fa-solid fa-house";
+
+
+        card.innerHTML = `
+
+            <div class="saved-address-icon">
+
+                <i class="${icon}"></i>
+
+            </div>
+
+            <div class="saved-address-info">
+
+                <strong>
+                    ${escapeHTML(
+                        address.name ||
+                        address.type ||
+                        "Address"
+                    )}
+                </strong>
+
+                <span class="saved-address-badge">
+
+                    ${escapeHTML(
+                        address.type ||
+                        "Other"
+                    )}
+
+                </span>
+
+                <p>
+                    ${escapeHTML(
+                        address.display || ""
+                    )}
+                </p>
+
+            </div>
+
+            <div>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                >
+                    Select
+                </button>
+
+            </div>
+
+        `;
+
+
+        card
+            .querySelector("button")
+            ?.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+
+                    selectLocation(
+                        address
+                    );
+
+
+                    const modal =
+                        document.getElementById(
+                            "location-modal"
+                        );
+
+
+                    const forListing =
+                        modal?.dataset.forListing ===
+                        "true";
+
+
+                    if (forListing) {
+
+                        applyListingLocation(
+                            address
+                        );
+
+                    }
+
+
+                    modal?.classList.add(
+                        "hidden"
+                    );
+
+
+                    showToast(
+                        "Location selected successfully.",
+                        "success"
+                    );
+
+                }
+            );
+
+
+        container.appendChild(
+            card
         );
 
-      }
-    );
-
-
-    container.appendChild(
-      card
-    );
-
-  });
+    });
 
 }
 
@@ -4121,200 +3971,393 @@ function renderSavedAddresses() {
 // SAVE NEW ADDRESS
 // =====================================================
 
-async function saveNewAddress() {
-    const type = document.getElementById('address-type')?.value || 'Home';
-    const fullName = document.getElementById('address-full-name')?.value.trim();
-    const phone = document.getElementById('address-phone')?.value.trim();
-    const pincode = document.getElementById('address-pincode')?.value.trim();
-    const house = document.getElementById('address-house')?.value.trim();
-    const area = document.getElementById('address-area')?.value.trim();
-    const city = document.getElementById('address-city')?.value.trim();
-    const state = document.getElementById('address-state')?.value.trim();
-    const landmark = document.getElementById('address-landmark')?.value.trim();
+async function saveNewAddress(event) {
 
-    // Basic validation
-    if (!fullName || !phone || !pincode || !house || !area || !city || !state) {
-        showToast('Please fill all required address fields.', 'error');
-        return;
+    if (event) {
+        event.preventDefault();
     }
 
-    if (!/^\d{6}$/.test(pincode)) {
-        showToast('Please enter a valid 6-digit PIN code.', 'error');
-        return;
-    }
 
-    const saveButton = document.getElementById('save-address-btn');
+    const type =
+        document
+            .getElementById("address-type")
+            ?.value ||
+        "Home";
 
-    try {
-        if (saveButton) {
-            saveButton.disabled = true;
-            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finding location...';
-        }
 
-        // Create a complete address for geocoding
-        const addressQuery = [
-            house,
-            area,
-            landmark,
-            city,
-            state,
-            pincode,
-            'India'
-        ]
-            .filter(Boolean)
-            .join(', ');
+    const fullName =
+        document
+            .getElementById("address-full-name")
+            ?.value
+            .trim();
 
-        console.log('Geocoding address:', addressQuery);
 
-        // Convert address into latitude/longitude
-        const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=in&q=${encodeURIComponent(addressQuery)}`
+    const phone =
+        document
+            .getElementById("address-phone")
+            ?.value
+            .trim();
+
+
+    const pincode =
+        document
+            .getElementById("address-pincode")
+            ?.value
+            .trim();
+
+
+    const house =
+        document
+            .getElementById("address-house")
+            ?.value
+            .trim();
+
+
+    const area =
+        document
+            .getElementById("address-area")
+            ?.value
+            .trim();
+
+
+    const city =
+        document
+            .getElementById("address-city")
+            ?.value
+            .trim();
+
+
+    const state =
+        document
+            .getElementById("address-state")
+            ?.value
+            .trim();
+
+
+    const landmark =
+        document
+            .getElementById("address-landmark")
+            ?.value
+            .trim();
+
+
+    if (
+        !fullName ||
+        !phone ||
+        !pincode ||
+        !house ||
+        !area ||
+        !city ||
+        !state
+    ) {
+
+        showToast(
+            "Please fill all required address fields.",
+            "error"
         );
 
-        if (!response.ok) {
-            throw new Error('Location service is currently unavailable.');
+        return;
+
+    }
+
+
+    if (
+        !/^\d{6}$/.test(
+            pincode
+        )
+    ) {
+
+        showToast(
+            "Please enter a valid 6-digit PIN code.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const saveButton =
+        document.getElementById(
+            "save-address-btn"
+        );
+
+
+    try {
+
+        if (saveButton) {
+
+            saveButton.disabled = true;
+
+            saveButton.innerHTML =
+                `<i class="fas fa-spinner fa-spin"></i>
+                 Finding location...`;
+
         }
 
-        const results = await response.json();
 
-        if (!results || results.length === 0) {
-            showToast(
-                'Location not found. Please check your address, city, state or PIN code.',
-                'error'
-            );
-            return;
-        }
+        const addressQuery = [
 
-        const result = results[0];
-
-        const latitude = parseFloat(result.lat);
-        const longitude = parseFloat(result.lon);
-
-        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
-            throw new Error('Invalid coordinates received.');
-        }
-
-        // Create address object
-        const address = {
-            id: Date.now().toString(),
-            type,
-            fullName,
-            phone,
-            pincode,
             house,
             area,
+            landmark,
             city,
             state,
+            pincode,
+            "India"
+
+        ]
+            .filter(Boolean)
+            .join(", ");
+
+
+        const response =
+            await fetch(
+                `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=in&q=${encodeURIComponent(addressQuery)}`
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Location service is currently unavailable."
+            );
+
+        }
+
+
+        const results =
+            await response.json();
+
+
+        if (
+            !Array.isArray(results) ||
+            results.length === 0
+        ) {
+
+            throw new Error(
+                "Location not found. Please check your address, city, state or PIN code."
+            );
+
+        }
+
+
+        const result =
+            results[0];
+
+
+        const latitude =
+            parseFloat(result.lat);
+
+
+        const longitude =
+            parseFloat(result.lon);
+
+
+        if (
+            !Number.isFinite(latitude) ||
+            !Number.isFinite(longitude)
+        ) {
+
+            throw new Error(
+                "Invalid coordinates received."
+            );
+
+        }
+
+
+        const address = {
+
+            id:
+                Date.now().toString(),
+
+            type,
+
+            name:
+                type,
+
+            fullName,
+
+            phone,
+
+            pincode,
+
+            house,
+
+            area,
+
+            city,
+
+            state,
+
             landmark,
+
             display: [
+
                 house,
                 area,
                 city,
                 state,
                 pincode
+
             ]
                 .filter(Boolean)
-                .join(', '),
+                .join(", "),
 
-            // Exact coordinates
-            lat: latitude,
-            lng: longitude,
+            lat:
+                latitude,
 
-            // Extra information
-            formattedAddress: result.display_name || addressQuery,
-            createdAt: new Date().toISOString()
+            lng:
+                longitude,
+
+            formattedAddress:
+                result.display_name ||
+                addressQuery,
+
+            createdAt:
+                new Date().toISOString()
+
         };
 
-        console.log('Geocoded address:', address);
 
-        // Get existing saved addresses
-        const savedAddresses = JSON.parse(
-            localStorage.getItem('flexRentAddresses') || '[]'
+        const savedAddresses =
+            getSavedAddresses();
+
+
+        savedAddresses.push(
+            address
         );
 
-        // Save new address
-        savedAddresses.push(address);
 
-        localStorage.setItem(
-            'flexRentAddresses',
-            JSON.stringify(savedAddresses)
+        saveAddresses(
+            savedAddresses
         );
 
-        // Select this address as the active location
-        selectLocation(address);
 
-        // Close address form
-        const addressFormModal = document.getElementById('address-form-modal');
+        selectLocation(
+            address
+        );
 
-        if (addressFormModal) {
-            addressFormModal.classList.add('hidden');
+
+        const locationModal =
+            document.getElementById(
+                "location-modal"
+            );
+
+
+        const forListing =
+            locationModal?.dataset.forListing ===
+            "true";
+
+
+        if (forListing) {
+
+            applyListingLocation(
+                address
+            );
+
         }
 
-        // Close location modal if open
-        const locationModal = document.getElementById('location-modal');
 
-        if (locationModal) {
-            locationModal.classList.add('hidden');
-        }
-
-        // Reset form
-        const form = document.getElementById('address-form');
-
-        if (form) {
-            form.reset();
-        }
-
-        // Reset address type
-        const addressTypeInput = document.getElementById('address-type');
-
-        if (addressTypeInput) {
-            addressTypeInput.value = 'Home';
-        }
-
-        // Reset active address type button
         document
-            .querySelectorAll('.address-type-btn')
-            .forEach(button => button.classList.remove('active'));
+            .getElementById(
+                "address-form-modal"
+            )
+            ?.classList.add(
+                "hidden"
+            );
 
-        const homeButton = document.querySelector(
-            '.address-type-btn[data-type="Home"]'
+
+        locationModal?.classList.add(
+            "hidden"
         );
 
-        if (homeButton) {
-            homeButton.classList.add('active');
+
+        document
+            .getElementById(
+                "address-form"
+            )
+            ?.reset();
+
+
+        const typeInput =
+            document.getElementById(
+                "address-type"
+            );
+
+
+        if (typeInput) {
+            typeInput.value = "Home";
         }
 
-        // Update saved address UI
-        if (typeof renderSavedAddresses === 'function') {
-            renderSavedAddresses();
-        }
 
-        showToast('Address saved with accurate location!', 'success');
+        document
+            .querySelectorAll(
+                ".address-type-btn"
+            )
+            .forEach(button =>
+                button.classList.remove(
+                    "active"
+                )
+            );
 
-        // Focus map on new location
-        if (
-            typeof focusMapOnLocation === 'function' &&
-            Number.isFinite(latitude) &&
-            Number.isFinite(longitude)
-        ) {
-            focusMapOnLocation(latitude, longitude);
-        }
 
-    } catch (error) {
-        console.error('Address geocoding error:', error);
+        const homeButton =
+            document.querySelector(
+                '.address-type-btn[data-address-type="Home"], .address-type-btn[data-type="Home"]'
+            );
+
+
+        homeButton?.classList.add(
+            "active"
+        );
+
+
+        renderSavedAddresses();
+
+
+        focusMapOnLocation(
+            latitude,
+            longitude
+        );
+
 
         showToast(
-            error.message || 'Could not find this location. Please try again.',
-            'error'
+            "Address saved with accurate location!",
+            "success"
         );
 
+
+    } catch (error) {
+
+        console.error(
+            "Address geocoding error:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Could not find this location.",
+            "error"
+        );
+
+
     } finally {
+
         if (saveButton) {
+
             saveButton.disabled = false;
-            saveButton.innerHTML = 'Save Address';
+
+            saveButton.innerHTML =
+                "Save Address";
+
         }
+
     }
+
 }
+
 
 // =====================================================
 // LOAD SAVED LOCATION
@@ -4322,64 +4365,71 @@ async function saveNewAddress() {
 
 function loadSavedLocation() {
 
-  try {
+    try {
 
-    const saved =
-      localStorage.getItem(
-        "flexRentSelectedLocation"
-      );
+        migrateOldAddresses();
 
 
-    if (!saved) return;
+        const saved =
+            localStorage.getItem(
+                "flexRentSelectedLocation"
+            );
 
 
-    const location =
-      JSON.parse(saved);
+        if (!saved) return;
 
 
-    if (!location) return;
+        const location =
+            JSON.parse(saved);
 
 
-    selectedLocation =
-      location;
+        if (!location) return;
 
 
-    updateLocationUI(
-      location
-    );
+        selectedLocation =
+            location;
 
 
-    if (
-      Number.isFinite(
-        Number(location.lat)
-      ) &&
-      Number.isFinite(
-        Number(location.lng)
-      )
-    ) {
+        updateLocationUI(
+            location
+        );
 
-      setTimeout(
-        () => {
 
-          focusMapOnLocation(
-            Number(location.lat),
-            Number(location.lng)
-          );
+        if (
+            Number.isFinite(
+                Number(location.lat)
+            ) &&
+            Number.isFinite(
+                Number(location.lng)
+            )
+        ) {
 
-        },
-        500
-      );
+            setTimeout(
+                () => {
+
+                    focusMapOnLocation(
+                        Number(location.lat),
+                        Number(location.lng)
+                    );
+
+                    renderListings(
+                        listings
+                    );
+
+                },
+                500
+            );
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Could not load saved location:",
+            error
+        );
 
     }
-
-  } catch (error) {
-
-    console.warn(
-      "Could not load saved location:",
-      error
-    );
-
-  }
 
 }
 
@@ -4390,205 +4440,185 @@ function loadSavedLocation() {
 
 function setupHeroControls() {
 
-  const heroSearchInput =
-    document.getElementById(
-      "hero-search-input"
-    );
+    const heroInput =
+        document.getElementById(
+            "hero-search-input"
+        );
 
 
-  const heroSearchBtn =
-    document.getElementById(
-      "hero-search-btn"
-    );
+    const heroButton =
+        document.getElementById(
+            "hero-search-btn"
+        );
 
 
-  function performHeroSearch() {
+    function performHeroSearch() {
 
-    if (!heroSearchInput) return;
-
-
-    const query =
-      heroSearchInput.value.trim();
+        if (!heroInput) return;
 
 
-    const mainSearch =
-      document.getElementById(
-        "search-input"
-      );
+        const query =
+            heroInput.value.trim();
 
 
-    if (mainSearch) {
+        const mainSearch =
+            document.getElementById(
+                "search-input"
+            );
 
-      mainSearch.value =
-        query;
+
+        if (mainSearch) {
+
+            mainSearch.value =
+                query;
+
+        }
+
+
+        filterListings();
+
+
+        document
+            .querySelector(".marketplace")
+            ?.scrollIntoView({
+                behavior:
+                    "smooth",
+                block:
+                    "start"
+            });
 
     }
 
 
-    filterListings();
+    heroButton?.addEventListener(
+        "click",
+        performHeroSearch
+    );
+
+
+    heroInput?.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                event.preventDefault();
+
+                performHeroSearch();
+
+            }
+
+        }
+    );
 
 
     document
-      .querySelector(".marketplace")
-      ?.scrollIntoView({
+        .getElementById(
+            "hero-explore-btn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
 
-        behavior:
-          "smooth",
+                document
+                    .querySelector(
+                        ".marketplace"
+                    )
+                    ?.scrollIntoView({
+                        behavior:
+                            "smooth",
+                        block:
+                            "start"
+                    });
 
-        block:
-          "start"
-
-      });
-
-  }
-
-
-  heroSearchBtn?.addEventListener(
-    "click",
-    performHeroSearch
-  );
-
-
-  heroSearchInput?.addEventListener(
-    "keydown",
-    event => {
-
-      if (
-        event.key ===
-        "Enter"
-      ) {
-
-        event.preventDefault();
-
-        performHeroSearch();
-
-      }
-
-    }
-  );
+            }
+        );
 
 
-  const heroExploreBtn =
-    document.getElementById(
-      "hero-explore-btn"
-    );
-
-
-  heroExploreBtn?.addEventListener(
-    "click",
-    () => {
-
-      document
-        .querySelector(".marketplace")
-        ?.scrollIntoView({
-
-          behavior:
-            "smooth",
-
-          block:
-            "start"
-
-        });
-
-    }
-  );
-
-
-  const heroListItemBtn =
-    document.getElementById(
-      "hero-list-item-btn"
-    );
-
-
-  heroListItemBtn?.addEventListener(
-    "click",
-    () => {
-
-      openListItemModal();
-
-    }
-  );
+    document
+        .getElementById(
+            "hero-list-item-btn"
+        )
+        ?.addEventListener(
+            "click",
+            openListItemModal
+        );
 
 }
 
 
 // =====================================================
-// QUICK CATEGORY FILTER
+// QUICK CATEGORY
 // =====================================================
 
 function setupQuickCategoryCards() {
 
-  const categoryCards =
-    document.querySelectorAll(
-      ".category-showcase-card"
-    );
+    document
+        .querySelectorAll(
+            ".category-showcase-card"
+        )
+        .forEach(card => {
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    const category =
+                        card.dataset.category;
 
 
-  categoryCards.forEach(
-    card => {
-
-      card.addEventListener(
-        "click",
-        () => {
-
-          const category =
-            card.dataset.category;
+                    if (!category) return;
 
 
-          if (!category) return;
+                    document
+                        .querySelectorAll(
+                            ".category-chip"
+                        )
+                        .forEach(chip => {
+
+                            chip.classList.remove(
+                                "active"
+                            );
 
 
-          const categoryChips =
-            document.querySelectorAll(
-              ".category-chip"
+                            if (
+                                String(
+                                    chip.dataset.category
+                                )
+                                    .toLowerCase() ===
+                                String(category)
+                                    .toLowerCase()
+                            ) {
+
+                                chip.classList.add(
+                                    "active"
+                                );
+
+                            }
+
+                        });
+
+
+                    filterListings();
+
+
+                    document
+                        .querySelector(
+                            ".marketplace"
+                        )
+                        ?.scrollIntoView({
+                            behavior:
+                                "smooth",
+                            block:
+                                "start"
+                        });
+
+                }
             );
 
-
-          categoryChips.forEach(
-            chip => {
-
-              chip.classList.remove(
-                "active"
-              );
-
-
-              if (
-                chip.dataset.category &&
-                chip.dataset.category
-                  .toLowerCase() ===
-                category.toLowerCase()
-              ) {
-
-                chip.classList.add(
-                  "active"
-                );
-
-              }
-
-            }
-          );
-
-
-          filterListings();
-
-
-          document
-            .querySelector(".marketplace")
-            ?.scrollIntoView({
-
-              behavior:
-                "smooth",
-
-              block:
-                "start"
-
-            });
-
-        }
-      );
-
-    }
-  );
+        });
 
 }
 
@@ -4599,63 +4629,57 @@ function setupQuickCategoryCards() {
 
 function setupBooking() {
 
-  const bookingDays =
-    document.getElementById(
-      "booking-days"
-    );
-
-
-  bookingDays?.addEventListener(
-    "input",
-    updateBookingSummary
-  );
-
-
-  document
-    .querySelectorAll(
-      ".pay-option"
-    )
-    .forEach(
-      button => {
-
-        button.addEventListener(
-          "click",
-          event => {
-
-            document
-              .querySelectorAll(
-                ".pay-option"
-              )
-              .forEach(
-                b =>
-                  b.classList.remove(
-                    "active"
-                  )
-              );
-
-
-            event.currentTarget
-              .classList.add(
-                "active"
-              );
-
-          }
+    document
+        .getElementById(
+            "booking-days"
+        )
+        ?.addEventListener(
+            "input",
+            updateBookingSummary
         );
 
-      }
-    );
+
+    document
+        .querySelectorAll(
+            ".pay-option"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                event => {
+
+                    document
+                        .querySelectorAll(
+                            ".pay-option"
+                        )
+                        .forEach(
+                            b =>
+                                b.classList.remove(
+                                    "active"
+                                )
+                        );
 
 
-  const confirmButton =
-    document.getElementById(
-      "confirm-booking-btn"
-    );
+                    event.currentTarget
+                        .classList.add(
+                            "active"
+                        );
+
+                }
+            );
+
+        });
 
 
-  confirmButton?.addEventListener(
-    "click",
-    confirmBooking
-  );
+    document
+        .getElementById(
+            "confirm-booking-btn"
+        )
+        ?.addEventListener(
+            "click",
+            confirmBooking
+        );
 
 }
 
@@ -4665,113 +4689,112 @@ function setupBooking() {
 // =====================================================
 
 window.openBookingModal =
-  function (id) {
+    function (id) {
 
-    selectedListingForBooking =
-      listings.find(
-        item =>
-          String(item.id) ===
-          String(id)
-      );
-
-
-    if (!selectedListingForBooking) {
-
-      alert(
-        "Listing not found."
-      );
-
-      return;
-
-    }
+        selectedListingForBooking =
+            listings.find(
+                item =>
+                    String(item.id) ===
+                    String(id)
+            );
 
 
-    const title =
-      document.getElementById(
-        "modal-item-title"
-      );
+        if (!selectedListingForBooking) {
+
+            alert(
+                "Listing not found."
+            );
+
+            return;
+
+        }
 
 
-    const location =
-      document.getElementById(
-        "modal-item-location"
-      );
+        document
+            .getElementById(
+                "modal-item-title"
+            )
+            ?.replaceChildren(
+                document.createTextNode(
+                    selectedListingForBooking.title
+                )
+            );
 
 
-    const price =
-      document.getElementById(
-        "modal-item-price"
-      );
+        const locationElement =
+            document.getElementById(
+                "modal-item-location"
+            );
 
 
-    if (title) {
+        if (locationElement) {
 
-      title.innerText =
-        selectedListingForBooking.title;
+            locationElement.innerText =
+                `Location: ${selectedListingForBooking.location}`;
 
-    }
-
-
-    if (location) {
-
-      location.innerText =
-        `Location: ${selectedListingForBooking.location}`;
-
-    }
+        }
 
 
-    if (price) {
-
-      price.innerText =
-        `Price: ${formatINR(
-          selectedListingForBooking.price_per_day
-        )} / day`;
-
-    }
+        const priceElement =
+            document.getElementById(
+                "modal-item-price"
+            );
 
 
-    const date =
-      document.getElementById(
-        "booking-date"
-      );
+        if (priceElement) {
+
+            priceElement.innerText =
+                `Price: ${formatINR(
+                    selectedListingForBooking.price_per_day
+                )} / day`;
+
+        }
 
 
-    if (date) {
-
-      date.value =
-        new Date()
-          .toISOString()
-          .split("T")[0];
-
-    }
+        const date =
+            document.getElementById(
+                "booking-date"
+            );
 
 
-    const days =
-      document.getElementById(
-        "booking-days"
-      );
+        if (date) {
+
+            date.value =
+                new Date()
+                    .toISOString()
+                    .split("T")[0];
+
+            date.min =
+                date.value;
+
+        }
 
 
-    if (days) {
-
-      days.value =
-        1;
-
-    }
+        const days =
+            document.getElementById(
+                "booking-days"
+            );
 
 
-    updateBookingSummary();
+        if (days) {
+
+            days.value = 1;
+
+        }
 
 
-    document
-      .getElementById(
-        "booking-modal"
-      )
-      ?.classList.remove(
-        "hidden"
-      );
+        updateBookingSummary();
 
-  };
+
+        document
+            .getElementById(
+                "booking-modal"
+            )
+            ?.classList.remove(
+                "hidden"
+            );
+
+    };
 
 
 // =====================================================
@@ -4780,73 +4803,66 @@ window.openBookingModal =
 
 function updateBookingSummary() {
 
-  if (
-    !selectedListingForBooking
-  ) return;
+    if (
+        !selectedListingForBooking
+    ) return;
 
 
-  const daysInput =
-    document.getElementById(
-      "booking-days"
-    );
+    const days =
+        Math.max(
+            1,
+            parseInt(
+                document
+                    .getElementById(
+                        "booking-days"
+                    )
+                    ?.value
+            ) || 1
+        );
 
 
-  const days =
-    parseInt(
-      daysInput
-        ? daysInput.value
-        : 1
-    ) || 1;
+    const price =
+        Number(
+            selectedListingForBooking
+                .price_per_day
+        ) || 0;
 
 
-  const price =
-    Number(
-      selectedListingForBooking
-        .price_per_day
-    ) || 0;
+    const total =
+        days * price;
 
 
-  const total =
-    days * price;
+    document
+        .getElementById(
+            "summary-rate"
+        )
+        ?.replaceChildren(
+            document.createTextNode(
+                formatINR(price)
+            )
+        );
 
 
-  document
-    .getElementById(
-      "summary-rate"
-    )
-    ?.replaceChildren(
-      document.createTextNode(
-        formatINR(price)
-      )
-    );
+    document
+        .getElementById(
+            "summary-days"
+        )
+        ?.replaceChildren(
+            document.createTextNode(
+                String(days)
+            )
+        );
 
 
-  const duration =
-    document.getElementById(
-      "summary-days"
-    );
-
-
-  const totalElement =
-    document.getElementById(
-      "summary-total"
-    );
-
-
-  if (duration) {
-
-    duration.innerText =
-      days;
-
-  }
-
-
-  if (totalElement) {
-
-    totalElement.innerText =
-      formatINR(total);
-
-  }
+    document
+        .getElementById(
+            "summary-total"
+        )
+        ?.replaceChildren(
+            document.createTextNode(
+                formatINR(total)
+            )
+        );
 
 }
 
@@ -4857,195 +4873,193 @@ function updateBookingSummary() {
 
 async function confirmBooking() {
 
-  if (!currentUser) {
+    if (!currentUser) {
 
-    alert(
-      "Please login to book an item."
-    );
-
-
-    document
-      .getElementById(
-        "auth-modal"
-      )
-      ?.classList.remove(
-        "hidden"
-      );
-
-
-    return;
-
-  }
-
-
-  if (
-    !selectedListingForBooking
-  ) {
-
-    alert(
-      "Please select an item first."
-    );
-
-    return;
-
-  }
-
-
-  const paymentOption =
-    document.querySelector(
-      ".pay-option.active"
-    );
-
-
-  const paymentMethod =
-    paymentOption
-      ? paymentOption.dataset.method
-      : "UPI";
-
-
-  const days =
-    parseInt(
-      document.getElementById(
-        "booking-days"
-      ).value
-    ) || 1;
-
-
-  const total =
-    days *
-    Number(
-      selectedListingForBooking
-        .price_per_day
-    );
-
-
-  const startDate =
-    document.getElementById(
-      "booking-date"
-    ).value;
-
-
-  if (!startDate) {
-
-    alert(
-      "Please select rental start date."
-    );
-
-    return;
-
-  }
-
-
-  try {
-
-    const bookingData = {
-
-      listing_id:
-        selectedListingForBooking.id,
-
-      renter_id:
-        currentUser.id,
-
-      item_name:
-        selectedListingForBooking.title,
-
-      start_date:
-        startDate,
-
-      rental_days:
-        days,
-
-      total_amount:
-        total,
-
-      payment_method:
-        paymentMethod,
-
-      status:
-        "pending"
-
-    };
-
-
-    const booking =
-      await createBooking(
-        bookingData
-      );
-
-
-    if (booking) {
-
-      try {
-
-        await createPayment({
-
-          user_id:
-            currentUser.id,
-
-          booking_id:
-            booking.id,
-
-          amount:
-            total,
-
-          payment_method:
-            paymentMethod,
-
-          payment_status:
-            "pending"
-
-        });
-
-      } catch (paymentError) {
-
-        console.warn(
-          "Payment record error:",
-          paymentError
+        alert(
+            "Please login to book an item."
         );
 
-      }
+        document
+            .getElementById(
+                "auth-modal"
+            )
+            ?.classList.remove(
+                "hidden"
+            );
+
+        return;
 
     }
 
 
-    alert(`
+    if (
+        !selectedListingForBooking
+    ) {
 
-Booking created successfully!
+        alert(
+            "Please select an item first."
+        );
 
-Item: ${selectedListingForBooking.title}
+        return;
 
-Duration: ${days} day(s)
-
-Total: ${formatINR(total)}
-
-Payment Method: ${paymentMethod}
-
-`);
+    }
 
 
-    document
-      .getElementById(
-        "booking-modal"
-      )
-      ?.classList.add(
-        "hidden"
-      );
+    const paymentOption =
+        document.querySelector(
+            ".pay-option.active"
+        );
 
 
-  } catch (error) {
-
-    console.error(
-      "Booking error:",
-      error
-    );
+    const paymentMethod =
+        paymentOption?.dataset.method ||
+        "UPI";
 
 
-    alert(
-      error.message ||
-      "Booking could not be saved."
-    );
+    const days =
+        Math.max(
+            1,
+            parseInt(
+                document
+                    .getElementById(
+                        "booking-days"
+                    )
+                    ?.value
+            ) || 1
+        );
 
-  }
+
+    const total =
+        days *
+        Number(
+            selectedListingForBooking
+                .price_per_day
+        );
+
+
+    const startDate =
+        document
+            .getElementById(
+                "booking-date"
+            )
+            ?.value;
+
+
+    if (!startDate) {
+
+        alert(
+            "Please select rental start date."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const bookingData = {
+
+            listing_id:
+                selectedListingForBooking.id,
+
+            renter_id:
+                currentUser.id,
+
+            item_name:
+                selectedListingForBooking.title,
+
+            start_date:
+                startDate,
+
+            rental_days:
+                days,
+
+            total_amount:
+                total,
+
+            payment_method:
+                paymentMethod,
+
+            status:
+                "pending"
+
+        };
+
+
+        const booking =
+            await createBooking(
+                bookingData
+            );
+
+
+        if (booking) {
+
+            try {
+
+                await createPayment({
+
+                    user_id:
+                        currentUser.id,
+
+                    booking_id:
+                        booking.id,
+
+                    amount:
+                        total,
+
+                    payment_method:
+                        paymentMethod,
+
+                    payment_status:
+                        "pending"
+
+                });
+
+            } catch (paymentError) {
+
+                console.warn(
+                    "Payment record error:",
+                    paymentError
+                );
+
+            }
+
+        }
+
+
+        alert(
+            `Booking created successfully!\n\n` +
+            `Item: ${selectedListingForBooking.title}\n` +
+            `Duration: ${days} day(s)\n` +
+            `Total: ${formatINR(total)}\n` +
+            `Payment Method: ${paymentMethod}`
+        );
+
+
+        document
+            .getElementById(
+                "booking-modal"
+            )
+            ?.classList.add(
+                "hidden"
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "Booking error:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Booking could not be saved."
+        );
+
+    }
 
 }
 
@@ -5056,206 +5070,297 @@ Payment Method: ${paymentMethod}
 
 function setupForgotPassword() {
 
-  const button =
-    document.getElementById(
-      "forgot-password-btn"
-    );
-
-
-  if (!button) return;
-
-
-  button.addEventListener(
-    "click",
-    async () => {
-
-      const emailInput =
+    const button =
         document.getElementById(
-          "auth-email"
+            "forgot-password-btn"
         );
 
 
-      const email =
-        emailInput
-          ? emailInput.value.trim()
-          : "";
+    if (!button) return;
 
 
-      if (!email) {
+    button.addEventListener(
+        "click",
+        async () => {
 
-        alert(
-          "Please enter your email address first."
-        );
-
-        emailInput?.focus();
-
-        return;
-
-      }
+            const emailInput =
+                document.getElementById(
+                    "auth-email"
+                );
 
 
-      try {
-
-        button.disabled = true;
-
-        button.textContent =
-          "Sending...";
+            const email =
+                emailInput?.value.trim() ||
+                "";
 
 
-        const { error } =
-          await supabase.auth
-            .resetPasswordForEmail(
-              email,
-              {
+            if (!email) {
 
-                redirectTo:
-                  window.location.origin +
-                  window.location.pathname
+                alert(
+                    "Please enter your email address first."
+                );
 
-              }
-            );
+                emailInput?.focus();
+
+                return;
+
+            }
 
 
-        if (error) {
+            try {
 
-          throw error;
+                button.disabled = true;
+
+                button.textContent =
+                    "Sending...";
+
+
+                const {
+                    error
+                } =
+                    await supabase.auth
+                        .resetPasswordForEmail(
+                            email,
+                            {
+                                redirectTo:
+                                    window.location.origin +
+                                    window.location.pathname
+                            }
+                        );
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                alert(
+                    "Password reset link has been sent. Please check your inbox and Spam folder."
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Password reset error:",
+                    error
+                );
+
+
+                alert(
+                    "Password reset failed: " +
+                    error.message
+                );
+
+
+            } finally {
+
+                button.disabled = false;
+
+                button.textContent =
+                    "Forgot Password?";
+
+            }
 
         }
-
-
-        alert(
-          "Password reset link has been sent to your email. Please check your inbox and Spam folder."
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "Password reset error:",
-          error
-        );
-
-
-        alert(
-          "Password reset failed: " +
-          error.message
-        );
-
-
-      } finally {
-
-        button.disabled = false;
-
-        button.textContent =
-          "Forgot Password?";
-
-      }
-
-    }
-  );
+    );
 
 }
 
 
 // =====================================================
-// HTML SECURITY HELPERS
+// TOAST
+// =====================================================
+
+function showToast(
+    message,
+    type = "success"
+) {
+
+    let toast =
+        document.getElementById(
+            "flex-rent-toast"
+        );
+
+
+    if (!toast) {
+
+        toast =
+            document.createElement(
+                "div"
+            );
+
+        toast.id =
+            "flex-rent-toast";
+
+
+        toast.style.position =
+            "fixed";
+
+        toast.style.bottom =
+            "24px";
+
+        toast.style.right =
+            "24px";
+
+        toast.style.zIndex =
+            "99999";
+
+        toast.style.maxWidth =
+            "360px";
+
+        toast.style.padding =
+            "14px 18px";
+
+        toast.style.borderRadius =
+            "12px";
+
+        toast.style.color =
+            "#fff";
+
+        toast.style.fontSize =
+            "14px";
+
+        toast.style.boxShadow =
+            "0 10px 30px rgba(0,0,0,.2)";
+
+
+        document.body.appendChild(
+            toast
+        );
+
+    }
+
+
+    toast.style.background =
+        type === "error"
+            ? "#DC2626"
+            : "#059669";
+
+
+    toast.textContent =
+        message;
+
+
+    toast.style.display =
+        "block";
+
+
+    clearTimeout(
+        toast._timer
+    );
+
+
+    toast._timer =
+        setTimeout(
+            () => {
+                toast.style.display =
+                    "none";
+            },
+            3500
+        );
+
+}
+
+
+// =====================================================
+// SECURITY HELPERS
 // =====================================================
 
 function escapeHTML(value) {
 
-  return String(value ?? "")
-    .replace(
-      /[&<>"']/g,
-      char => ({
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /[&<>"']/g,
+            char => ({
 
-        "&":
-          "&amp;",
+                "&":
+                    "&amp;",
 
-        "<":
-          "&lt;",
+                "<":
+                    "&lt;",
 
-        ">":
-          "&gt;",
+                ">":
+                    "&gt;",
 
-        '"':
-          "&quot;",
+                '"':
+                    "&quot;",
 
-        "'":
-          "&#039;"
+                "'":
+                    "&#039;"
 
-      })[char]
-    );
+            })[char]
+        );
 
 }
 
 
 function escapeAttribute(value) {
 
-  return escapeHTML(value);
+    return escapeHTML(value);
 
 }
 
 
 // =====================================================
-// GOOGLE OAUTH RETURN
+// OAUTH RETURN
 // =====================================================
 
 window.addEventListener(
-  "load",
-  async () => {
+    "load",
+    async () => {
 
-    try {
+        try {
 
-      const {
-        data
-      } =
-        await supabase.auth
-          .getSession();
-
-
-      if (
-        data &&
-        data.session &&
-        data.session.user
-      ) {
-
-        currentUser =
-          data.session.user;
+            const {
+                data
+            } =
+                await supabase.auth
+                    .getSession();
 
 
-        await ensureUserProfile();
+            if (
+                data?.session?.user
+            ) {
 
-        updateUIForUser();
+                currentUser =
+                    data.session.user;
 
-      }
+                await ensureUserProfile();
 
-    } catch (error) {
+                updateUIForUser();
 
-      console.warn(
-        "OAuth session check:",
-        error
-      );
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "OAuth session check:",
+                error
+            );
+
+        }
 
     }
-
-  }
 );
 
 
 // =====================================================
-// FORWARD SELECTED LOCATION TO LISTING
+// LISTING LOCATION HELPER
 // =====================================================
 
 window.selectLocationForListing =
-  function () {
+    function () {
 
-    openLocationModal(
-      true
-    );
+        openLocationModal(
+            true
+        );
 
-  };
+    };
 
 
 // =====================================================
-// END OF FLEX RENT SCRIPT
+// END
 // =====================================================
