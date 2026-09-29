@@ -2562,7 +2562,15 @@ async function loadMyListings() {
 
 
 // =====================================================
-// MY BOOKINGS
+// ADVANCED MY BOOKINGS / ORDERS
+// =====================================================
+
+let allMyBookings = [];
+let activeOrderFilter = "all";
+
+
+// =====================================================
+// LOAD MY BOOKINGS
 // =====================================================
 
 async function loadMyBookings() {
@@ -2572,22 +2580,50 @@ async function loadMyBookings() {
             "my-bookings-list"
         );
 
-
     if (!container) return;
 
 
+    // -----------------------------------------------
+    // LOGIN CHECK
+    // -----------------------------------------------
+
     if (!currentUser) {
 
-        container.innerHTML =
-            `<p>Please login first.</p>`;
+        container.innerHTML = `
+
+            <div class="empty-state">
+
+                <i class="fa-solid fa-user-lock"></i>
+
+                <p>
+                    Please login to view your orders.
+                </p>
+
+            </div>
+
+        `;
 
         return;
-
     }
 
 
-    container.innerHTML =
-        `<p>Loading your bookings...</p>`;
+    // -----------------------------------------------
+    // LOADING
+    // -----------------------------------------------
+
+    container.innerHTML = `
+
+        <div class="orders-loading">
+
+            <i class="fa-solid fa-spinner fa-spin"></i>
+
+            <p>
+                Loading your orders...
+            </p>
+
+        </div>
+
+    `;
 
 
     try {
@@ -2598,91 +2634,43 @@ async function loadMyBookings() {
             );
 
 
+        allMyBookings =
+            Array.isArray(bookings)
+                ? bookings
+                : [];
+
+
+        // -------------------------------------------
+        // NO BOOKINGS
+        // -------------------------------------------
+
         if (
-            !bookings ||
-            bookings.length === 0
+            allMyBookings.length === 0
         ) {
 
-            container.innerHTML = `
+            renderMyBookings([]);
 
-                <div class="empty-state">
-
-                    <i class="fa-solid fa-calendar-xmark"></i>
-
-                    <p>
-                        You have no bookings yet.
-                    </p>
-
-                </div>
-
-            `;
+            setupOrderTabs();
 
             return;
 
         }
 
 
-        container.innerHTML = "";
+        // -------------------------------------------
+        // SETUP FILTER TABS
+        // -------------------------------------------
+
+        setupOrderTabs();
 
 
-        bookings.forEach(booking => {
+        // -------------------------------------------
+        // RENDER ORDERS
+        // -------------------------------------------
 
-            const card =
-                document.createElement("div");
-
-            card.className =
-                "booking-card";
-
-
-            card.innerHTML = `
-
-                <h3>
-                    ${escapeHTML(
-                        booking.item_name ||
-                        "Rental Item"
-                    )}
-                </h3>
-
-                <p>
-                    <strong>Start Date:</strong>
-                    ${escapeHTML(
-                        booking.start_date || "-"
-                    )}
-                </p>
-
-                <p>
-                    <strong>Duration:</strong>
-                    ${booking.rental_days || 1}
-                    day(s)
-                </p>
-
-                <p>
-                    <strong>Total:</strong>
-                    ${formatINR(
-                        booking.total_amount || 0
-                    )}
-                </p>
-
-                <p>
-                    <strong>Payment:</strong>
-                    ${escapeHTML(
-                        booking.payment_method || "-"
-                    )}
-                </p>
-
-                <p>
-                    <strong>Status:</strong>
-                    ${escapeHTML(
-                        booking.status || "pending"
-                    )}
-                </p>
-
-            `;
-
-
-            container.appendChild(card);
-
-        });
+        renderMyBookings(
+            getFilteredBookings()
+        );
 
 
     } catch (error) {
@@ -2697,15 +2685,912 @@ async function loadMyBookings() {
 
             <div class="empty-state">
 
+                <i class="fa-solid fa-triangle-exclamation"></i>
+
                 <p>
-                    Could not load your bookings.
+                    Could not load your orders.
                 </p>
+
+                <small>
+                    Please try again later.
+                </small>
 
             </div>
 
         `;
 
     }
+
+}
+
+
+// =====================================================
+// FILTER BOOKINGS
+// =====================================================
+
+function getFilteredBookings() {
+
+    if (
+        activeOrderFilter ===
+        "all"
+    ) {
+
+        return allMyBookings;
+
+    }
+
+
+    return allMyBookings.filter(
+        booking => {
+
+            const status =
+                String(
+                    booking.status ||
+                    booking.order_status ||
+                    "pending"
+                )
+                .toLowerCase()
+                .trim();
+
+
+            // ---------------------------------------
+            // ACTIVE
+            // ---------------------------------------
+
+            if (
+                activeOrderFilter ===
+                "active"
+            ) {
+
+                return (
+                    status === "active" ||
+                    status === "confirmed" ||
+                    status === "ongoing"
+                );
+
+            }
+
+
+            // ---------------------------------------
+            // COMPLETED
+            // ---------------------------------------
+
+            if (
+                activeOrderFilter ===
+                "completed"
+            ) {
+
+                return (
+                    status === "completed" ||
+                    status === "complete"
+                );
+
+            }
+
+
+            // ---------------------------------------
+            // CANCELLED
+            // ---------------------------------------
+
+            if (
+                activeOrderFilter ===
+                "cancelled"
+            ) {
+
+                return (
+                    status === "cancelled" ||
+                    status === "canceled"
+                );
+
+            }
+
+
+            // ---------------------------------------
+            // PENDING
+            // ---------------------------------------
+
+            if (
+                activeOrderFilter ===
+                "pending"
+            ) {
+
+                return (
+                    status === "pending" ||
+                    status === "requested" ||
+                    status === "processing"
+                );
+
+            }
+
+
+            return true;
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// SETUP ORDER TABS
+// =====================================================
+
+function setupOrderTabs() {
+
+    const tabs =
+        document.querySelectorAll(
+            ".order-tab"
+        );
+
+
+    if (!tabs.length) return;
+
+
+    tabs.forEach(tab => {
+
+        // Prevent duplicate listeners
+        if (
+            tab.dataset.ordersReady ===
+            "true"
+        ) {
+            return;
+        }
+
+
+        tab.dataset.ordersReady =
+            "true";
+
+
+        tab.addEventListener(
+            "click",
+            function () {
+
+                // -----------------------------------
+                // REMOVE ACTIVE
+                // -----------------------------------
+
+                tabs.forEach(
+                    item =>
+                        item.classList.remove(
+                            "active"
+                        )
+                );
+
+
+                // -----------------------------------
+                // ACTIVE TAB
+                // -----------------------------------
+
+                this.classList.add(
+                    "active"
+                );
+
+
+                activeOrderFilter =
+                    this.dataset.orderFilter ||
+                    "all";
+
+
+                // -----------------------------------
+                // RENDER FILTERED ORDERS
+                // -----------------------------------
+
+                renderMyBookings(
+                    getFilteredBookings()
+                );
+
+            }
+        );
+
+    });
+
+}
+
+
+// =====================================================
+// RENDER MY BOOKINGS
+// =====================================================
+
+function renderMyBookings(
+    bookings
+) {
+
+    const container =
+        document.getElementById(
+            "my-bookings-list"
+        );
+
+
+    if (!container) return;
+
+
+    // -----------------------------------------------
+    // EMPTY RESULT
+    // -----------------------------------------------
+
+    if (
+        !Array.isArray(bookings) ||
+        bookings.length === 0
+    ) {
+
+        let message =
+            "You have no orders yet.";
+
+
+        if (
+            activeOrderFilter ===
+            "pending"
+        ) {
+
+            message =
+                "You have no pending orders.";
+
+        }
+
+        else if (
+            activeOrderFilter ===
+            "active"
+        ) {
+
+            message =
+                "You have no active rentals.";
+
+        }
+
+        else if (
+            activeOrderFilter ===
+            "completed"
+        ) {
+
+            message =
+                "You have no completed orders.";
+
+        }
+
+        else if (
+            activeOrderFilter ===
+            "cancelled"
+        ) {
+
+            message =
+                "You have no cancelled orders.";
+
+        }
+
+
+        container.innerHTML = `
+
+            <div class="empty-state order-empty-state">
+
+                <i class="fa-solid fa-box-open"></i>
+
+                <h3>
+                    No Orders Found
+                </h3>
+
+                <p>
+                    ${escapeHTML(message)}
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    // -----------------------------------------------
+    // CLEAR CONTAINER
+    // -----------------------------------------------
+
+    container.innerHTML = "";
+
+
+    // -----------------------------------------------
+    // CREATE ORDER CARDS
+    // -----------------------------------------------
+
+    bookings.forEach(
+        (booking, index) => {
+
+            const card =
+                document.createElement(
+                    "article"
+                );
+
+
+            card.className =
+                "advanced-order-card";
+
+
+            // ---------------------------------------
+            // BASIC DATA
+            // ---------------------------------------
+
+            const itemName =
+                booking.item_name ||
+                booking.listing_title ||
+                booking.title ||
+                "Rental Item";
+
+
+            const startDate =
+                booking.start_date ||
+                booking.rental_start_date ||
+                "-";
+
+
+            const endDate =
+                booking.end_date ||
+                booking.rental_end_date ||
+                "";
+
+
+            const rentalDays =
+                Number(
+                    booking.rental_days ||
+                    booking.duration ||
+                    1
+                );
+
+
+            const totalAmount =
+                Number(
+                    booking.total_amount ||
+                    booking.total_price ||
+                    booking.amount ||
+                    0
+                );
+
+
+            const pricePerDay =
+                Number(
+                    booking.price_per_day ||
+                    booking.daily_price ||
+                    booking.rate ||
+                    0
+                );
+
+
+            const paymentMethod =
+                booking.payment_method ||
+                "Not specified";
+
+
+            const status =
+                String(
+                    booking.status ||
+                    booking.order_status ||
+                    "pending"
+                )
+                .toLowerCase()
+                .trim();
+
+
+            // ---------------------------------------
+            // IMAGE
+            // ---------------------------------------
+
+            const image =
+                booking.item_image ||
+                booking.image_url ||
+                booking.listing_image ||
+                "https://via.placeholder.com/300x220?text=Rental+Item";
+
+
+            // ---------------------------------------
+            // LOCATION
+            // ---------------------------------------
+
+            const location =
+                booking.location ||
+                booking.item_location ||
+                "Location not specified";
+
+
+            // ---------------------------------------
+            // STATUS TEXT
+            // ---------------------------------------
+
+            let statusText =
+                "Pending";
+
+
+            if (
+                status === "confirmed"
+            ) {
+
+                statusText =
+                    "Confirmed";
+
+            }
+
+            else if (
+                status === "active" ||
+                status === "ongoing"
+            ) {
+
+                statusText =
+                    "Active";
+
+            }
+
+            else if (
+                status === "completed" ||
+                status === "complete"
+            ) {
+
+                statusText =
+                    "Completed";
+
+            }
+
+            else if (
+                status === "cancelled" ||
+                status === "canceled"
+            ) {
+
+                statusText =
+                    "Cancelled";
+
+            }
+
+            else if (
+                status === "requested"
+            ) {
+
+                statusText =
+                    "Requested";
+
+            }
+
+
+            // ---------------------------------------
+            // STATUS CLASS
+            // ---------------------------------------
+
+            let statusClass =
+                "pending";
+
+
+            if (
+                status === "confirmed"
+            ) {
+
+                statusClass =
+                    "confirmed";
+
+            }
+
+            else if (
+                status === "active" ||
+                status === "ongoing"
+            ) {
+
+                statusClass =
+                    "active";
+
+            }
+
+            else if (
+                status === "completed" ||
+                status === "complete"
+            ) {
+
+                statusClass =
+                    "completed";
+
+            }
+
+            else if (
+                status === "cancelled" ||
+                status === "canceled"
+            ) {
+
+                statusClass =
+                    "cancelled";
+
+            }
+
+
+            // ---------------------------------------
+            // DATE RANGE
+            // ---------------------------------------
+
+            let dateRange =
+                startDate;
+
+
+            if (endDate) {
+
+                dateRange =
+                    `${startDate} → ${endDate}`;
+
+            }
+
+
+            // ---------------------------------------
+            // CARD HTML
+            // ---------------------------------------
+
+            card.innerHTML = `
+
+                <div class="order-card-image">
+
+                    <img
+                        src="${escapeAttribute(image)}"
+                        alt="${escapeAttribute(itemName)}"
+                        loading="lazy"
+                    >
+
+                </div>
+
+
+                <div class="order-card-content">
+
+                    <div class="order-card-top">
+
+                        <div>
+
+                            <span class="order-label">
+                                Rental Order
+                            </span>
+
+                            <h3 class="order-item-name">
+                                ${escapeHTML(
+                                    itemName
+                                )}
+                            </h3>
+
+                        </div>
+
+
+                        <span
+                            class="order-status ${statusClass}"
+                        >
+
+                            <i
+                                class="fa-solid fa-circle"
+                            ></i>
+
+                            ${escapeHTML(
+                                statusText
+                            )}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="order-location">
+
+                        <i
+                            class="fa-solid fa-location-dot"
+                        ></i>
+
+                        <span>
+                            ${escapeHTML(
+                                location
+                            )}
+                        </span>
+
+                    </div>
+
+
+                    <div class="order-details-grid">
+
+                        <div
+                            class="order-detail-item"
+                        >
+
+                            <span>
+                                Rental Period
+                            </span>
+
+                            <strong>
+                                ${escapeHTML(
+                                    dateRange
+                                )}
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="order-detail-item"
+                        >
+
+                            <span>
+                                Duration
+                            </span>
+
+                            <strong>
+                                ${rentalDays}
+                                day${rentalDays > 1 ? "s" : ""}
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="order-detail-item"
+                        >
+
+                            <span>
+                                Price / Day
+                            </span>
+
+                            <strong>
+                                ${formatINR(
+                                    pricePerDay
+                                )}
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="order-detail-item"
+                        >
+
+                            <span>
+                                Payment
+                            </span>
+
+                            <strong>
+                                ${escapeHTML(
+                                    paymentMethod
+                                )}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="order-card-bottom">
+
+                        <div class="order-total">
+
+                            <span>
+                                Total Amount
+                            </span>
+
+                            <strong>
+                                ${formatINR(
+                                    totalAmount
+                                )}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="order-actions">
+
+                            <button
+                                type="button"
+                                class="btn btn-outline order-view-btn"
+                                data-order-index="${index}"
+                            >
+
+                                <i
+                                    class="fa-solid fa-eye"
+                                ></i>
+
+                                View Order
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="btn btn-primary order-contact-btn"
+                                data-order-index="${index}"
+                            >
+
+                                <i
+                                    class="fa-solid fa-message"
+                                ></i>
+
+                                Contact Owner
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+    );
+
+
+    // -----------------------------------------------
+    // ORDER BUTTONS
+    // -----------------------------------------------
+
+    setupOrderCardButtons(
+        bookings
+    );
+
+}
+
+
+// =====================================================
+// ORDER CARD BUTTONS
+// =====================================================
+
+function setupOrderCardButtons(
+    bookings
+) {
+
+    const viewButtons =
+        document.querySelectorAll(
+            ".order-view-btn"
+        );
+
+
+    const contactButtons =
+        document.querySelectorAll(
+            ".order-contact-btn"
+        );
+
+
+    // -----------------------------------------------
+    // VIEW ORDER
+    // -----------------------------------------------
+
+    viewButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const index =
+                        Number(
+                            this.dataset.orderIndex
+                        );
+
+
+                    const booking =
+                        bookings[index];
+
+
+                    if (!booking) return;
+
+
+                    showOrderDetails(
+                        booking
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    // -----------------------------------------------
+    // CONTACT OWNER
+    // -----------------------------------------------
+
+    contactButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    if (!currentUser) {
+
+                        alert(
+                            "Please login first to contact the owner."
+                        );
+
+                        document
+                            .getElementById(
+                                "auth-modal"
+                            )
+                            ?.classList.remove(
+                                "hidden"
+                            );
+
+                        return;
+
+                    }
+
+
+                    alert(
+                        "Chat feature will be connected in the next stage."
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// SHOW ORDER DETAILS
+// =====================================================
+
+function showOrderDetails(
+    booking
+) {
+
+    const itemName =
+        booking.item_name ||
+        booking.listing_title ||
+        booking.title ||
+        "Rental Item";
+
+
+    const startDate =
+        booking.start_date ||
+        booking.rental_start_date ||
+        "-";
+
+
+    const endDate =
+        booking.end_date ||
+        booking.rental_end_date ||
+        "-";
+
+
+    const days =
+        Number(
+            booking.rental_days ||
+            booking.duration ||
+            1
+        );
+
+
+    const total =
+        Number(
+            booking.total_amount ||
+            booking.total_price ||
+            booking.amount ||
+            0
+        );
+
+
+    const status =
+        booking.status ||
+        booking.order_status ||
+        "pending";
+
+
+    alert(
+
+        `Order Details\n\n` +
+
+        `Item: ${itemName}\n` +
+
+        `Start Date: ${startDate}\n` +
+
+        `End Date: ${endDate}\n` +
+
+        `Duration: ${days} day(s)\n` +
+
+        `Total: ${formatINR(total)}\n` +
+
+        `Status: ${status}`
+
+    );
 
 }
 // =====================================================
