@@ -15,7 +15,7 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
   >
 
-  <!-- Leaflet - kept for compatibility with existing script.js -->
+  <!-- Leaflet -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -31,40 +31,40 @@
 <body>
 
   <!-- =========================================================
-     FLEX RENT OPENING ANIMATION
-========================================================= -->
+       LOADING / OPENING ANIMATION
+  ========================================================== -->
 
-<div id="loading-screen">
+  <div id="loading-screen">
 
-  <div class="intro-animation">
+    <div class="intro-animation">
 
-    <div class="intro-logo-wrap">
+      <div class="intro-logo-wrap">
 
-      <div class="intro-logo-icon">
-        <i class="fa-solid fa-layer-group"></i>
+        <div class="intro-logo-icon">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+
+      </div>
+
+      <div class="intro-brand">
+        <span class="intro-flex">Flex</span><span class="intro-rent">Rent</span>
+      </div>
+
+      <div class="intro-line"></div>
+
+      <p class="intro-tagline">
+        Rent What You Need. Earn From What You Own.
+      </p>
+
+      <div class="intro-loading">
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
 
     </div>
 
-    <div class="intro-brand">
-      <span class="intro-flex">Flex</span><span class="intro-rent">Rent</span>
-    </div>
-
-    <div class="intro-line"></div>
-
-    <p class="intro-tagline">
-      Rent What You Need. Earn From What You Own.
-    </p>
-
-    <div class="intro-loading">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-
   </div>
-
-</div>
 
 
   <!-- =========================================================
@@ -75,12 +75,14 @@
 
     <!-- Logo -->
     <a href="#" class="logo">
-  <img
-    src="flex-rent-logo.png"
-    alt="Flex Rent"
-    class="logo-image"
-  >
-</a>
+
+      <img
+        src="flex-rent-logo.png"
+        alt="Flex Rent"
+        class="logo-image"
+      >
+
+    </a>
 
 
     <!-- =======================================================
@@ -114,7 +116,10 @@
     </button>
 
 
-    <!-- Main Search -->
+    <!-- =======================================================
+         SINGLE MAIN SEARCH BAR
+    ======================================================== -->
+
     <div
       class="search-container"
       onclick="document.getElementById('search-input').focus()"
@@ -134,13 +139,16 @@
         title="Voice Search"
         type="button"
       >
+
         <i class="fa-solid fa-microphone"></i>
+
       </button>
 
     </div>
 
 
     <!-- Navigation Actions -->
+
     <nav class="nav-actions">
 
       <button
@@ -231,39 +239,10 @@
         </p>
 
 
-        <!-- Hero Actions -->
-
-<div class="hero-actions">
-
-  <button
-    type="button"
-    id="hero-list-item-btn"
-    class="btn btn-primary"
-  >
-
-    <i class="fa-solid fa-plus"></i>
-
-    List Your Item
-
-  </button>
-
-
-  <button
-    type="button"
-    id="hero-explore-btn"
-    class="btn btn-outline"
-  >
-
-    <i class="fa-solid fa-compass"></i>
-
-    Explore Items
-
-  </button>
-
-</div>
-
-
-        <!-- Hero Actions -->
+        <!-- ===================================================
+             HERO ACTIONS
+             ONLY ONE PAIR
+        ==================================================== -->
 
         <div class="hero-actions">
 
@@ -336,7 +315,9 @@
       </div>
 
 
-      <!-- Hero Visual -->
+      <!-- ===================================================
+           HERO VISUAL
+      ==================================================== -->
 
       <div class="hero-visual">
 
@@ -735,8 +716,6 @@
 
     <!-- =======================================================
          HIDDEN MAP
-         Kept temporarily for compatibility with existing
-         script.js. We will remove map logic in next step.
     ======================================================== -->
 
     <div
@@ -792,7 +771,7 @@
         class="listings-grid"
       >
 
-        <!-- Dynamic cards inserted by script.js -->
+        <!-- Dynamic listings inserted by script.js -->
 
       </div>
 
@@ -1051,14 +1030,10 @@
 
     <div class="modal-content location-modal-content">
 
-      <!-- Close -->
-
       <span class="close-modal">
         &times;
       </span>
 
-
-      <!-- Header -->
 
       <div class="location-modal-header">
 
@@ -1149,8 +1124,6 @@
           class="saved-addresses-list"
         >
 
-          <!-- Saved addresses will be inserted here -->
-
           <div class="no-saved-address">
 
             <i class="fa-regular fa-address-book"></i>
@@ -1239,6 +1212,7 @@
 
       <form id="address-form">
 
+
         <!-- Address Type -->
 
         <div class="form-group">
@@ -1288,6 +1262,7 @@
             </button>
 
           </div>
+
 
           <input
             type="hidden"
@@ -1392,7 +1367,7 @@
         </div>
 
 
-        <!-- City -->
+        <!-- City + State -->
 
         <div class="form-row">
 
@@ -1435,10 +1410,13 @@
         <div class="form-group">
 
           <label>
+
             Landmark
+
             <span class="optional-label">
               Optional
             </span>
+
           </label>
 
           <input
@@ -1579,7 +1557,9 @@
             id="forgot-password-btn"
             class="forgot-password-btn"
           >
+
             Forgot Password?
+
           </button>
 
         </div>
@@ -1645,7 +1625,7 @@
       </button>
 
 
-      <!-- OTP -->
+      <!-- Phone OTP -->
 
       <div
         id="phone-otp-section"
@@ -1707,7 +1687,9 @@
           href="#"
           id="auth-toggle-btn"
         >
+
           Register here
+
         </a>
 
       </p>
@@ -1856,7 +1838,7 @@
           </div>
 
 
-          <!-- Existing JS can still use this field -->
+          <!-- Existing JS compatibility field -->
 
           <input
             type="text"
