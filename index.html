@@ -3,308 +3,1441 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flex Rent - Smart Community Rental Marketplace</title>
-  
-  <!-- CSS Dependencies -->
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-  <!-- Supabase & Leaflet JS -->
+  <title>Flex Rent - Smart Community Rental Marketplace</title>
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  >
+
+  <!-- Leaflet Map CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
+
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Leaflet -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
+
 <body>
 
-  <!-- Loading Screen -->
+  <!-- =========================================================
+       LOADING SCREEN
+  ========================================================== -->
+
   <div id="loading-screen">
     <div class="spinner"></div>
+
     <h2>Flex Rent</h2>
-    <p>Connecting rentals worldwide...</p>
+
+    <p>
+      Connecting rentals worldwide...
+    </p>
   </div>
 
-  <!-- Navigation Bar -->
+
+  <!-- =========================================================
+       NAVIGATION
+  ========================================================== -->
+
   <header class="navbar">
+
+    <!-- Logo -->
     <div class="logo">
-      <i class="fa-solid fa-layer-group"></i> Flex<span>Rent</span>
+      <i class="fa-solid fa-layer-group"></i>
+      Flex<span>Rent</span>
     </div>
-    
-    <div class="search-container" onclick="document.getElementById('search-input').focus()">
+
+
+    <!-- Main Search -->
+    <div
+      class="search-container"
+      onclick="document.getElementById('search-input').focus()"
+    >
+
       <i class="fa-solid fa-magnifying-glass search-icon"></i>
-      <input type="text" id="search-input" placeholder="Search tools, equipment, everyday items...">
-      <button id="mic-btn" class="mic-btn" title="Voice Search">
+
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Search tools, equipment, everyday items..."
+      >
+
+      <button
+        id="mic-btn"
+        class="mic-btn"
+        title="Voice Search"
+        type="button"
+      >
         <i class="fa-solid fa-microphone"></i>
       </button>
+
     </div>
 
+
+    <!-- Navigation Actions -->
     <nav class="nav-actions">
-      <button class="btn btn-outline" id="list-item-nav-btn"><i class="fa-solid fa-plus"></i> List Your Item</button>
-      <button class="btn btn-primary" id="auth-nav-btn">Login / Register</button>
-      <button class="btn btn-secondary hidden" id="dashboard-nav-btn"><i class="fa-solid fa-user"></i> Dashboard</button>
+
+      <button
+        class="btn btn-outline"
+        id="list-item-nav-btn"
+        type="button"
+      >
+        <i class="fa-solid fa-plus"></i>
+        List Your Item
+      </button>
+
+
+      <button
+        class="btn btn-primary"
+        id="auth-nav-btn"
+        type="button"
+      >
+        Login / Register
+      </button>
+
+
+      <button
+        class="btn btn-secondary hidden"
+        id="dashboard-nav-btn"
+        type="button"
+      >
+        <i class="fa-solid fa-user"></i>
+        Dashboard
+      </button>
+
     </nav>
+
   </header>
 
-  <!-- Main Hero & Category Filter Section -->
+
+
+  <!-- =========================================================
+       MAIN CONTENT
+  ========================================================== -->
+
   <main class="container">
+
+
+    <!-- =======================================================
+         ADVANCED HERO SECTION
+    ======================================================== -->
+
     <section class="hero-section">
-      <h1>Rent What You Need. <br>Earn From What You Own.</h1>
-      <p>Discover everyday tools, heavy machinery, and equipment available near you.</p>
+
+      <div class="hero-content">
+
+        <!-- Badge -->
+        <div class="hero-badge">
+          <i class="fa-solid fa-sparkles"></i>
+
+          Smart Community Rental Marketplace
+        </div>
+
+
+        <!-- Main Heading -->
+        <h1>
+          Rent What You Need.
+          <br>
+
+          <span>Earn From What You Own.</span>
+        </h1>
+
+
+        <!-- Description -->
+        <p>
+          Discover tools, equipment and everyday items available
+          for rent near you — or turn your unused items into
+          extra income.
+        </p>
+
+
+        <!-- Hero Search -->
+        <div class="hero-search-box">
+
+          <i class="fa-solid fa-magnifying-glass"></i>
+
+          <input
+            type="text"
+            id="hero-search-input"
+            placeholder="What do you want to rent?"
+          >
+
+          <button
+            type="button"
+            id="hero-search-btn"
+            class="btn btn-primary"
+          >
+            Search
+          </button>
+
+        </div>
+
+
+        <!-- Hero Actions -->
+        <div class="hero-actions">
+
+          <button
+            type="button"
+            id="hero-list-item-btn"
+            class="btn btn-primary"
+          >
+            <i class="fa-solid fa-plus"></i>
+            List Your Item
+          </button>
+
+
+          <button
+            type="button"
+            id="hero-explore-btn"
+            class="btn btn-outline"
+          >
+            <i class="fa-solid fa-compass"></i>
+            Explore Items
+          </button>
+
+        </div>
+
+
+        <!-- Trust Features -->
+        <div class="hero-trust">
+
+          <div>
+            <i class="fa-solid fa-location-dot"></i>
+
+            <span>
+              Rent Nearby
+            </span>
+          </div>
+
+
+          <div>
+            <i class="fa-solid fa-shield-halved"></i>
+
+            <span>
+              Secure Rentals
+            </span>
+          </div>
+
+
+          <div>
+            <i class="fa-solid fa-wallet"></i>
+
+            <span>
+              Earn From Items
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Hero Visual -->
+      <div class="hero-visual">
+
+        <div class="hero-card hero-card-main">
+
+          <div class="hero-card-icon">
+            <i class="fa-solid fa-toolbox"></i>
+          </div>
+
+
+          <div>
+            <span>
+              Popular Rental
+            </span>
+
+            <h3>
+              Tools & Equipment
+            </h3>
+
+            <p>
+              Available near you
+            </p>
+          </div>
+
+
+          <div class="hero-card-arrow">
+            <i class="fa-solid fa-arrow-right"></i>
+          </div>
+
+        </div>
+
+
+        <!-- Floating Card -->
+        <div class="floating-card floating-card-top">
+
+          <i class="fa-solid fa-location-dot"></i>
+
+          <div>
+            <strong>
+              Nearby Items
+            </strong>
+
+            <small>
+              Find rentals around you
+            </small>
+          </div>
+
+        </div>
+
+
+        <!-- Floating Card -->
+        <div class="floating-card floating-card-bottom">
+
+          <i class="fa-solid fa-star"></i>
+
+          <div>
+            <strong>
+              Trusted Rentals
+            </strong>
+
+            <small>
+              Rent with confidence
+            </small>
+          </div>
+
+        </div>
+
+      </div>
+
     </section>
 
-    <!-- Categories -->
+
+
+    <!-- =======================================================
+         QUICK CATEGORY CARDS
+    ======================================================== -->
+
+    <section class="quick-categories">
+
+      <div class="section-heading">
+
+        <div>
+          <span class="section-label">
+            Explore
+          </span>
+
+          <h2>
+            What are you looking for?
+          </h2>
+        </div>
+
+      </div>
+
+
+      <div class="category-showcase">
+
+        <button
+          class="category-showcase-card"
+          data-category="Everyday"
+          type="button"
+        >
+          <div class="category-icon">
+            <i class="fa-solid fa-box-open"></i>
+          </div>
+
+          <strong>
+            Everyday
+          </strong>
+
+          <span>
+            Useful daily items
+          </span>
+        </button>
+
+
+        <button
+          class="category-showcase-card"
+          data-category="Agriculture"
+          type="button"
+        >
+          <div class="category-icon">
+            <i class="fa-solid fa-tractor"></i>
+          </div>
+
+          <strong>
+            Agriculture
+          </strong>
+
+          <span>
+            Farming equipment
+          </span>
+        </button>
+
+
+        <button
+          class="category-showcase-card"
+          data-category="Construction"
+          type="button"
+        >
+          <div class="category-icon">
+            <i class="fa-solid fa-helmet-safety"></i>
+          </div>
+
+          <strong>
+            Construction
+          </strong>
+
+          <span>
+            Tools & machinery
+          </span>
+        </button>
+
+
+        <button
+          class="category-showcase-card"
+          data-category="Industrial"
+          type="button"
+        >
+          <div class="category-icon">
+            <i class="fa-solid fa-industry"></i>
+          </div>
+
+          <strong>
+            Industrial
+          </strong>
+
+          <span>
+            Heavy equipment
+          </span>
+        </button>
+
+
+        <button
+          class="category-showcase-card"
+          data-category="Gardening"
+          type="button"
+        >
+          <div class="category-icon">
+            <i class="fa-solid fa-seedling"></i>
+          </div>
+
+          <strong>
+            Gardening
+          </strong>
+
+          <span>
+            Garden tools
+          </span>
+        </button>
+
+
+        <button
+          class="category-showcase-card"
+          data-category="Other"
+          type="button"
+        >
+          <div class="category-icon">
+            <i class="fa-solid fa-ellipsis"></i>
+          </div>
+
+          <strong>
+            Other
+          </strong>
+
+          <span>
+            Explore more
+          </span>
+        </button>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =======================================================
+         ORIGINAL CATEGORY FILTER
+    ======================================================== -->
+
     <section class="categories-bar">
-      <button class="category-chip active" data-category="All"><i class="fa-solid fa-border-all"></i> All</button>
-      <button class="category-chip" data-category="Everyday"><i class="fa-solid fa-box-open"></i> Everyday</button>
-      <button class="category-chip" data-category="Agriculture"><i class="fa-solid fa-tractor"></i> Agriculture</button>
-      <button class="category-chip" data-category="Construction"><i class="fa-solid fa-helmet-safety"></i> Construction</button>
-      <button class="category-chip" data-category="Industrial"><i class="fa-solid fa-industry"></i> Industrial</button>
-      <button class="category-chip" data-category="Gardening"><i class="fa-solid fa-seedling"></i> Gardening</button>
-      <button class="category-chip" data-category="Other"><i class="fa-solid fa-ellipsis"></i> Other</button>
+
+      <button
+        class="category-chip active"
+        data-category="All"
+        type="button"
+      >
+        <i class="fa-solid fa-border-all"></i>
+        All
+      </button>
+
+
+      <button
+        class="category-chip"
+        data-category="Everyday"
+        type="button"
+      >
+        <i class="fa-solid fa-box-open"></i>
+        Everyday
+      </button>
+
+
+      <button
+        class="category-chip"
+        data-category="Agriculture"
+        type="button"
+      >
+        <i class="fa-solid fa-tractor"></i>
+        Agriculture
+      </button>
+
+
+      <button
+        class="category-chip"
+        data-category="Construction"
+        type="button"
+      >
+        <i class="fa-solid fa-helmet-safety"></i>
+        Construction
+      </button>
+
+
+      <button
+        class="category-chip"
+        data-category="Industrial"
+        type="button"
+      >
+        <i class="fa-solid fa-industry"></i>
+        Industrial
+      </button>
+
+
+      <button
+        class="category-chip"
+        data-category="Gardening"
+        type="button"
+      >
+        <i class="fa-solid fa-seedling"></i>
+        Gardening
+      </button>
+
+
+      <button
+        class="category-chip"
+        data-category="Other"
+        type="button"
+      >
+        <i class="fa-solid fa-ellipsis"></i>
+        Other
+      </button>
+
     </section>
 
-    <!-- Map Section -->
+
+
+    <!-- =======================================================
+         MAP
+    ======================================================== -->
+
     <section class="map-wrapper">
+
       <div class="map-header">
-        <h3><i class="fa-solid fa-globe"></i> Worldwide Interactive Rental Map</h3>
-        <input type="text" id="location-search" placeholder="Filter map by location (e.g. London, New York)...">
+
+        <div>
+          <span class="section-label">
+            Discover Nearby
+          </span>
+
+          <h3>
+            <i class="fa-solid fa-location-dot"></i>
+            Rental Items Near You
+          </h3>
+        </div>
+
+
+        <input
+          type="text"
+          id="location-search"
+          placeholder="Search location..."
+        >
+
       </div>
+
+
       <div id="map"></div>
+
     </section>
 
-    <!-- Marketplace Listings -->
+
+
+    <!-- =======================================================
+         MARKETPLACE
+    ======================================================== -->
+
     <section class="marketplace">
-      <h2>Explore Available Listings</h2>
-      <div id="listings-grid" class="listings-grid">
-        <!-- Dynamic Cards Injected via JS -->
+
+      <div class="marketplace-header">
+
+        <div>
+
+          <span class="section-label">
+            Marketplace
+          </span>
+
+          <h2>
+            Explore Available Listings
+          </h2>
+
+          <p>
+            Find items available for rent from people around you.
+          </p>
+
+        </div>
+
+
+        <button
+          type="button"
+          id="marketplace-explore-btn"
+          class="btn btn-outline"
+        >
+          View All
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
       </div>
+
+
+      <div
+        id="listings-grid"
+        class="listings-grid"
+      >
+        <!-- Dynamic cards will be inserted by script.js -->
+      </div>
+
     </section>
 
-    <!-- User Dashboard Section (Hidden by Default) -->
-    <section id="dashboard-section" class="dashboard-section hidden">
-      <div class="dashboard-header">
-        <h2>User Dashboard</h2>
-        <button id="logout-btn" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+
+
+    <!-- =======================================================
+         HOW FLEX RENT WORKS
+    ======================================================== -->
+
+    <section class="how-it-works">
+
+      <div class="section-heading">
+
+        <span class="section-label">
+          Simple & Easy
+        </span>
+
+        <h2>
+          How Flex Rent Works
+        </h2>
+
+        <p>
+          Rent something you need or earn from something you own.
+        </p>
+
       </div>
-      <div class="dashboard-tabs">
-        <button class="tab-btn active" data-tab="tab-listings">My Listings</button>
-        <button class="tab-btn" data-tab="tab-bookings">My Bookings</button>
-        <button class="tab-btn" data-tab="tab-profile">Profile Info</button>
+
+
+      <div class="steps-grid">
+
+        <div class="step-card">
+
+          <div class="step-number">
+            01
+          </div>
+
+          <i class="fa-solid fa-magnifying-glass"></i>
+
+          <h3>
+            Find an Item
+          </h3>
+
+          <p>
+            Search for tools, equipment or everyday items
+            available near you.
+          </p>
+
+        </div>
+
+
+        <div class="step-card">
+
+          <div class="step-number">
+            02
+          </div>
+
+          <i class="fa-solid fa-calendar-check"></i>
+
+          <h3>
+            Book It
+          </h3>
+
+          <p>
+            Choose your rental dates and send a booking request.
+          </p>
+
+        </div>
+
+
+        <div class="step-card">
+
+          <div class="step-number">
+            03
+          </div>
+
+          <i class="fa-solid fa-handshake"></i>
+
+          <h3>
+            Rent & Enjoy
+          </h3>
+
+          <p>
+            Connect with the owner, collect the item and use it.
+          </p>
+
+        </div>
+
+
+        <div class="step-card">
+
+          <div class="step-number">
+            04
+          </div>
+
+          <i class="fa-solid fa-wallet"></i>
+
+          <h3>
+            Earn Money
+          </h3>
+
+          <p>
+            List your unused items and turn them into extra income.
+          </p>
+
+        </div>
+
       </div>
-      <div class="tab-content" id="tab-listings">
-        <div id="my-listings-grid" class="listings-grid"></div>
-      </div>
-      <div class="tab-content hidden" id="tab-bookings">
-        <div id="my-bookings-list" class="bookings-list"></div>
-      </div>
-      <div class="tab-content hidden" id="tab-profile">
-        <div id="profile-info" class="profile-card"></div>
-      </div>
+
     </section>
+
+
+
+    <!-- =======================================================
+         DASHBOARD
+    ======================================================== -->
+
+    <section
+      id="dashboard-section"
+      class="dashboard-section hidden"
+    >
+
+      <div class="dashboard-header">
+
+        <div>
+          <span class="section-label">
+            Account
+          </span>
+
+          <h2>
+            User Dashboard
+          </h2>
+        </div>
+
+
+        <button
+          id="logout-btn"
+          class="btn btn-danger"
+          type="button"
+        >
+          <i class="fa-solid fa-right-from-bracket"></i>
+          Logout
+        </button>
+
+      </div>
+
+
+      <!-- Dashboard Tabs -->
+
+      <div class="dashboard-tabs">
+
+        <button
+          class="tab-btn active"
+          data-tab="tab-listings"
+          type="button"
+        >
+          <i class="fa-solid fa-box"></i>
+          My Listings
+        </button>
+
+
+        <button
+          class="tab-btn"
+          data-tab="tab-bookings"
+          type="button"
+        >
+          <i class="fa-solid fa-calendar"></i>
+          My Bookings
+        </button>
+
+
+        <button
+          class="tab-btn"
+          data-tab="tab-profile"
+          type="button"
+        >
+          <i class="fa-solid fa-user"></i>
+          Profile Info
+        </button>
+
+      </div>
+
+
+      <!-- My Listings -->
+
+      <div
+        class="tab-content"
+        id="tab-listings"
+      >
+
+        <div
+          id="my-listings-grid"
+          class="listings-grid"
+        ></div>
+
+      </div>
+
+
+      <!-- My Bookings -->
+
+      <div
+        class="tab-content hidden"
+        id="tab-bookings"
+      >
+
+        <div
+          id="my-bookings-list"
+          class="bookings-list"
+        ></div>
+
+      </div>
+
+
+      <!-- Profile -->
+
+      <div
+        class="tab-content hidden"
+        id="tab-profile"
+      >
+
+        <div
+          id="profile-info"
+          class="profile-card"
+        ></div>
+
+      </div>
+
+    </section>
+
   </main>
 
-  <!-- AUTH MODAL -->
-  <div id="auth-modal" class="modal hidden">
+
+
+  <!-- =========================================================
+       AUTH MODAL
+  ========================================================== -->
+
+  <div
+    id="auth-modal"
+    class="modal hidden"
+  >
+
     <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <h2 id="auth-title">Login to Flex Rent</h2>
+
+      <span class="close-modal">
+        &times;
+      </span>
+
+
+      <h2 id="auth-title">
+        Login to Flex Rent
+      </h2>
+
+
       <form id="auth-form">
 
-  <div class="form-group hidden" id="name-group">
-    <label>Full Name</label>
-    <input type="text" id="auth-name" placeholder="John Doe">
-  </div>
+        <!-- Name -->
 
-  <div class="form-group hidden" id="phone-group">
-    <label>Phone Number</label>
-    <input type="tel" id="auth-phone" placeholder="+919876543210">
-  </div>
+        <div
+          class="form-group hidden"
+          id="name-group"
+        >
 
-  <div class="form-group" id="email-group">
-    <label>Email Address</label>
-    <input type="email" id="auth-email" placeholder="user@example.com">
-  </div>
+          <label>
+            Full Name
+          </label>
 
-  <div class="form-group" id="password-group">
-    <label>Password</label>
-    <input type="password" id="auth-password" placeholder="••••••••">
+          <input
+            type="text"
+            id="auth-name"
+            placeholder="Your full name"
+          >
 
-    <button
-      type="button"
-      id="forgot-password-btn"
-      class="forgot-password-btn"
-    >
-      Forgot Password?
-    </button>
-  </div>
-
-  <button
-    type="submit"
-    class="btn btn-primary btn-block"
-    id="auth-submit-btn"
-  >
-    Login
-  </button>
-
-</form>
-
-<div id="auth-divider" style="text-align:center; margin:15px 0;">
-  <span>──────── OR ────────</span>
-</div>
-
-<button
-  type="button"
-  id="google-login-btn"
-  class="btn btn-secondary btn-block"
->
-  <i class="fa-brands fa-google"></i>
-  Continue with Google
-</button>
-
-<button
-  type="button"
-  id="phone-login-btn"
-  class="btn btn-secondary btn-block"
-  style="margin-top:10px;"
->
-  <i class="fa-solid fa-mobile-screen-button"></i>
-  Continue with Phone
-</button>
-
-<div id="phone-otp-section" class="hidden" style="margin-top:15px;">
-
-  <div class="form-group">
-    <label>Enter OTP</label>
-
-    <input
-      type="text"
-      id="phone-otp"
-      placeholder="Enter 6-digit OTP"
-      maxlength="6"
-      inputmode="numeric"
-    >
-  </div>
-
-  <button
-    type="button"
-    id="verify-phone-otp-btn"
-    class="btn btn-primary btn-block"
-  >
-    Verify OTP
-  </button>
-
-  <button
-    type="button"
-    id="resend-phone-otp-btn"
-    class="btn btn-secondary btn-block"
-    style="margin-top:8px;"
-  >
-    Resend OTP
-  </button>
-
-</div>
-      <p class="auth-toggle">
-        <span id="auth-toggle-text">Don't have an account?</span> 
-        <a href="#" id="auth-toggle-btn">Register here</a>
-      </p>
-    </div>
-  </div>
-
-  <!-- LIST ITEM MODAL -->
-  <div id="list-item-modal" class="modal hidden">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <h2>List Your Item for Rent</h2>
-      <form id="listing-form">
-        <div class="form-group">
-          <label>Item Name</label>
-          <input type="text" id="item-title" required placeholder="e.g. Caterpillar Excavator / Lawn Mower">
         </div>
-        <div class="form-group">
-          <label>Category</label>
-          <select id="item-category" required>
-            <option value="Everyday">Everyday</option>
-            <option value="Agriculture">Agriculture</option>
-            <option value="Construction">Construction</option>
-            <option value="Industrial">Industrial</option>
-            <option value="Gardening">Gardening</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Price Per Day (₹)</label>
-          <input type="number" id="item-price" required placeholder="50">
-        </div>
-        <div class="form-group">
-          <label>Location (City / Address)</label>
-          <input type="text" id="item-location" required placeholder="New York, NY">
-        </div>
-        <div class="form-group">
-  <label>Item Image</label>
-  <input 
-    type="file" 
-    id="item-image" 
-    accept="image/*" 
-    required
-  >
-  <small>Upload a clear image of your item. Maximum size: 5 MB.</small>
-</div>
 
-<div class="form-group">
-  <label>Description</label>
-  <textarea 
-    id="item-description" 
-    rows="3" 
-    placeholder="Provide details about condition, pickup, etc."
-  ></textarea>
-</div>
-          <textarea id="item-description" rows="3" placeholder="Provide details about condition, pickup, etc."></textarea>
+
+        <!-- Phone -->
+
+        <div
+          class="form-group hidden"
+          id="phone-group"
+        >
+
+          <label>
+            Phone Number
+          </label>
+
+          <input
+            type="tel"
+            id="auth-phone"
+            placeholder="+919876543210"
+          >
+
         </div>
-        <button type="submit" class="btn btn-primary btn-block">Publish Listing</button>
+
+
+        <!-- Email -->
+
+        <div
+          class="form-group"
+          id="email-group"
+        >
+
+          <label>
+            Email Address
+          </label>
+
+          <input
+            type="email"
+            id="auth-email"
+            placeholder="user@example.com"
+          >
+
+        </div>
+
+
+        <!-- Password -->
+
+        <div
+          class="form-group"
+          id="password-group"
+        >
+
+          <label>
+            Password
+          </label>
+
+          <input
+            type="password"
+            id="auth-password"
+            placeholder="••••••••"
+          >
+
+
+          <button
+            type="button"
+            id="forgot-password-btn"
+            class="forgot-password-btn"
+          >
+            Forgot Password?
+          </button>
+
+        </div>
+
+
+        <!-- Main Auth Button -->
+
+        <button
+          type="submit"
+          class="btn btn-primary btn-block"
+          id="auth-submit-btn"
+        >
+          Login
+        </button>
+
       </form>
+
+
+      <!-- Divider -->
+
+      <div
+        id="auth-divider"
+        style="text-align:center; margin:15px 0;"
+      >
+        <span>
+          ──────── OR ────────
+        </span>
+      </div>
+
+
+      <!-- Google Login -->
+
+      <button
+        type="button"
+        id="google-login-btn"
+        class="btn btn-secondary btn-block"
+      >
+
+        <i class="fa-brands fa-google"></i>
+
+        Continue with Google
+
+      </button>
+
+
+      <!-- Phone Login -->
+
+      <button
+        type="button"
+        id="phone-login-btn"
+        class="btn btn-secondary btn-block"
+        style="margin-top:10px;"
+      >
+
+        <i class="fa-solid fa-mobile-screen-button"></i>
+
+        Continue with Phone
+
+      </button>
+
+
+      <!-- OTP Section -->
+
+      <div
+        id="phone-otp-section"
+        class="hidden"
+        style="margin-top:15px;"
+      >
+
+        <div class="form-group">
+
+          <label>
+            Enter OTP
+          </label>
+
+          <input
+            type="text"
+            id="phone-otp"
+            placeholder="Enter 6-digit OTP"
+            maxlength="6"
+            inputmode="numeric"
+          >
+
+        </div>
+
+
+        <button
+          type="button"
+          id="verify-phone-otp-btn"
+          class="btn btn-primary btn-block"
+        >
+          Verify OTP
+        </button>
+
+
+        <button
+          type="button"
+          id="resend-phone-otp-btn"
+          class="btn btn-secondary btn-block"
+          style="margin-top:8px;"
+        >
+          Resend OTP
+        </button>
+
+      </div>
+
+
+      <!-- Auth Toggle -->
+
+      <p class="auth-toggle">
+
+        <span id="auth-toggle-text">
+          Don't have an account?
+        </span>
+
+        <a
+          href="#"
+          id="auth-toggle-btn"
+        >
+          Register here
+        </a>
+
+      </p>
+
     </div>
+
   </div>
 
-  <!-- BOOKING & PAYMENT MODAL -->
-  <div id="booking-modal" class="modal hidden">
+
+
+  <!-- =========================================================
+       LIST ITEM MODAL
+  ========================================================== -->
+
+  <div
+    id="list-item-modal"
+    class="modal hidden"
+  >
+
     <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <h2 id="modal-item-title">Rent Item</h2>
+
+      <span class="close-modal">
+        &times;
+      </span>
+
+
+      <h2>
+        List Your Item for Rent
+      </h2>
+
+
+      <form id="listing-form">
+
+        <!-- Item Name -->
+
+        <div class="form-group">
+
+          <label>
+            Item Name
+          </label>
+
+          <input
+            type="text"
+            id="item-title"
+            required
+            placeholder="e.g. Lawn Mower"
+          >
+
+        </div>
+
+
+        <!-- Category -->
+
+        <div class="form-group">
+
+          <label>
+            Category
+          </label>
+
+          <select
+            id="item-category"
+            required
+          >
+
+            <option value="Everyday">
+              Everyday
+            </option>
+
+            <option value="Agriculture">
+              Agriculture
+            </option>
+
+            <option value="Construction">
+              Construction
+            </option>
+
+            <option value="Industrial">
+              Industrial
+            </option>
+
+            <option value="Gardening">
+              Gardening
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- Price -->
+
+        <div class="form-group">
+
+          <label>
+            Price Per Day (₹)
+          </label>
+
+          <input
+            type="number"
+            id="item-price"
+            required
+            min="1"
+            placeholder="500"
+          >
+
+        </div>
+
+
+        <!-- Location -->
+
+        <div class="form-group">
+
+          <label>
+            Location
+          </label>
+
+          <input
+            type="text"
+            id="item-location"
+            required
+            placeholder="City / Area"
+          >
+
+        </div>
+
+
+        <!-- Image -->
+
+        <div class="form-group">
+
+          <label>
+            Item Image
+          </label>
+
+          <input
+            type="file"
+            id="item-image"
+            accept="image/*"
+            required
+          >
+
+          <small>
+            Upload a clear image. Maximum size: 5 MB.
+          </small>
+
+        </div>
+
+
+        <!-- Description -->
+
+        <div class="form-group">
+
+          <label>
+            Description
+          </label>
+
+          <textarea
+            id="item-description"
+            rows="4"
+            placeholder="Provide details about condition, pickup, features, etc."
+          ></textarea>
+
+        </div>
+
+
+        <!-- Publish -->
+
+        <button
+          type="submit"
+          class="btn btn-primary btn-block"
+        >
+
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+
+          Publish Listing
+
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================================================
+       BOOKING & PAYMENT MODAL
+  ========================================================== -->
+
+  <div
+    id="booking-modal"
+    class="modal hidden"
+  >
+
+    <div class="modal-content">
+
+      <span class="close-modal">
+        &times;
+      </span>
+
+
+      <h2 id="modal-item-title">
+        Rent Item
+      </h2>
+
+
       <div id="booking-details">
+
+        <!-- Location -->
+
         <p id="modal-item-location"></p>
+
+
+        <!-- Price -->
+
         <p id="modal-item-price"></p>
-        
+
+
         <hr class="divider">
-        
+
+
+        <!-- Start Date -->
+
         <div class="form-group">
-          <label>Select Rental Start Date</label>
-          <input type="date" id="booking-date" required>
+
+          <label>
+            Select Rental Start Date
+          </label>
+
+          <input
+            type="date"
+            id="booking-date"
+            required
+          >
+
         </div>
+
+
+        <!-- Rental Days -->
+
         <div class="form-group">
-          <label>Rental Duration (Days)</label>
-          <input type="number" id="booking-days" value="1" min="1" required>
+
+          <label>
+            Rental Duration (Days)
+          </label>
+
+          <input
+            type="number"
+            id="booking-days"
+            value="1"
+            min="1"
+            required
+          >
+
         </div>
+
+
+        <!-- Payment Summary -->
 
         <div class="payment-summary">
-          <h4>Payment Summary</h4>
-          <p>Rate: <span id="summary-rate">₹0</span> / day</p>
-          <p>Total Duration: <span id="summary-days">1</span> day(s)</p>
-          <h3>Total Payable: <span id="summary-total">₹0</span></h3>
+
+          <h4>
+            Payment Summary
+          </h4>
+
+
+          <p>
+            Rate:
+            <span id="summary-rate">
+              ₹0
+            </span>
+            / day
+          </p>
+
+
+          <p>
+            Total Duration:
+            <span id="summary-days">
+              1
+            </span>
+            day(s)
+          </p>
+
+
+          <h3>
+            Total Payable:
+            <span id="summary-total">
+              ₹0
+            </span>
+          </h3>
+
         </div>
 
-        <h4>Select Payment Option</h4>
+
+        <!-- Payment Options -->
+
+        <h4>
+          Select Payment Option
+        </h4>
+
+
         <div class="payment-options">
-          <button class="pay-option active" data-method="UPI"><i class="fa-solid fa-mobile-screen-button"></i> UPI</button>
-          <button class="pay-option" data-method="Card"><i class="fa-solid fa-credit-card"></i> Card</button>
-          <button class="pay-option" data-method="Net Banking"><i class="fa-solid fa-building-columns"></i> Net Banking</button>
+
+          <button
+            class="pay-option active"
+            data-method="UPI"
+            type="button"
+          >
+            <i class="fa-solid fa-mobile-screen-button"></i>
+            UPI
+          </button>
+
+
+          <button
+            class="pay-option"
+            data-method="Card"
+            type="button"
+          >
+            <i class="fa-solid fa-credit-card"></i>
+            Card
+          </button>
+
+
+          <button
+            class="pay-option"
+            data-method="Net Banking"
+            type="button"
+          >
+            <i class="fa-solid fa-building-columns"></i>
+            Net Banking
+          </button>
+
         </div>
 
-        <button id="confirm-booking-btn" class="btn btn-primary btn-block">Confirm & Pay</button>
+
+        <!-- Confirm -->
+
+        <button
+          id="confirm-booking-btn"
+          class="btn btn-primary btn-block"
+          type="button"
+        >
+          <i class="fa-solid fa-lock"></i>
+          Confirm & Pay
+        </button>
+
       </div>
+
     </div>
+
   </div>
 
-  <!-- JS Scripts -->
-<script src="supabase.js"></script>
-<script src="script.js"></script>
+
+
+  <!-- =========================================================
+       JAVASCRIPT
+  ========================================================== -->
+
+  <script src="supabase.js"></script>
+  <script src="script.js"></script>
+
 </body>
 </html>
