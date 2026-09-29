@@ -1514,3 +1514,64 @@ async function logoutUser() {
 
 // Make logout available globally
 window.logoutUser = logoutUser;
+// ================================
+// DASHBOARD BASIC CONTROLS
+// ================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const dashboardBtn = document.getElementById("dashboard-nav-btn");
+  const dashboardSection = document.getElementById("dashboard-section");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  // Open Dashboard
+  if (dashboardBtn) {
+    dashboardBtn.addEventListener("click", () => {
+
+      if (!currentUser) {
+        alert("Please login first.");
+        return;
+      }
+
+      dashboardSection.classList.remove("hidden");
+
+      // Hide marketplace when dashboard opens
+      document.querySelector(".marketplace").classList.add("hidden");
+
+      // Scroll to dashboard
+      dashboardSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    });
+  }
+
+  // Logout
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+
+      try {
+        await signOutUser();
+
+        currentUser = null;
+
+        updateUIForUser();
+
+        dashboardSection.classList.add("hidden");
+
+        document.querySelector(".marketplace").classList.remove("hidden");
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+
+        alert("Logged out successfully.");
+
+      } catch (error) {
+        alert("Logout failed: " + error.message);
+      }
+    });
+  }
+
+});
