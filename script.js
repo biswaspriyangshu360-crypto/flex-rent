@@ -1320,7 +1320,348 @@ function setupGoogleLoginButton() {
   );
 
 }
+// =====================================================
+// PHONE OTP LOGIN
+// =====================================================
 
+let phoneOTPNumber = "";
+
+function setupPhoneLogin() {
+
+  const phoneButton =
+    document.getElementById("phone-login-btn");
+
+  const otpSection =
+    document.getElementById("phone-otp-section");
+
+  const verifyButton =
+    document.getElementById("verify-phone-otp-btn");
+
+  const resendButton =
+    document.getElementById("resend-phone-otp-btn");
+
+  const phoneInput =
+    document.getElementById("auth-phone");
+
+  if (!phoneButton) return;
+
+
+  // ---------------------------------------------
+  // SEND OTP
+  // ---------------------------------------------
+
+  phoneButton.addEventListener("click", async () => {
+
+    const phone = phoneInput
+      ? phoneInput.value.trim()
+      : "";
+
+    if (!phone) {
+
+      alert(
+        "Please enter your phone number first."
+      );
+
+      phoneInput?.focus();
+
+      return;
+    }
+
+
+    if (!phone.startsWith("+")) {
+
+      alert(
+        "Please enter your phone number with country code.\nExample: +919876543210"
+      );
+
+      phoneInput?.focus();
+
+      return;
+    }
+
+
+    try {
+
+      phoneButton.disabled = true;
+
+      phoneButton.innerText =
+        "Sending OTP...";
+
+
+      const { error } =
+        await supabase.auth.signInWithOtp({
+          phone: phone
+        });
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      phoneOTPNumber = phone;
+
+
+      if (otpSection) {
+
+        otpSection.classList.remove(
+          "hidden"
+        );
+
+      }
+
+
+      alert(
+        "OTP sent successfully to your phone."
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Phone OTP error:",
+        error
+      );
+
+
+      alert(
+        "OTP could not be sent: " +
+        error.message
+      );
+
+
+    } finally {
+
+      phoneButton.disabled = false;
+
+      phoneButton.innerHTML =
+        `<i class="fa-solid fa-mobile-screen-button"></i>
+         Continue with Phone`;
+
+    }
+
+  });
+
+
+  // ---------------------------------------------
+  // VERIFY OTP
+  // ---------------------------------------------
+
+  if (verifyButton) {
+
+    verifyButton.addEventListener(
+      "click",
+      async () => {
+
+        const otpInput =
+          document.getElementById(
+            "phone-otp"
+          );
+
+        const otp =
+          otpInput
+            ? otpInput.value.trim()
+            : "";
+
+
+        if (!phoneOTPNumber) {
+
+          alert(
+            "Please request an OTP first."
+          );
+
+          return;
+
+        }
+
+
+        if (!otp || otp.length < 4) {
+
+          alert(
+            "Please enter the OTP."
+          );
+
+          return;
+
+        }
+
+
+        try {
+
+          verifyButton.disabled = true;
+
+          verifyButton.innerText =
+            "Verifying...";
+
+
+          const { data, error } =
+            await supabase.auth.verifyOtp({
+
+              phone:
+                phoneOTPNumber,
+
+              token:
+                otp,
+
+              type:
+                "sms"
+
+            });
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          if (
+            !data ||
+            !data.user
+          ) {
+
+            throw new Error(
+              "Phone verification failed."
+            );
+
+          }
+
+
+          currentUser =
+            data.user;
+
+
+          await ensureUserProfile();
+
+
+          updateUIForUser();
+
+
+          const authModal =
+            document.getElementById(
+              "auth-modal"
+            );
+
+
+          if (authModal) {
+
+            authModal.classList.add(
+              "hidden"
+            );
+
+          }
+
+
+          alert(
+            "Phone login successful!"
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "OTP verification error:",
+            error
+          );
+
+
+          alert(
+            "OTP verification failed: " +
+            error.message
+          );
+
+
+        } finally {
+
+          verifyButton.disabled = false;
+
+          verifyButton.innerText =
+            "Verify OTP";
+
+        }
+
+      }
+    );
+
+  }
+
+
+  // ---------------------------------------------
+  // RESEND OTP
+  // ---------------------------------------------
+
+  if (resendButton) {
+
+    resendButton.addEventListener(
+      "click",
+      async () => {
+
+        if (!phoneOTPNumber) {
+
+          alert(
+            "Please enter your phone number first."
+          );
+
+          return;
+
+        }
+
+
+        try {
+
+          resendButton.disabled = true;
+
+          resendButton.innerText =
+            "Sending...";
+
+
+          const { error } =
+            await supabase.auth.signInWithOtp({
+
+              phone:
+                phoneOTPNumber
+
+            });
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          alert(
+            "New OTP has been sent."
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "Resend OTP error:",
+            error
+          );
+
+
+          alert(
+            "Could not resend OTP: " +
+            error.message
+          );
+
+
+        } finally {
+
+          resendButton.disabled = false;
+
+          resendButton.innerText =
+            "Resend OTP";
+
+        }
+
+      }
+    );
+
+  }
+
+}
 
 // =====================================================
 // ENSURE USER PROFILE
