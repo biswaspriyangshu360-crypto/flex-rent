@@ -513,60 +513,44 @@ async function loadListings() {
 // =====================================================
 // RENDER LISTINGS
 // =====================================================
-
 function renderListings(items) {
 
-    const container =
-        document.getElementById(
-            "listings-grid"
-        );
+    const container = document.getElementById("listings-grid");
 
     if (!container) return;
 
     container.innerHTML = "";
 
-    if (
-        !Array.isArray(items) ||
-        items.length === 0
-    ) {
+    if (!Array.isArray(items) || items.length === 0) {
 
         container.innerHTML = `
-
             <div class="empty-state">
-
                 <i class="fa-solid fa-box-open"></i>
-
-                <p>
-                    No rental items found.
-                </p>
-
+                <p>No rental items found.</p>
             </div>
-
         `;
 
         return;
     }
 
-
     const userLocation =
         selectedLocation &&
-        Number.isFinite(
-            Number(selectedLocation.lat)
-        ) &&
-        Number.isFinite(
-            Number(selectedLocation.lng)
-        )
+        Number.isFinite(Number(selectedLocation.lat)) &&
+        Number.isFinite(Number(selectedLocation.lng))
             ? selectedLocation
             : null;
 
 
     items.forEach(item => {
 
-        const card =
-            document.createElement("div");
+        const card = document.createElement("article");
 
-        card.className = "card";
+        card.className = "advanced-listing-card";
 
+
+        /* -----------------------------
+           BASIC DATA
+        ----------------------------- */
 
         const image =
             item.image_url ||
@@ -574,8 +558,80 @@ function renderListings(items) {
 
 
         const available =
-            item.available !== false;
+            item.available !== false &&
+            item.is_available !== false;
 
+
+        const title =
+            item.title ||
+            "Unnamed Item";
+
+
+        const category =
+            item.category ||
+            "Other";
+
+
+        const location =
+            item.location ||
+            "Location not specified";
+
+
+        const description =
+            item.description ||
+            "No description provided.";
+
+
+        const price =
+            Number(item.price_per_day) || 0;
+
+
+        /* -----------------------------
+           OPTIONAL ADVANCED DATA
+           
+           These will start showing
+           automatically after we add
+           the database fields.
+        ----------------------------- */
+
+        const condition =
+            item.condition ||
+            "Not specified";
+
+
+        const itemAge =
+            item.item_age ||
+            "Not specified";
+
+
+        const brand =
+            item.brand ||
+            "";
+
+
+        const model =
+            item.model ||
+            "";
+
+
+        const rating =
+            item.rating !== undefined &&
+            item.rating !== null
+                ? Number(item.rating).toFixed(1)
+                : null;
+
+
+        const reviewCount =
+            Number(item.review_count) || 0;
+
+
+        const rentalCount =
+            Number(item.rental_count) || 0;
+
+
+        /* -----------------------------
+           DISTANCE
+        ----------------------------- */
 
         let distanceText = "";
 
@@ -585,115 +641,361 @@ function renderListings(items) {
             Number.isFinite(Number(item.lng))
         ) {
 
-            const distance =
-                calculateDistance(
-                    userLocation.lat,
-                    userLocation.lng,
-                    item.lat,
-                    item.lng
-                );
+            const distance = calculateDistance(
+                userLocation.lat,
+                userLocation.lng,
+                item.lat,
+                item.lng
+            );
 
-            distanceText =
-                formatDistance(distance);
-
+            distanceText = formatDistance(distance);
         }
 
 
+        /* -----------------------------
+           RATING DISPLAY
+        ----------------------------- */
+
+        let ratingHTML = "";
+
+        if (rating !== null) {
+
+            ratingHTML = `
+                <div class="listing-rating">
+                    <i class="fa-solid fa-star"></i>
+                    <strong>${escapeHTML(rating)}</strong>
+
+                    ${
+                        reviewCount > 0
+                            ? `<span>(${reviewCount})</span>`
+                            : ""
+                    }
+                </div>
+            `;
+
+        } else {
+
+            ratingHTML = `
+                <div class="listing-rating no-rating">
+                    <i class="fa-regular fa-star"></i>
+                    <span>New listing</span>
+                </div>
+            `;
+        }
+
+
+        /* -----------------------------
+           RENTAL COUNT
+        ----------------------------- */
+
+        const rentalHTML =
+            rentalCount > 0
+                ? `
+                    <span class="listing-rentals">
+                        ${rentalCount} rental${rentalCount > 1 ? "s" : ""}
+                    </span>
+                  `
+                : `
+                    <span class="listing-rentals">
+                        New
+                    </span>
+                  `;
+
+
+        /* -----------------------------
+           BRAND / MODEL
+        ----------------------------- */
+
+        const brandModelHTML =
+            brand || model
+                ? `
+                    <div class="listing-brand-model">
+                        ${
+                            brand
+                                ? `<strong>${escapeHTML(brand)}</strong>`
+                                : ""
+                        }
+
+                        ${
+                            model
+                                ? `<span>${escapeHTML(model)}</span>`
+                                : ""
+                        }
+                    </div>
+                  `
+                : "";
+
+
+        /* -----------------------------
+           DISTANCE
+        ----------------------------- */
+
+        const distanceHTML =
+            distanceText
+                ? `
+                    <span class="listing-distance">
+                        <i class="fa-solid fa-location-dot"></i>
+                        ${escapeHTML(distanceText)}
+                    </span>
+                  `
+                : `
+                    <span class="listing-distance">
+                        <i class="fa-solid fa-location-dot"></i>
+                        ${escapeHTML(location)}
+                    </span>
+                  `;
+
+
+        /* -----------------------------
+           CARD HTML
+        ----------------------------- */
+
         card.innerHTML = `
 
-            <div class="card-image-wrapper">
+            <div class="listing-image-wrapper">
 
                 <img
                     src="${escapeAttribute(image)}"
-                    alt="${escapeAttribute(item.title)}"
-                    class="card-image"
+                    alt="${escapeAttribute(title)}"
+                    class="listing-card-image"
                     loading="lazy"
                 >
 
-            </div>
-
-            <div class="card-body">
-
-                <span class="card-category">
-                    ${escapeHTML(item.category)}
+                <span class="listing-category-badge">
+                    ${escapeHTML(category)}
                 </span>
 
-                <h3 class="card-title">
-                    ${escapeHTML(item.title)}
-                </h3>
-
-                <p class="card-description">
-                    ${escapeHTML(item.description)}
-                </p>
-
-                <p class="card-location">
-
-                    <i class="fa-solid fa-location-dot"></i>
-
-                    ${escapeHTML(item.location)}
-
-                    ${
-                        distanceText
-                            ? `
-                                <span class="distance-badge">
-                                    ${escapeHTML(distanceText)}
-                                </span>
-                              `
-                            : ""
-                    }
-
-                </p>
-
-                <div class="card-price">
-
-                    ${formatINR(item.price_per_day)}
-
-                    <small>/ day</small>
-
-                </div>
-
-                <div
-                    style="
-                        margin:8px 0;
-                        font-size:.85rem;
-                        color:${available ? "#10B981" : "#EF4444"};
-                    "
-                >
-
-                    <i class="fa-solid fa-circle"></i>
-
-                    ${available ? " Available" : " Unavailable"}
-
-                </div>
 
                 <button
-                    class="btn btn-primary"
                     type="button"
-                    data-booking-id="${escapeAttribute(item.id)}"
-                    ${!available ? "disabled" : ""}
+                    class="listing-favorite-btn"
+                    title="Add to favorites"
+                    aria-label="Add ${escapeAttribute(title)} to favorites"
                 >
-                    <i class="fa-solid fa-calendar-check"></i>
-                    ${available ? "Rent Now" : "Unavailable"}
+                    <i class="fa-regular fa-heart"></i>
                 </button>
+
+
+                <span
+                    class="listing-availability ${
+                        available
+                            ? "available"
+                            : "unavailable"
+                    }"
+                >
+                    <i class="fa-solid fa-circle"></i>
+
+                    ${
+                        available
+                            ? "Available"
+                            : "Unavailable"
+                    }
+                </span>
 
             </div>
 
+
+            <div class="listing-card-body">
+
+
+                <div class="listing-title-row">
+
+                    <h3 class="listing-title">
+                        ${escapeHTML(title)}
+                    </h3>
+
+                </div>
+
+
+                ${brandModelHTML}
+
+
+                <div class="listing-meta-row">
+
+                    ${ratingHTML}
+
+                    ${rentalHTML}
+
+                </div>
+
+
+                <div class="listing-info-grid">
+
+                    <div class="listing-info-item">
+
+                        <span class="listing-info-label">
+                            Condition
+                        </span>
+
+                        <strong>
+                            ${escapeHTML(condition)}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="listing-info-item">
+
+                        <span class="listing-info-label">
+                            Item Age
+                        </span>
+
+                        <strong>
+                            ${escapeHTML(String(itemAge))}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <p class="listing-description">
+                    ${escapeHTML(description)}
+                </p>
+
+
+                <div class="listing-location-row">
+
+                    ${distanceHTML}
+
+                </div>
+
+
+                <div class="listing-price-row">
+
+                    <div class="listing-price">
+
+                        <strong>
+                            ${formatINR(price)}
+                        </strong>
+
+                        <span>/ day</span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="listing-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-outline listing-details-btn"
+                        data-details-id="${escapeAttribute(item.id)}"
+                    >
+                        <i class="fa-solid fa-eye"></i>
+                        View Details
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-primary listing-rent-btn"
+                        data-booking-id="${escapeAttribute(item.id)}"
+                        ${!available ? "disabled" : ""}
+                    >
+                        <i class="fa-solid fa-calendar-check"></i>
+
+                        ${
+                            available
+                                ? "Rent Now"
+                                : "Unavailable"
+                        }
+
+                    </button>
+
+                </div>
+
+            </div>
         `;
 
 
+        /* -----------------------------
+           FAVORITE BUTTON
+        ----------------------------- */
+
+        const favoriteButton =
+            card.querySelector(".listing-favorite-btn");
+
+
+        favoriteButton?.addEventListener(
+            "click",
+            (event) => {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                favoriteButton.classList.toggle("active");
+
+                const icon =
+                    favoriteButton.querySelector("i");
+
+                if (
+                    favoriteButton.classList.contains("active")
+                ) {
+
+                    icon.classList.remove("fa-regular");
+                    icon.classList.add("fa-solid");
+
+                } else {
+
+                    icon.classList.remove("fa-solid");
+                    icon.classList.add("fa-regular");
+
+                }
+
+            }
+        );
+
+
+        /* -----------------------------
+           RENT NOW BUTTON
+        ----------------------------- */
+
         const bookingButton =
-            card.querySelector(
-                "[data-booking-id]"
-            );
+            card.querySelector("[data-booking-id]");
 
 
         bookingButton?.addEventListener(
             "click",
             () => {
 
-                openBookingModal(
-                    item.id
-                );
+                openBookingModal(item.id);
+
+            }
+        );
+
+
+        /* -----------------------------
+           VIEW DETAILS BUTTON
+           
+           Full details page will be
+           connected in STEP 3.
+        ----------------------------- */
+
+        const detailsButton =
+            card.querySelector(".listing-details-btn");
+
+
+        detailsButton?.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    typeof window.openListingDetails ===
+                    "function"
+                ) {
+
+                    window.openListingDetails(item.id);
+
+                } else {
+
+                    console.log(
+                        "Listing details page will be connected in Step 3:",
+                        item.id
+                    );
+
+                }
 
             }
         );
