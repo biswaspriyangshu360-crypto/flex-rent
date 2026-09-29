@@ -1,7 +1,23 @@
 // =====================================================
 // FLEX RENT - MAIN JAVASCRIPT
-// Currency: Indian Rupees (₹)
-// Image Upload: Supabase Storage
+// =====================================================
+// Features:
+// - Email + Password Authentication
+// - Google Authentication
+// - User Session
+// - Profile Creation
+// - Marketplace Listings
+// - Image Upload
+// - INR Currency
+// - Search
+// - Category Filter
+// - Voice Search
+// - Leaflet Map
+// - GPS Location
+// - Booking
+// - Payment Record
+// - Dashboard
+// - Logout
 // =====================================================
 
 
@@ -14,10 +30,11 @@ let listings = [];
 let map = null;
 let mapMarkers = [];
 let selectedListingForBooking = null;
+let currentUserProfile = null;
 
 
 // =====================================================
-// CURRENCY FORMATTER
+// CURRENCY
 // =====================================================
 
 function formatINR(amount) {
@@ -28,49 +45,96 @@ function formatINR(amount) {
 
 
 // =====================================================
-// MOCK INITIAL DATA
-// Used when Supabase has no listings / is unavailable
+// MOCK LISTINGS
+// Used only when database has no listings
 // =====================================================
 
 const mockListings = [
+
   {
-    id: "1",
+    id: "mock-1",
     title: "Caterpillar Mini Excavator",
     category: "Construction",
-    description: "Heavy-duty compact excavator for digging and trenching.",
+    description:
+      "Heavy-duty compact excavator for digging and trenching.",
     price_per_day: 5000,
-    location: "New York, USA",
-    lat: 40.7128,
-    lng: -74.0060,
+    location: "Kolkata, India",
+    lat: 22.5726,
+    lng: 88.3639,
     image_url:
       "https://images.unsplash.com/photo-1579412690850-bd41cd0af397?auto=format&fit=crop&w=600&q=80"
   },
 
   {
-    id: "2",
+    id: "mock-2",
     title: "John Deere Farm Tractor",
     category: "Agriculture",
-    description: "75HP tractor with multiple attachment capabilities.",
+    description:
+      "75HP tractor with multiple attachment capabilities.",
     price_per_day: 4000,
-    location: "Texas, USA",
-    lat: 31.9686,
-    lng: -99.9018,
+    location: "Guwahati, India",
+    lat: 26.1445,
+    lng: 91.7362,
     image_url:
       "https://images.unsplash.com/photo-1530267981375-f0de937f5f13?auto=format&fit=crop&w=600&q=80"
   },
 
   {
-    id: "3",
+    id: "mock-3",
     title: "Bosch Professional Power Drill",
     category: "Everyday",
-    description: "18V Cordless hammer drill with battery kit.",
+    description:
+      "18V cordless hammer drill with battery kit.",
     price_per_day: 500,
-    location: "London, UK",
-    lat: 51.5074,
-    lng: -0.1278,
+    location: "Guwahati, India",
+    lat: 26.1445,
+    lng: 91.7362,
     image_url:
       "https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=600&q=80"
+  },
+
+  {
+    id: "mock-4",
+    title: "Electric Lawn Mower",
+    category: "Gardening",
+    description:
+      "Easy-to-use electric lawn mower for home gardens.",
+    price_per_day: 800,
+    location: "Kolkata, India",
+    lat: 22.5726,
+    lng: 88.3639,
+    image_url:
+      "https://images.unsplash.com/photo-1599685315640-3f3a2b9e1c0a?auto=format&fit=crop&w=600&q=80"
+  },
+
+  {
+    id: "mock-5",
+    title: "Heavy Duty Ladder",
+    category: "Everyday",
+    description:
+      "Strong aluminium ladder suitable for home and work.",
+    price_per_day: 300,
+    location: "Siliguri, India",
+    lat: 26.7271,
+    lng: 88.3953,
+    image_url:
+      "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80"
+  },
+
+  {
+    id: "mock-6",
+    title: "Industrial Welding Machine",
+    category: "Industrial",
+    description:
+      "Professional welding machine for industrial applications.",
+    price_per_day: 1500,
+    location: "Durgapur, India",
+    lat: 23.5204,
+    lng: 87.3119,
+    image_url:
+      "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=600&q=80"
   }
+
 ];
 
 
@@ -80,67 +144,86 @@ const mockListings = [
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // Hide Loading Screen
-  setTimeout(() => {
+  hideLoadingScreen();
 
-    const loader = document.getElementById("loading-screen");
-
-    if (loader) {
-      loader.style.opacity = "0";
-
-      setTimeout(() => {
-        loader.style.display = "none";
-      }, 500);
-    }
-
-  }, 1000);
-
-
-  // Initialize website features
   initMap();
+
   setupVoiceSearch();
+
   setupEventListeners();
+
+  setupGoogleLoginButton();
+
   loadListings();
+
   checkSession();
 
 });
 
 
 // =====================================================
-// INITIALIZE LEAFLET MAP
+// LOADING SCREEN
+// =====================================================
+
+function hideLoadingScreen() {
+
+  setTimeout(() => {
+
+    const loader =
+      document.getElementById("loading-screen");
+
+    if (!loader) return;
+
+    loader.style.opacity = "0";
+
+    setTimeout(() => {
+      loader.style.display = "none";
+    }, 500);
+
+  }, 1000);
+
+}
+
+
+// =====================================================
+// LEAFLET MAP
 // =====================================================
 
 function initMap() {
 
-  const mapElement = document.getElementById("map");
+  const mapElement =
+    document.getElementById("map");
 
   if (!mapElement) return;
 
   map = L.map("map").setView(
     [20.5937, 78.9629],
-    2
+    5
   );
 
   L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-      attribution: "© OpenStreetMap contributors"
+      attribution:
+        "© OpenStreetMap contributors"
     }
   ).addTo(map);
+
 }
 
 
 // =====================================================
-// UPDATE MAP MARKERS
+// MAP MARKERS
 // =====================================================
 
 function updateMapMarkers(items) {
 
   if (!map) return;
 
-  // Remove old markers
   mapMarkers.forEach(marker => {
+
     map.removeLayer(marker);
+
   });
 
   mapMarkers = [];
@@ -148,39 +231,58 @@ function updateMapMarkers(items) {
 
   items.forEach(item => {
 
+    const lat = Number(item.lat);
+    const lng = Number(item.lng);
+
     if (
-      item.lat !== null &&
-      item.lng !== null &&
-      item.lat !== undefined &&
-      item.lng !== undefined
+      Number.isFinite(lat) &&
+      Number.isFinite(lng)
     ) {
 
-      const marker = L.marker([
-        item.lat,
-        item.lng
-      ]).addTo(map);
+      const marker =
+        L.marker([lat, lng])
+          .addTo(map);
 
 
       marker.bindPopup(`
-        <b>${item.title}</b><br>
-        Price: ${formatINR(item.price_per_day)}/day<br>
 
-        <button
-          onclick="openBookingModal('${item.id}')"
-          style="
-            margin-top:5px;
-            background:#4F46E5;
-            color:#fff;
-            border:none;
-            padding:4px 8px;
-            border-radius:4px;
-            cursor:pointer;
-          "
-        >
-          Rent Now
-        </button>
+        <div style="min-width:180px">
+
+          <strong>${escapeHTML(item.title)}</strong>
+
+          <br>
+
+          <span>
+            ${formatINR(item.price_per_day)}
+            / day
+          </span>
+
+          <br>
+
+          <small>
+            ${escapeHTML(item.location || "")}
+          </small>
+
+          <br>
+
+          <button
+            onclick="openBookingModal('${item.id}')"
+            style="
+              margin-top:8px;
+              background:#4F46E5;
+              color:#fff;
+              border:none;
+              padding:7px 12px;
+              border-radius:6px;
+              cursor:pointer;
+            "
+          >
+            Rent Now
+          </button>
+
+        </div>
+
       `);
-
 
       mapMarkers.push(marker);
 
@@ -192,18 +294,88 @@ function updateMapMarkers(items) {
 
 
 // =====================================================
-// LOAD LISTINGS FROM SUPABASE
+// DATABASE LISTING → UI FORMAT
+// Supabase uses:
+// name, price, latitude, longitude
+// =====================================================
+
+function normalizeListing(item) {
+
+  return {
+
+    id: item.id,
+
+    title:
+      item.title ||
+      item.name ||
+      "Unnamed Item",
+
+    category:
+      item.category ||
+      "Other",
+
+    description:
+      item.description ||
+      "",
+
+    price_per_day:
+      Number(
+        item.price ??
+        item.price_per_day ??
+        0
+      ),
+
+    location:
+      item.location ||
+      "Location unavailable",
+
+    lat:
+      item.latitude ??
+      item.lat ??
+      null,
+
+    lng:
+      item.longitude ??
+      item.lng ??
+      null,
+
+    image_url:
+      item.image_url ||
+      "",
+
+    owner_id:
+      item.owner_id,
+
+    available:
+      item.is_available !== undefined
+        ? item.is_available
+        : item.available !== undefined
+          ? item.available
+          : true
+
+  };
+
+}
+
+
+// =====================================================
+// LOAD LISTINGS
 // =====================================================
 
 async function loadListings() {
 
   try {
 
-    const dbListings = await fetchListings();
+    const dbListings =
+      await fetchListings();
 
-    if (dbListings && dbListings.length > 0) {
+    if (
+      dbListings &&
+      dbListings.length > 0
+    ) {
 
-      listings = dbListings;
+      listings =
+        dbListings.map(normalizeListing);
 
     } else {
 
@@ -211,41 +383,56 @@ async function loadListings() {
 
     }
 
-  } catch (err) {
+  } catch (error) {
 
     console.warn(
-      "Using fallback mock data because Supabase is unavailable."
+      "Supabase listings unavailable:",
+      error
     );
 
     listings = mockListings;
 
   }
 
-
   renderListings(listings);
+
   updateMapMarkers(listings);
 
 }
 
 
 // =====================================================
-// RENDER LISTING CARDS
+// RENDER LISTINGS
 // =====================================================
 
 function renderListings(items) {
 
   const container =
-    document.getElementById("listings-grid");
+    document.getElementById(
+      "listings-grid"
+    );
 
   if (!container) return;
 
   container.innerHTML = "";
 
 
-  if (!items || items.length === 0) {
+  if (
+    !items ||
+    items.length === 0
+  ) {
 
-    container.innerHTML =
-      "<p>No rental items found.</p>";
+    container.innerHTML = `
+
+      <div class="empty-state">
+
+        <i class="fa-solid fa-box-open"></i>
+
+        <p>No rental items found.</p>
+
+      </div>
+
+    `;
 
     return;
 
@@ -254,45 +441,90 @@ function renderListings(items) {
 
   items.forEach(item => {
 
-    const card = document.createElement("div");
+    const card =
+      document.createElement("div");
 
     card.className = "card";
 
 
+    const image =
+      item.image_url ||
+      "https://via.placeholder.com/600x400?text=No+Image";
+
+
+    const availability =
+      item.available !== false;
+
+
     card.innerHTML = `
+
       <img
-        src="${item.image_url || "https://via.placeholder.com/600x400?text=No+Image"}"
-        alt="${item.title}"
+        src="${escapeAttribute(image)}"
+        alt="${escapeAttribute(item.title)}"
       >
 
       <div class="card-body">
 
         <span class="card-category">
-          ${item.category}
+          ${escapeHTML(item.category)}
         </span>
 
         <h3 class="card-title">
-          ${item.title}
+          ${escapeHTML(item.title)}
         </h3>
 
         <p class="card-location">
+
           <i class="fa-solid fa-location-dot"></i>
-          ${item.location}
+
+          ${escapeHTML(item.location)}
+
+        </p>
+
+        <p style="
+          color:#94A3B8;
+          font-size:0.85rem;
+          margin-bottom:10px;
+        ">
+
+          ${escapeHTML(
+            item.description
+              ? item.description.substring(0, 90)
+              : "No description available."
+          )}
+
         </p>
 
         <div class="card-price">
+
           ${formatINR(item.price_per_day)}
+
           <small>/ day</small>
+
         </div>
 
-        <button
-          class="btn btn-primary btn-block"
-          onclick="openBookingModal('${item.id}')"
-        >
-          Rent Now
-        </button>
+        ${
+          availability
+            ? `
+              <button
+                class="btn btn-primary btn-block"
+                onclick="openBookingModal('${item.id}')"
+              >
+                Rent Now
+              </button>
+            `
+            : `
+              <button
+                class="btn btn-secondary btn-block"
+                disabled
+              >
+                Currently Unavailable
+              </button>
+            `
+        }
 
       </div>
+
     `;
 
 
@@ -304,114 +536,23 @@ function renderListings(items) {
 
 
 // =====================================================
-// VOICE SEARCH
-// =====================================================
-
-function setupVoiceSearch() {
-
-  const micBtn =
-    document.getElementById("mic-btn");
-
-  const searchInput =
-    document.getElementById("search-input");
-
-
-  if (!micBtn || !searchInput) return;
-
-
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-
-  if (SpeechRecognition) {
-
-    const recognition =
-      new SpeechRecognition();
-
-
-    recognition.continuous = false;
-
-    recognition.lang = "en-US";
-
-
-    micBtn.addEventListener(
-      "click",
-      () => {
-
-        try {
-
-          micBtn.classList.add("listening");
-
-          recognition.start();
-
-        } catch (error) {
-
-          console.warn(
-            "Voice recognition already running."
-          );
-
-        }
-
-      }
-    );
-
-
-    recognition.onresult = event => {
-
-      const transcript =
-        event.results[0][0].transcript;
-
-
-      searchInput.value = transcript;
-
-      micBtn.classList.remove("listening");
-
-      filterListings();
-
-    };
-
-
-    recognition.onerror = () => {
-
-      micBtn.classList.remove("listening");
-
-      alert(
-        "Voice search failed or was denied. Please try typing."
-      );
-
-    };
-
-
-    recognition.onend = () => {
-
-      micBtn.classList.remove("listening");
-
-    };
-
-  } else {
-
-    micBtn.style.display = "none";
-
-  }
-
-}
-
-
-// =====================================================
-// FILTER LISTINGS
+// SEARCH
 // =====================================================
 
 function filterListings() {
 
   const searchInput =
-    document.getElementById("search-input");
+    document.getElementById(
+      "search-input"
+    );
 
   if (!searchInput) return;
 
 
   const query =
-    searchInput.value.toLowerCase();
+    searchInput.value
+      .toLowerCase()
+      .trim();
 
 
   const activeChip =
@@ -430,13 +571,16 @@ function filterListings() {
     listings.filter(item => {
 
       const title =
-        (item.title || "").toLowerCase();
+        (item.title || "")
+          .toLowerCase();
 
       const location =
-        (item.location || "").toLowerCase();
+        (item.location || "")
+          .toLowerCase();
 
       const description =
-        (item.description || "").toLowerCase();
+        (item.description || "")
+          .toLowerCase();
 
 
       const matchesSearch =
@@ -466,6 +610,117 @@ function filterListings() {
 
 
 // =====================================================
+// VOICE SEARCH
+// =====================================================
+
+function setupVoiceSearch() {
+
+  const micBtn =
+    document.getElementById("mic-btn");
+
+  const searchInput =
+    document.getElementById(
+      "search-input"
+    );
+
+  if (
+    !micBtn ||
+    !searchInput
+  ) return;
+
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+
+  if (!SpeechRecognition) {
+
+    micBtn.style.display = "none";
+
+    return;
+
+  }
+
+
+  const recognition =
+    new SpeechRecognition();
+
+
+  recognition.continuous = false;
+
+  recognition.lang = "en-IN";
+
+
+  micBtn.addEventListener(
+    "click",
+    () => {
+
+      try {
+
+        micBtn.classList.add(
+          "listening"
+        );
+
+        recognition.start();
+
+      } catch (error) {
+
+        console.warn(
+          "Voice recognition already running."
+        );
+
+      }
+
+    }
+  );
+
+
+  recognition.onresult =
+    event => {
+
+      const transcript =
+        event.results[0][0]
+          .transcript;
+
+
+      searchInput.value =
+        transcript;
+
+
+      micBtn.classList.remove(
+        "listening"
+      );
+
+
+      filterListings();
+
+    };
+
+
+  recognition.onerror =
+    () => {
+
+      micBtn.classList.remove(
+        "listening"
+      );
+
+    };
+
+
+  recognition.onend =
+    () => {
+
+      micBtn.classList.remove(
+        "listening"
+      );
+
+    };
+
+}
+
+
+// =====================================================
 // EVENT LISTENERS
 // =====================================================
 
@@ -476,7 +731,10 @@ function setupEventListeners() {
   // ---------------------------------------------------
 
   const searchInput =
-    document.getElementById("search-input");
+    document.getElementById(
+      "search-input"
+    );
+
 
   if (searchInput) {
 
@@ -501,15 +759,20 @@ function setupEventListeners() {
         event => {
 
           document
-            .querySelectorAll(".category-chip")
-            .forEach(c =>
-              c.classList.remove("active")
-            );
+            .querySelectorAll(
+              ".category-chip"
+            )
+            .forEach(c => {
+
+              c.classList.remove(
+                "active"
+              );
+
+            });
 
 
-          event.currentTarget.classList.add(
-            "active"
-          );
+          event.currentTarget
+            .classList.add("active");
 
 
           filterListings();
@@ -525,21 +788,29 @@ function setupEventListeners() {
   // ---------------------------------------------------
 
   const authModal =
-    document.getElementById("auth-modal");
+    document.getElementById(
+      "auth-modal"
+    );
 
   const listItemModal =
-    document.getElementById("list-item-modal");
+    document.getElementById(
+      "list-item-modal"
+    );
 
   const bookingModal =
-    document.getElementById("booking-modal");
+    document.getElementById(
+      "booking-modal"
+    );
 
 
   // ---------------------------------------------------
-  // AUTH BUTTON
+  // LOGIN BUTTON
   // ---------------------------------------------------
 
   const authNavBtn =
-    document.getElementById("auth-nav-btn");
+    document.getElementById(
+      "auth-nav-btn"
+    );
 
 
   if (authNavBtn) {
@@ -548,7 +819,13 @@ function setupEventListeners() {
       "click",
       () => {
 
-        authModal.classList.remove("hidden");
+        if (authModal) {
+
+          authModal.classList.remove(
+            "hidden"
+          );
+
+        }
 
       }
     );
@@ -557,7 +834,7 @@ function setupEventListeners() {
 
 
   // ---------------------------------------------------
-  // LIST YOUR ITEM BUTTON
+  // LIST ITEM BUTTON
   // ---------------------------------------------------
 
   const listItemNavBtn =
@@ -578,18 +855,26 @@ function setupEventListeners() {
             "Please login first to list an item."
           );
 
-          authModal.classList.remove(
-            "hidden"
-          );
+          if (authModal) {
+
+            authModal.classList.remove(
+              "hidden"
+            );
+
+          }
 
           return;
 
         }
 
 
-        listItemModal.classList.remove(
-          "hidden"
-        );
+        if (listItemModal) {
+
+          listItemModal.classList.remove(
+            "hidden"
+          );
+
+        }
 
       }
     );
@@ -609,14 +894,31 @@ function setupEventListeners() {
         "click",
         () => {
 
-          if (authModal)
-            authModal.classList.add("hidden");
+          if (authModal) {
 
-          if (listItemModal)
-            listItemModal.classList.add("hidden");
+            authModal.classList.add(
+              "hidden"
+            );
 
-          if (bookingModal)
-            bookingModal.classList.add("hidden");
+          }
+
+
+          if (listItemModal) {
+
+            listItemModal.classList.add(
+              "hidden"
+            );
+
+          }
+
+
+          if (bookingModal) {
+
+            bookingModal.classList.add(
+              "hidden"
+            );
+
+          }
 
         }
       );
@@ -624,9 +926,34 @@ function setupEventListeners() {
     });
 
 
-  // ===================================================
-  // LOGIN / REGISTER
-  // ===================================================
+  // ---------------------------------------------------
+  // AUTH FORM
+  // ---------------------------------------------------
+
+  setupAuthentication();
+
+
+  // ---------------------------------------------------
+  // LISTING FORM
+  // ---------------------------------------------------
+
+  setupListingForm();
+
+
+  // ---------------------------------------------------
+  // BOOKING
+  // ---------------------------------------------------
+
+  setupBooking();
+
+}
+
+
+// =====================================================
+// AUTHENTICATION
+// =====================================================
+
+function setupAuthentication() {
 
   let isRegistering = false;
 
@@ -634,6 +961,12 @@ function setupEventListeners() {
   const toggleBtn =
     document.getElementById(
       "auth-toggle-btn"
+    );
+
+
+  const authForm =
+    document.getElementById(
+      "auth-form"
     );
 
 
@@ -649,36 +982,68 @@ function setupEventListeners() {
           !isRegistering;
 
 
-        document.getElementById(
-          "auth-title"
-        ).innerText =
-          isRegistering
-            ? "Register Account"
-            : "Login to Flex Rent";
+        const title =
+          document.getElementById(
+            "auth-title"
+          );
 
 
-        document.getElementById(
-          "auth-submit-btn"
-        ).innerText =
-          isRegistering
-            ? "Register"
-            : "Login";
+        const submitBtn =
+          document.getElementById(
+            "auth-submit-btn"
+          );
 
 
-        document
-          .getElementById("name-group")
-          .classList.toggle(
+        const nameGroup =
+          document.getElementById(
+            "name-group"
+          );
+
+
+        const phoneGroup =
+          document.getElementById(
+            "phone-group"
+          );
+
+
+        if (title) {
+
+          title.innerText =
+            isRegistering
+              ? "Create Flex Rent Account"
+              : "Login to Flex Rent";
+
+        }
+
+
+        if (submitBtn) {
+
+          submitBtn.innerText =
+            isRegistering
+              ? "Create Account"
+              : "Login";
+
+        }
+
+
+        if (nameGroup) {
+
+          nameGroup.classList.toggle(
             "hidden",
             !isRegistering
           );
 
+        }
 
-        document
-          .getElementById("phone-group")
-          .classList.toggle(
+
+        if (phoneGroup) {
+
+          phoneGroup.classList.toggle(
             "hidden",
             !isRegistering
           );
+
+        }
 
       }
     );
@@ -686,51 +1051,60 @@ function setupEventListeners() {
   }
 
 
-  // ===================================================
-  // AUTH FORM SUBMIT
-  // ===================================================
-
-  const authForm =
-    document.getElementById("auth-form");
+  if (!authForm) return;
 
 
-  if (authForm) {
+  authForm.addEventListener(
+    "submit",
+    async event => {
 
-    authForm.addEventListener(
-      "submit",
-      async event => {
-
-        event.preventDefault();
+      event.preventDefault();
 
 
-        const email =
-          document.getElementById(
-            "auth-email"
-          ).value;
+      const email =
+        document.getElementById(
+          "auth-email"
+        ).value.trim();
 
 
-        const password =
-          document.getElementById(
-            "auth-password"
-          ).value;
+      const password =
+        document.getElementById(
+          "auth-password"
+        ).value;
 
 
-        try {
+      if (!email || !password) {
 
-          if (isRegistering) {
+        alert(
+          "Please enter email and password."
+        );
 
-            const name =
-              document.getElementById(
-                "auth-name"
-              ).value;
+        return;
 
-
-            const phone =
-              document.getElementById(
-                "auth-phone"
-              ).value;
+      }
 
 
+      try {
+
+        // ---------------------------------------------
+        // REGISTER
+        // ---------------------------------------------
+
+        if (isRegistering) {
+
+          const name =
+            document.getElementById(
+              "auth-name"
+            ).value.trim();
+
+
+          const phone =
+            document.getElementById(
+              "auth-phone"
+            ).value.trim();
+
+
+          const data =
             await signUpUser(
               email,
               password,
@@ -739,450 +1113,301 @@ function setupEventListeners() {
             );
 
 
-            alert(
-              "Registration successful! Please log in."
-            );
-
-          } else {
-
-            const data =
-              await signInUser(
-                email,
-                password
-              );
-
+          // If email confirmation is disabled
+          if (data.session) {
 
             currentUser =
               data.user;
 
+            await ensureUserProfile();
 
             updateUIForUser();
 
-
-            authModal.classList.add(
-              "hidden"
-            );
+            document
+              .getElementById("auth-modal")
+              .classList.add("hidden");
 
 
             alert(
-              "Logged in successfully!"
-            );
-
-          }
-
-        } catch (err) {
-
-          alert(
-            err.message ||
-            "Authentication failed."
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-  // ===================================================
-  // NEW LISTING SUBMIT
-  // ===================================================
-
-  const listingForm =
-    document.getElementById(
-      "listing-form"
-    );
-
-
-  if (listingForm) {
-
-    listingForm.addEventListener(
-      "submit",
-      async event => {
-
-        event.preventDefault();
-
-
-        if (!currentUser) {
-
-          alert(
-            "Please login first."
-          );
-
-          return;
-
-        }
-
-
-        // Get image file
-        const imageInput =
-          document.getElementById(
-            "item-image"
-          );
-
-
-        const imageFile =
-          imageInput &&
-          imageInput.files
-            ? imageInput.files[0]
-            : null;
-
-
-        if (!imageFile) {
-
-          alert(
-            "Please select an image."
-          );
-
-          return;
-
-        }
-
-
-        try {
-
-          // ------------------------------------------------
-          // Upload image to Supabase Storage
-          // ------------------------------------------------
-
-          alert(
-            "Uploading image... Please wait."
-          );
-
-
-          const imageUrl =
-            await uploadListingImage(
-              imageFile
-            );
-
-
-          // ------------------------------------------------
-          // Create listing
-          // ------------------------------------------------
-
-          const newListing = {
-
-            owner_id:
-              currentUser.id,
-
-            title:
-              document.getElementById(
-                "item-title"
-              ).value,
-
-            category:
-              document.getElementById(
-                "item-category"
-              ).value,
-
-            price_per_day:
-              parseFloat(
-                document.getElementById(
-                  "item-price"
-                ).value
-              ),
-
-            location:
-              document.getElementById(
-                "item-location"
-              ).value,
-
-            image_url:
-              imageUrl,
-
-            description:
-              document.getElementById(
-                "item-description"
-              ).value,
-
-            // Temporary coordinates
-            lat:
-              20.5937 +
-              (Math.random() - 0.5) * 10,
-
-            lng:
-              78.9629 +
-              (Math.random() - 0.5) * 10
-
-          };
-
-
-          // Save listing to Supabase
-          const createdListing =
-            await createListing(
-              newListing
-            );
-
-
-          // Use database version if returned
-          if (
-            createdListing &&
-            createdListing[0]
-          ) {
-
-            listings.unshift(
-              createdListing[0]
+              "Account created successfully!"
             );
 
           } else {
 
-            listings.unshift(
-              newListing
+            alert(
+              "Account created. Please check your email for verification, then login."
             );
 
           }
 
 
-          renderListings(listings);
+          return;
 
-          updateMapMarkers(listings);
+        }
 
 
-          // Close modal
-          listItemModal.classList.add(
-            "hidden"
+        // ---------------------------------------------
+        // LOGIN
+        // ---------------------------------------------
+
+        const data =
+          await signInUser(
+            email,
+            password
           );
 
 
-          // Reset form
-          listingForm.reset();
+        if (
+          !data ||
+          !data.user
+        ) {
 
-
-          alert(
-            "Item published successfully!"
-          );
-
-
-        } catch (err) {
-
-          console.error(
-            "Listing upload error:",
-            err
-          );
-
-
-          alert(
-            err.message ||
-            "Failed to publish listing."
+          throw new Error(
+            "Login failed. Please try again."
           );
 
         }
+
+
+        currentUser =
+          data.user;
+
+
+        await ensureUserProfile();
+
+
+        updateUIForUser();
+
+
+        document
+          .getElementById("auth-modal")
+          .classList.add("hidden");
+
+
+        alert(
+          "Logged in successfully!"
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Authentication error:",
+          error
+        );
+
+
+        alert(
+          error.message ||
+          "Authentication failed."
+        );
 
       }
-    );
 
-  }
+    }
+  );
+
+}
 
 
-  // ===================================================
-  // BOOKING DAYS
-  // ===================================================
+// =====================================================
+// GOOGLE LOGIN
+// =====================================================
 
-  const bookingDays =
+function setupGoogleLoginButton() {
+
+  const authModal =
     document.getElementById(
-      "booking-days"
+      "auth-modal"
     );
 
 
-  if (bookingDays) {
-
-    bookingDays.addEventListener(
-      "input",
-      updateBookingSummary
-    );
-
-  }
+  if (!authModal) return;
 
 
-  // ===================================================
-  // PAYMENT OPTIONS
-  // ===================================================
-
-  document
-    .querySelectorAll(".pay-option")
-    .forEach(btn => {
-
-      btn.addEventListener(
-        "click",
-        event => {
-
-          document
-            .querySelectorAll(".pay-option")
-            .forEach(b =>
-              b.classList.remove("active")
-            );
-
-
-          event.currentTarget.classList.add(
-            "active"
-          );
-
-        }
-      );
-
-    });
-
-
-  // ===================================================
-  // CONFIRM BOOKING
-  // ===================================================
-
-  const confirmBookingBtn =
+  const form =
     document.getElementById(
-      "confirm-booking-btn"
+      "auth-form"
     );
 
 
-  if (confirmBookingBtn) {
-
-    confirmBookingBtn.addEventListener(
-      "click",
-      async () => {
-
-        if (!currentUser) {
-
-          alert(
-            "Please login to proceed with booking."
-          );
-
-          authModal.classList.remove(
-            "hidden"
-          );
-
-          return;
-
-        }
+  if (!form) return;
 
 
-        if (!selectedListingForBooking) {
-
-          alert(
-            "Please select a listing first."
-          );
-
-          return;
-
-        }
+  // Don't create duplicate button
+  if (
+    document.getElementById(
+      "google-login-btn"
+    )
+  ) return;
 
 
-        const activePayment =
-          document.querySelector(
-            ".pay-option.active"
-          );
+  const googleButton =
+    document.createElement("button");
 
 
-        const selectedMethod =
-          activePayment
-            ? activePayment.dataset.method
-            : "UPI";
+  googleButton.id =
+    "google-login-btn";
 
 
-        const days =
-          parseInt(
-            document.getElementById(
-              "booking-days"
-            ).value
-          ) || 1;
+  googleButton.type =
+    "button";
 
 
-        const total =
-          days *
-          Number(
-            selectedListingForBooking.price_per_day
-          );
+  googleButton.className =
+    "btn btn-secondary btn-block";
 
 
-        try {
-
-          // ------------------------------------------------
-          // Create Booking
-          // ------------------------------------------------
-
-          const bookingData = {
-
-            listing_id:
-              selectedListingForBooking.id,
-
-            renter_id:
-              currentUser.id,
-
-            start_date:
-              document.getElementById(
-                "booking-date"
-              ).value,
-
-            duration_days:
-              days,
-
-            total_price:
-              total
-
-          };
+  googleButton.style.marginTop =
+    "10px";
 
 
-          const createdBooking =
-            await createBooking(
-              bookingData
-            );
+  googleButton.innerHTML =
+    `<i class="fa-brands fa-google"></i> Continue with Google`;
 
 
-          // ------------------------------------------------
-          // Create Payment Record
-          // ------------------------------------------------
+  googleButton.addEventListener(
+    "click",
+    async () => {
 
-          if (
-            createdBooking &&
-            createdBooking[0]
-          ) {
+      try {
 
-            await createPayment({
+        const redirectUrl =
+          window.location.origin +
+          window.location.pathname;
 
-              booking_id:
-                createdBooking[0].id,
 
-              amount:
-                total,
+        const { error } =
+          await supabase.auth
+            .signInWithOAuth({
 
-              payment_method:
-                selectedMethod
+              provider: "google",
+
+              options: {
+                redirectTo:
+                  redirectUrl
+              }
 
             });
 
-          }
 
+        if (error) {
 
-          alert(
-            `Booking & Payment Confirmed via ${selectedMethod}!\n\nTotal: ${formatINR(total)}`
-          );
-
-
-          bookingModal.classList.add(
-            "hidden"
-          );
-
-
-        } catch (err) {
-
-          console.error(
-            "Booking error:",
-            err
-          );
-
-
-          /*
-           IMPORTANT:
-           This only means the local UI can continue.
-           It does NOT mean a real payment was processed.
-          */
-
-          alert(
-            `Booking could not be saved to the database.\n\nTotal: ${formatINR(total)}\n\nPlease check your Supabase tables and policies.`
-          );
+          throw error;
 
         }
 
+      } catch (error) {
+
+        console.error(
+          "Google login error:",
+          error
+        );
+
+
+        alert(
+          error.message ||
+          "Google login could not be started."
+        );
+
       }
+
+    }
+  );
+
+
+  form.appendChild(
+    googleButton
+  );
+
+}
+
+
+// =====================================================
+// ENSURE USER PROFILE
+// =====================================================
+
+async function ensureUserProfile() {
+
+  if (!currentUser) return;
+
+
+  try {
+
+    const profile =
+      await fetchUserProfile(
+        currentUser.id
+      );
+
+
+    if (profile) {
+
+      currentUserProfile =
+        profile;
+
+      return;
+
+    }
+
+
+    const metadata =
+      currentUser.user_metadata ||
+      {};
+
+
+    const fullName =
+      metadata.full_name ||
+      metadata.name ||
+      currentUser.email
+        ?.split("@")[0] ||
+      "Flex Rent User";
+
+
+    const phone =
+      metadata.phone ||
+      "";
+
+
+    const { data, error } =
+      await supabase
+        .from("profiles")
+        .upsert(
+          {
+            id: currentUser.id,
+            email:
+              currentUser.email || "",
+            full_name:
+              fullName,
+            phone:
+              phone
+          },
+          {
+            onConflict: "id"
+          }
+        )
+        .select()
+        .maybeSingle();
+
+
+    if (error) {
+
+      console.warn(
+        "Could not create profile:",
+        error
+      );
+
+      return;
+
+    }
+
+
+    currentUserProfile =
+      data;
+
+  } catch (error) {
+
+    console.warn(
+      "Profile check failed:",
+      error
     );
 
   }
@@ -1191,202 +1416,7 @@ function setupEventListeners() {
 
 
 // =====================================================
-// OPEN BOOKING MODAL
-// =====================================================
-
-window.openBookingModal = function(id) {
-
-  selectedListingForBooking =
-    listings.find(
-      item => String(item.id) === String(id)
-    );
-
-
-  if (!selectedListingForBooking) {
-
-    alert(
-      "Listing not found."
-    );
-
-    return;
-
-  }
-
-
-  const titleElement =
-    document.getElementById(
-      "modal-item-title"
-    );
-
-
-  const locationElement =
-    document.getElementById(
-      "modal-item-location"
-    );
-
-
-  const priceElement =
-    document.getElementById(
-      "modal-item-price"
-    );
-
-
-  if (titleElement) {
-
-    titleElement.innerText =
-      selectedListingForBooking.title;
-
-  }
-
-
-  if (locationElement) {
-
-    locationElement.innerText =
-      `Location: ${selectedListingForBooking.location}`;
-
-  }
-
-
-  if (priceElement) {
-
-    priceElement.innerText =
-      `Price: ${formatINR(
-        selectedListingForBooking.price_per_day
-      )} / day`;
-
-  }
-
-
-  // Set today's date
-  const bookingDate =
-    document.getElementById(
-      "booking-date"
-    );
-
-
-  if (bookingDate) {
-
-    bookingDate.value =
-      new Date()
-        .toISOString()
-        .split("T")[0];
-
-  }
-
-
-  // Reset days to 1
-  const bookingDays =
-    document.getElementById(
-      "booking-days"
-    );
-
-
-  if (bookingDays) {
-
-    bookingDays.value = 1;
-
-  }
-
-
-  updateBookingSummary();
-
-
-  const bookingModal =
-    document.getElementById(
-      "booking-modal"
-    );
-
-
-  if (bookingModal) {
-
-    bookingModal.classList.remove(
-      "hidden"
-    );
-
-  }
-
-};
-
-
-// =====================================================
-// UPDATE BOOKING SUMMARY
-// =====================================================
-
-function updateBookingSummary() {
-
-  if (!selectedListingForBooking) return;
-
-
-  const bookingDays =
-    document.getElementById(
-      "booking-days"
-    );
-
-
-  const days =
-    parseInt(
-      bookingDays
-        ? bookingDays.value
-        : 1
-    ) || 1;
-
-
-  const price =
-    Number(
-      selectedListingForBooking.price_per_day
-    ) || 0;
-
-
-  const total =
-    days * price;
-
-
-  const summaryRate =
-    document.getElementById(
-      "summary-rate"
-    );
-
-
-  const summaryDays =
-    document.getElementById(
-      "summary-days"
-    );
-
-
-  const summaryTotal =
-    document.getElementById(
-      "summary-total"
-    );
-
-
-  if (summaryRate) {
-
-    summaryRate.innerText =
-      formatINR(price);
-
-  }
-
-
-  if (summaryDays) {
-
-    summaryDays.innerText =
-      days;
-
-  }
-
-
-  if (summaryTotal) {
-
-    summaryTotal.innerText =
-      formatINR(total);
-
-  }
-
-}
-
-
-// =====================================================
-// USER SESSION
+// SESSION
 // =====================================================
 
 async function checkSession() {
@@ -1394,13 +1424,28 @@ async function checkSession() {
   try {
 
     const { data } =
-      await supabase.auth.getSession();
+      await supabase.auth
+        .getSession();
 
 
-    if (data.session) {
+    if (
+      data &&
+      data.session &&
+      data.session.user
+    ) {
 
       currentUser =
         data.session.user;
+
+
+      await ensureUserProfile();
+
+
+      updateUIForUser();
+
+    } else {
+
+      currentUser = null;
 
       updateUIForUser();
 
@@ -1414,6 +1459,38 @@ async function checkSession() {
     );
 
   }
+
+
+  // Listen for login/logout changes
+  supabase.auth.onAuthStateChange(
+    async (event, session) => {
+
+      if (
+        session &&
+        session.user
+      ) {
+
+        currentUser =
+          session.user;
+
+
+        await ensureUserProfile();
+
+
+        updateUIForUser();
+
+      } else {
+
+        currentUser = null;
+
+        currentUserProfile = null;
+
+        updateUIForUser();
+
+      }
+
+    }
+  );
 
 }
 
@@ -1480,31 +1557,1103 @@ function updateUIForUser() {
 
 
 // =====================================================
-// OPTIONAL: LOGOUT HELPER
-// Can be used by your dashboard/logout button
+// DASHBOARD
 // =====================================================
 
-async function logoutUser() {
+function setupDashboard() {
+
+  const dashboardButton =
+    document.getElementById(
+      "dashboard-nav-btn"
+    );
+
+
+  const dashboardSection =
+    document.getElementById(
+      "dashboard-section"
+    );
+
+
+  const logoutButton =
+    document.getElementById(
+      "logout-btn"
+    );
+
+
+  if (
+    dashboardButton &&
+    dashboardSection
+  ) {
+
+    dashboardButton.addEventListener(
+      "click",
+      async () => {
+
+        if (!currentUser) {
+
+          alert(
+            "Please login first."
+          );
+
+          return;
+
+        }
+
+
+        dashboardSection
+          .classList
+          .remove("hidden");
+
+
+        const marketplace =
+          document.querySelector(
+            ".marketplace"
+          );
+
+
+        if (marketplace) {
+
+          marketplace
+            .classList
+            .add("hidden");
+
+        }
+
+
+        await loadDashboard();
+
+
+        dashboardSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }
+    );
+
+  }
+
+
+  if (logoutButton) {
+
+    logoutButton.addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          await signOutUser();
+
+
+          currentUser = null;
+
+          currentUserProfile = null;
+
+
+          updateUIForUser();
+
+
+          if (dashboardSection) {
+
+            dashboardSection
+              .classList
+              .add("hidden");
+
+          }
+
+
+          const marketplace =
+            document.querySelector(
+              ".marketplace"
+            );
+
+
+          if (marketplace) {
+
+            marketplace
+              .classList
+              .remove("hidden");
+
+          }
+
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+
+
+          alert(
+            "Logged out successfully."
+          );
+
+        } catch (error) {
+
+          alert(
+            error.message ||
+            "Logout failed."
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  setupDashboardTabs();
+
+}
+
+
+// =====================================================
+// DASHBOARD TABS
+// =====================================================
+
+function setupDashboardTabs() {
+
+  const tabs =
+    document.querySelectorAll(
+      ".tab-btn"
+    );
+
+
+  tabs.forEach(tab => {
+
+    tab.addEventListener(
+      "click",
+      async () => {
+
+        tabs.forEach(t =>
+          t.classList.remove(
+            "active"
+          )
+        );
+
+
+        tab.classList.add(
+          "active"
+        );
+
+
+        const tabId =
+          tab.dataset.tab;
+
+
+        document
+          .querySelectorAll(
+            ".tab-content"
+          )
+          .forEach(content => {
+
+            content.classList.add(
+              "hidden"
+            );
+
+          });
+
+
+        const selected =
+          document.getElementById(
+            tabId
+          );
+
+
+        if (selected) {
+
+          selected.classList.remove(
+            "hidden"
+          );
+
+        }
+
+
+        if (
+          tabId ===
+          "tab-listings"
+        ) {
+
+          await loadMyListings();
+
+        }
+
+
+        if (
+          tabId ===
+          "tab-bookings"
+        ) {
+
+          await loadMyBookings();
+
+        }
+
+
+        if (
+          tabId ===
+          "tab-profile"
+        ) {
+
+          await loadProfile();
+
+        }
+
+      }
+    );
+
+  });
+
+}
+
+
+// =====================================================
+// LOAD DASHBOARD
+// =====================================================
+
+async function loadDashboard() {
+
+  await loadMyListings();
+
+  await loadProfile();
+
+}
+
+
+// =====================================================
+// MY LISTINGS
+// =====================================================
+
+async function loadMyListings() {
+
+  const container =
+    document.getElementById(
+      "my-listings-grid"
+    );
+
+
+  if (!container) return;
+
+
+  container.innerHTML =
+    `<p>Loading your listings...</p>`;
+
+
+  if (!currentUser) {
+
+    container.innerHTML =
+      `<p>Please login first.</p>`;
+
+    return;
+
+  }
+
 
   try {
 
-    await signOutUser();
+    const data =
+      await fetchUserListings(
+        currentUser.id
+      );
 
-    currentUser = null;
 
-    updateUIForUser();
+    if (
+      !data ||
+      data.length === 0
+    ) {
 
-    alert(
-      "Logged out successfully."
-    );
+      container.innerHTML = `
 
-    location.reload();
+        <div class="empty-state">
+
+          <i class="fa-solid fa-box-open"></i>
+
+          <p>You have not listed any items yet.</p>
+
+          <button
+            class="btn btn-primary"
+            onclick="openListItemModal()"
+          >
+            List Your First Item
+          </button>
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    const normalized =
+      data.map(normalizeListing);
+
+
+    container.innerHTML = "";
+
+
+    normalized.forEach(item => {
+
+      const card =
+        document.createElement("div");
+
+
+      card.className =
+        "card";
+
+
+      card.innerHTML = `
+
+        <img
+          src="${escapeAttribute(
+            item.image_url ||
+            "https://via.placeholder.com/600x400?text=No+Image"
+          )}"
+          alt="${escapeAttribute(
+            item.title
+          )}"
+        >
+
+        <div class="card-body">
+
+          <span class="card-category">
+            ${escapeHTML(item.category)}
+          </span>
+
+          <h3 class="card-title">
+            ${escapeHTML(item.title)}
+          </h3>
+
+          <p class="card-location">
+            <i class="fa-solid fa-location-dot"></i>
+            ${escapeHTML(item.location)}
+          </p>
+
+          <div class="card-price">
+            ${formatINR(item.price_per_day)}
+            <small>/ day</small>
+          </div>
+
+          <span style="
+            color:#10B981;
+            font-size:0.85rem;
+          ">
+            <i class="fa-solid fa-circle"></i>
+            ${item.available !== false
+              ? " Available"
+              : " Unavailable"}
+          </span>
+
+        </div>
+
+      `;
+
+
+      container.appendChild(card);
+
+    });
 
   } catch (error) {
 
-    alert(
-      error.message ||
-      "Logout failed."
+    console.error(
+      "My listings error:",
+      error
+    );
+
+
+    container.innerHTML = `
+
+      <div class="empty-state">
+
+        <p>
+          Could not load your listings.
+        </p>
+
+        <small>
+          ${escapeHTML(
+            error.message || ""
+          )}
+        </small>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+// =====================================================
+// MY BOOKINGS
+// =====================================================
+
+async function loadMyBookings() {
+
+  const container =
+    document.getElementById(
+      "my-bookings-list"
+    );
+
+
+  if (!container) return;
+
+
+  container.innerHTML =
+    `<p>Loading your bookings...</p>`;
+
+
+  if (!currentUser) {
+
+    container.innerHTML =
+      `<p>Please login first.</p>`;
+
+    return;
+
+  }
+
+
+  try {
+
+    const bookings =
+      await fetchUserBookings(
+        currentUser.id
+      );
+
+
+    if (
+      !bookings ||
+      bookings.length === 0
+    ) {
+
+      container.innerHTML = `
+
+        <div class="empty-state">
+
+          <i class="fa-solid fa-calendar-xmark"></i>
+
+          <p>You have no bookings yet.</p>
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    bookings.forEach(booking => {
+
+      const card =
+        document.createElement("div");
+
+
+      card.className =
+        "booking-card";
+
+
+      card.innerHTML = `
+
+        <h3>
+          ${escapeHTML(
+            booking.item_name ||
+            "Rental Item"
+          )}
+        </h3>
+
+        <p>
+          <strong>Start Date:</strong>
+          ${escapeHTML(
+            booking.start_date || "-"
+          )}
+        </p>
+
+        <p>
+          <strong>Duration:</strong>
+          ${booking.rental_days || 1}
+          day(s)
+        </p>
+
+        <p>
+          <strong>Total:</strong>
+          ${formatINR(
+            booking.total_amount || 0
+          )}
+        </p>
+
+        <p>
+          <strong>Payment:</strong>
+          ${escapeHTML(
+            booking.payment_method ||
+            "-"
+          )}
+        </p>
+
+        <p>
+          <strong>Status:</strong>
+          ${escapeHTML(
+            booking.status ||
+            "pending"
+          )}
+        </p>
+
+      `;
+
+
+      container.appendChild(card);
+
+    });
+
+  } catch (error) {
+
+    console.error(
+      "Bookings error:",
+      error
+    );
+
+
+    container.innerHTML = `
+
+      <div class="empty-state">
+
+        <p>
+          Could not load your bookings.
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+// =====================================================
+// PROFILE
+// =====================================================
+
+async function loadProfile() {
+
+  const container =
+    document.getElementById(
+      "profile-info"
+    );
+
+
+  if (!container) return;
+
+
+  if (!currentUser) {
+
+    container.innerHTML =
+      `<p>Please login first.</p>`;
+
+    return;
+
+  }
+
+
+  try {
+
+    if (!currentUserProfile) {
+
+      await ensureUserProfile();
+
+    }
+
+
+    const profile =
+      currentUserProfile;
+
+
+    container.innerHTML = `
+
+      <h3>
+        <i class="fa-solid fa-user"></i>
+        Profile Information
+      </h3>
+
+      <br>
+
+      <p>
+        <strong>Name:</strong>
+        ${escapeHTML(
+          profile?.full_name ||
+          "Not provided"
+        )}
+      </p>
+
+      <p>
+        <strong>Email:</strong>
+        ${escapeHTML(
+          currentUser.email || ""
+        )}
+      </p>
+
+      <p>
+        <strong>Phone:</strong>
+        ${escapeHTML(
+          profile?.phone ||
+          "Not provided"
+        )}
+      </p>
+
+      <p>
+        <strong>Account ID:</strong>
+        ${escapeHTML(
+          currentUser.id
+        )}
+      </p>
+
+    `;
+
+  } catch (error) {
+
+    container.innerHTML = `
+      <p>
+        Could not load profile.
+      </p>
+    `;
+
+  }
+
+}
+
+
+// =====================================================
+// OPEN LIST ITEM MODAL FROM DASHBOARD
+// =====================================================
+
+window.openListItemModal =
+  function () {
+
+    const modal =
+      document.getElementById(
+        "list-item-modal"
+      );
+
+
+    if (!currentUser) {
+
+      alert(
+        "Please login first."
+      );
+
+      return;
+
+    }
+
+
+    if (modal) {
+
+      modal.classList.remove(
+        "hidden"
+      );
+
+    }
+
+  };
+
+
+// =====================================================
+// LISTING FORM
+// =====================================================
+
+function setupListingForm() {
+
+  const listingForm =
+    document.getElementById(
+      "listing-form"
+    );
+
+
+  if (!listingForm) return;
+
+
+  listingForm.addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      if (!currentUser) {
+
+        alert(
+          "Please login first."
+        );
+
+        return;
+
+      }
+
+
+      const imageInput =
+        document.getElementById(
+          "item-image"
+        );
+
+
+      const imageFile =
+        imageInput &&
+        imageInput.files
+          ? imageInput.files[0]
+          : null;
+
+
+      if (!imageFile) {
+
+        alert(
+          "Please select an image."
+        );
+
+        return;
+
+      }
+
+
+      try {
+
+        // ---------------------------------------------
+        // Upload image
+        // ---------------------------------------------
+
+        alert(
+          "Uploading image..."
+        );
+
+
+        const imageUrl =
+          await uploadListingImage(
+            imageFile
+          );
+
+
+        // ---------------------------------------------
+        // Get form values
+        // ---------------------------------------------
+
+        const title =
+          document.getElementById(
+            "item-title"
+          ).value.trim();
+
+
+        const category =
+          document.getElementById(
+            "item-category"
+          ).value;
+
+
+        const price =
+          parseFloat(
+            document.getElementById(
+              "item-price"
+            ).value
+          );
+
+
+        const location =
+          document.getElementById(
+            "item-location"
+          ).value.trim();
+
+
+        const description =
+          document.getElementById(
+            "item-description"
+          ).value.trim();
+
+
+        if (!title) {
+
+          throw new Error(
+            "Please enter item name."
+          );
+
+        }
+
+
+        if (
+          !Number.isFinite(price) ||
+          price <= 0
+        ) {
+
+          throw new Error(
+            "Please enter a valid price."
+          );
+
+        }
+
+
+        if (!location) {
+
+          throw new Error(
+            "Please enter location."
+          );
+
+        }
+
+
+        // ---------------------------------------------
+        // GPS
+        // ---------------------------------------------
+
+        const coordinates =
+          await getCurrentLocation();
+
+
+        // ---------------------------------------------
+        // IMPORTANT:
+        // These names match your Supabase table.
+        // ---------------------------------------------
+
+        const listingData = {
+
+          owner_id:
+            currentUser.id,
+
+          name:
+            title,
+
+          category:
+            category,
+
+          price:
+            price,
+
+          location:
+            location,
+
+          latitude:
+            coordinates
+              ? coordinates.lat
+              : null,
+
+          longitude:
+            coordinates
+              ? coordinates.lng
+              : null,
+
+          image_url:
+            imageUrl,
+
+          description:
+            description,
+
+          is_available:
+            true
+
+        };
+
+
+        // ---------------------------------------------
+        // Save to Supabase
+        // ---------------------------------------------
+
+        const created =
+          await createListing(
+            listingData
+          );
+
+
+        const normalized =
+          normalizeListing(
+            created
+          );
+
+
+        listings.unshift(
+          normalized
+        );
+
+
+        renderListings(
+          listings
+        );
+
+
+        updateMapMarkers(
+          listings
+        );
+
+
+        const modal =
+          document.getElementById(
+            "list-item-modal"
+          );
+
+
+        if (modal) {
+
+          modal.classList.add(
+            "hidden"
+          );
+
+        }
+
+
+        listingForm.reset();
+
+
+        alert(
+          "Item published successfully!"
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Listing error:",
+          error
+        );
+
+
+        alert(
+          error.message ||
+          "Failed to publish listing."
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// GPS LOCATION
+// =====================================================
+
+function getCurrentLocation() {
+
+  return new Promise(resolve => {
+
+    if (
+      !navigator.geolocation
+    ) {
+
+      resolve(null);
+
+      return;
+
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+
+      position => {
+
+        resolve({
+
+          lat:
+            position.coords.latitude,
+
+          lng:
+            position.coords.longitude
+
+        });
+
+      },
+
+      error => {
+
+        console.warn(
+          "Location permission not available:",
+          error.message
+        );
+
+        resolve(null);
+
+      },
+
+      {
+        enableHighAccuracy: true,
+
+        timeout: 10000,
+
+        maximumAge: 0
+
+      }
+
+    );
+
+  });
+
+}
+
+
+// =====================================================
+// BOOKING
+// =====================================================
+
+function setupBooking() {
+
+  const bookingDays =
+    document.getElementById(
+      "booking-days"
+    );
+
+
+  if (bookingDays) {
+
+    bookingDays.addEventListener(
+      "input",
+      updateBookingSummary
+    );
+
+  }
+
+
+  // Payment buttons
+
+  document
+    .querySelectorAll(".pay-option")
+    .forEach(btn => {
+
+      btn.addEventListener(
+        "click",
+        event => {
+
+          document
+            .querySelectorAll(
+              ".pay-option"
+            )
+            .forEach(b =>
+              b.classList.remove(
+                "active"
+              )
+            );
+
+
+          event.currentTarget
+            .classList.add(
+              "active"
+            );
+
+        }
+      );
+
+    });
+
+
+  const confirmButton =
+    document.getElementById(
+      "confirm-booking-btn"
+    );
+
+
+  if (confirmButton) {
+
+    confirmButton.addEventListener(
+      "click",
+      confirmBooking
     );
 
   }
@@ -1512,66 +2661,511 @@ async function logoutUser() {
 }
 
 
-// Make logout available globally
-window.logoutUser = logoutUser;
-// ================================
-// DASHBOARD BASIC CONTROLS
-// ================================
+// =====================================================
+// OPEN BOOKING MODAL
+// =====================================================
 
-document.addEventListener("DOMContentLoaded", () => {
+window.openBookingModal =
+  function (id) {
 
-  const dashboardBtn = document.getElementById("dashboard-nav-btn");
-  const dashboardSection = document.getElementById("dashboard-section");
-  const logoutBtn = document.getElementById("logout-btn");
+    selectedListingForBooking =
+      listings.find(
+        item =>
+          String(item.id) ===
+          String(id)
+      );
 
-  // Open Dashboard
-  if (dashboardBtn) {
-    dashboardBtn.addEventListener("click", () => {
 
-      if (!currentUser) {
-        alert("Please login first.");
-        return;
-      }
+    if (!selectedListingForBooking) {
 
-      dashboardSection.classList.remove("hidden");
+      alert(
+        "Listing not found."
+      );
 
-      // Hide marketplace when dashboard opens
-      document.querySelector(".marketplace").classList.add("hidden");
+      return;
 
-      // Scroll to dashboard
-      dashboardSection.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    });
+    }
+
+
+    const title =
+      document.getElementById(
+        "modal-item-title"
+      );
+
+
+    const location =
+      document.getElementById(
+        "modal-item-location"
+      );
+
+
+    const price =
+      document.getElementById(
+        "modal-item-price"
+      );
+
+
+    if (title) {
+
+      title.innerText =
+        selectedListingForBooking.title;
+
+    }
+
+
+    if (location) {
+
+      location.innerText =
+        `Location: ${selectedListingForBooking.location}`;
+
+    }
+
+
+    if (price) {
+
+      price.innerText =
+        `Price: ${formatINR(
+          selectedListingForBooking.price_per_day
+        )} / day`;
+
+    }
+
+
+    const date =
+      document.getElementById(
+        "booking-date"
+      );
+
+
+    if (date) {
+
+      date.value =
+        new Date()
+          .toISOString()
+          .split("T")[0];
+
+    }
+
+
+    const days =
+      document.getElementById(
+        "booking-days"
+      );
+
+
+    if (days) {
+
+      days.value = 1;
+
+    }
+
+
+    updateBookingSummary();
+
+
+    const modal =
+      document.getElementById(
+        "booking-modal"
+      );
+
+
+    if (modal) {
+
+      modal.classList.remove(
+        "hidden"
+      );
+
+    }
+
+  };
+
+
+// =====================================================
+// BOOKING SUMMARY
+// =====================================================
+
+function updateBookingSummary() {
+
+  if (
+    !selectedListingForBooking
+  ) return;
+
+
+  const daysInput =
+    document.getElementById(
+      "booking-days"
+    );
+
+
+  const days =
+    parseInt(
+      daysInput
+        ? daysInput.value
+        : 1
+    ) || 1;
+
+
+  const price =
+    Number(
+      selectedListingForBooking
+        .price_per_day
+    ) || 0;
+
+
+  const total =
+    days * price;
+
+
+  const rate =
+    document.getElementById(
+      "summary-rate"
+    );
+
+
+  const duration =
+    document.getElementById(
+      "summary-days"
+    );
+
+
+  const totalElement =
+    document.getElementById(
+      "summary-total"
+    );
+
+
+  if (rate) {
+
+    rate.innerText =
+      formatINR(price);
+
   }
 
-  // Logout
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
+
+  if (duration) {
+
+    duration.innerText =
+      days;
+
+  }
+
+
+  if (totalElement) {
+
+    totalElement.innerText =
+      formatINR(total);
+
+  }
+
+}
+
+
+// =====================================================
+// CONFIRM BOOKING
+// =====================================================
+
+async function confirmBooking() {
+
+  if (!currentUser) {
+
+    alert(
+      "Please login to book an item."
+    );
+
+    const authModal =
+      document.getElementById(
+        "auth-modal"
+      );
+
+
+    if (authModal) {
+
+      authModal.classList.remove(
+        "hidden"
+      );
+
+    }
+
+    return;
+
+  }
+
+
+  if (
+    !selectedListingForBooking
+  ) {
+
+    alert(
+      "Please select an item first."
+    );
+
+    return;
+
+  }
+
+
+  const paymentOption =
+    document.querySelector(
+      ".pay-option.active"
+    );
+
+
+  const paymentMethod =
+    paymentOption
+      ? paymentOption.dataset.method
+      : "UPI";
+
+
+  const days =
+    parseInt(
+      document.getElementById(
+        "booking-days"
+      ).value
+    ) || 1;
+
+
+  const total =
+    days *
+    Number(
+      selectedListingForBooking
+        .price_per_day
+    );
+
+
+  const startDate =
+    document.getElementById(
+      "booking-date"
+    ).value;
+
+
+  if (!startDate) {
+
+    alert(
+      "Please select rental start date."
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    // ---------------------------------------------
+    // BOOKING DATA
+    // Matches your Supabase table.
+    // ---------------------------------------------
+
+    const bookingData = {
+
+      listing_id:
+        selectedListingForBooking.id,
+
+      renter_id:
+        currentUser.id,
+
+      item_name:
+        selectedListingForBooking.title,
+
+      start_date:
+        startDate,
+
+      rental_days:
+        days,
+
+      total_amount:
+        total,
+
+      payment_method:
+        paymentMethod,
+
+      status:
+        "pending"
+
+    };
+
+
+    const booking =
+      await createBooking(
+        bookingData
+      );
+
+
+    // ---------------------------------------------
+    // PAYMENT RECORD
+    // ---------------------------------------------
+
+    if (booking) {
 
       try {
-        await signOutUser();
 
-        currentUser = null;
+        await createPayment({
+
+          user_id:
+            currentUser.id,
+
+          booking_id:
+            booking.id,
+
+          amount:
+            total,
+
+          payment_method:
+            paymentMethod,
+
+          payment_status:
+            "pending"
+
+        });
+
+      } catch (paymentError) {
+
+        console.warn(
+          "Payment record error:",
+          paymentError
+        );
+
+      }
+
+    }
+
+
+    alert(`
+
+Booking created successfully!
+
+Item: ${selectedListingForBooking.title}
+
+Duration: ${days} day(s)
+
+Total: ${formatINR(total)}
+
+Payment Method: ${paymentMethod}
+
+`);
+
+    const modal =
+      document.getElementById(
+        "booking-modal"
+      );
+
+
+    if (modal) {
+
+      modal.classList.add(
+        "hidden"
+      );
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      "Booking error:",
+      error
+    );
+
+
+    alert(
+      error.message ||
+      "Booking could not be saved."
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// HTML SECURITY HELPERS
+// =====================================================
+
+function escapeHTML(value) {
+
+  return String(value ?? "")
+    .replace(
+      /[&<>"']/g,
+      char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[char]
+    );
+
+}
+
+
+function escapeAttribute(value) {
+
+  return escapeHTML(value);
+
+}
+
+
+// =====================================================
+// DASHBOARD SETUP
+// =====================================================
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    setupDashboard();
+
+  }
+);
+
+
+// =====================================================
+// GOOGLE OAUTH RETURN
+// =====================================================
+
+window.addEventListener(
+  "load",
+  async () => {
+
+    try {
+
+      const {
+        data
+      } =
+        await supabase.auth
+          .getSession();
+
+
+      if (
+        data &&
+        data.session &&
+        data.session.user
+      ) {
+
+        currentUser =
+          data.session.user;
+
+
+        await ensureUserProfile();
+
 
         updateUIForUser();
 
-        dashboardSection.classList.add("hidden");
-
-        document.querySelector(".marketplace").classList.remove("hidden");
-
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth"
-        });
-
-        alert("Logged out successfully.");
-
-      } catch (error) {
-        alert("Logout failed: " + error.message);
       }
-    });
-  }
 
-});
+    } catch (error) {
+
+      console.warn(
+        "OAuth session check:",
+        error
+      );
+
+    }
+
+  }
+);
+
+
+// =====================================================
+// END OF FLEX RENT SCRIPT
+// =====================================================
