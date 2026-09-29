@@ -2531,3 +2531,594 @@ body {
     font-size: 12px;
   }
 }
+/* =========================================================
+   STEP 2B - ADVANCED LISTING CARDS
+========================================================= */
+
+.advanced-listing-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.25s ease,
+                box-shadow 0.25s ease,
+                border-color 0.25s ease;
+    position: relative;
+}
+
+.advanced-listing-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(79, 70, 229, 0.25);
+    box-shadow: 0 16px 35px rgba(15, 23, 42, 0.12);
+}
+
+
+/* =========================================================
+   IMAGE
+========================================================= */
+
+.listing-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 230px;
+    background: #f1f5f9;
+    overflow: hidden;
+}
+
+.listing-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.advanced-listing-card:hover .listing-card-image {
+    transform: scale(1.04);
+}
+
+
+/* =========================================================
+   CATEGORY BADGE
+========================================================= */
+
+.listing-category-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+
+    padding: 6px 10px;
+
+    background: rgba(255, 255, 255, 0.94);
+    color: #334155;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+
+    backdrop-filter: blur(8px);
+}
+
+
+/* =========================================================
+   FAVORITE BUTTON
+========================================================= */
+
+.listing-favorite-btn {
+    position: absolute;
+    top: 11px;
+    right: 11px;
+
+    width: 38px;
+    height: 38px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.94);
+    color: #475569;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+
+    transition: all 0.2s ease;
+}
+
+.listing-favorite-btn:hover {
+    transform: scale(1.08);
+    color: #ef4444;
+}
+
+.listing-favorite-btn.active {
+    color: #ef4444;
+}
+
+.listing-favorite-btn i {
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   AVAILABILITY
+========================================================= */
+
+.listing-availability {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    backdrop-filter: blur(8px);
+}
+
+.listing-availability i {
+    font-size: 7px;
+}
+
+.listing-availability.available {
+    background: rgba(220, 252, 231, 0.95);
+    color: #15803d;
+}
+
+.listing-availability.unavailable {
+    background: rgba(254, 226, 226, 0.95);
+    color: #b91c1c;
+}
+
+
+/* =========================================================
+   CARD BODY
+========================================================= */
+
+.listing-card-body {
+    padding: 17px;
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.listing-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.listing-title {
+    margin: 0;
+
+    font-size: 18px;
+    line-height: 1.3;
+
+    color: #0f172a;
+
+    font-weight: 750;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   BRAND / MODEL
+========================================================= */
+
+.listing-brand-model {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    margin-top: 6px;
+
+    font-size: 12px;
+}
+
+.listing-brand-model strong {
+    color: #475569;
+}
+
+.listing-brand-model span {
+    color: #94a3b8;
+}
+
+.listing-brand-model span::before {
+    content: "•";
+    margin-right: 7px;
+}
+
+
+/* =========================================================
+   RATING + RENTALS
+========================================================= */
+
+.listing-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 10px;
+}
+
+.listing-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    font-size: 13px;
+}
+
+.listing-rating i {
+    color: #f59e0b;
+}
+
+.listing-rating strong {
+    color: #334155;
+}
+
+.listing-rating span {
+    color: #94a3b8;
+}
+
+.listing-rating.no-rating {
+    color: #94a3b8;
+}
+
+.listing-rating.no-rating i {
+    color: #94a3b8;
+}
+
+.listing-rentals {
+    padding-left: 10px;
+
+    border-left: 1px solid #e2e8f0;
+
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   CONDITION + AGE
+========================================================= */
+
+.listing-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 8px;
+
+    margin-top: 14px;
+}
+
+.listing-info-item {
+    background: #f8fafc;
+
+    border: 1px solid #eef2f7;
+
+    border-radius: 12px;
+
+    padding: 10px;
+}
+
+.listing-info-label {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.listing-info-item strong {
+    display: block;
+
+    color: #334155;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.listing-description {
+    margin: 13px 0 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+    line-height: 1.55;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   LOCATION
+========================================================= */
+
+.listing-location-row {
+    margin-top: 12px;
+
+    display: flex;
+    align-items: center;
+}
+
+.listing-distance {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+.listing-distance i {
+    color: var(--primary);
+}
+
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+.listing-price-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    margin-top: 14px;
+}
+
+.listing-price {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.listing-price strong {
+    color: #0f172a;
+
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.listing-price span {
+    color: #64748b;
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.listing-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 8px;
+
+    margin-top: 14px;
+}
+
+.listing-actions .btn {
+    min-height: 42px;
+
+    padding: 9px 10px;
+
+    border-radius: 11px;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.listing-details-btn {
+    white-space: nowrap;
+}
+
+.listing-rent-btn {
+    white-space: nowrap;
+}
+
+.listing-actions .btn i {
+    margin-right: 4px;
+}
+
+
+/* =========================================================
+   DISABLED RENT BUTTON
+========================================================= */
+
+.listing-rent-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* =========================================================
+   MARKETPLACE GRID
+========================================================= */
+
+#listings-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(270px, 1fr));
+
+    gap: 22px;
+
+    align-items: stretch;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    #listings-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+    }
+
+    .advanced-listing-card {
+        border-radius: 16px;
+    }
+
+    .listing-image-wrapper {
+        height: 170px;
+    }
+
+    .listing-card-body {
+        padding: 12px;
+    }
+
+    .listing-title {
+        font-size: 15px;
+    }
+
+    .listing-meta-row {
+        gap: 7px;
+    }
+
+    .listing-rating {
+        font-size: 11px;
+    }
+
+    .listing-rentals {
+        font-size: 10px;
+        padding-left: 7px;
+    }
+
+    .listing-info-grid {
+        gap: 5px;
+    }
+
+    .listing-info-item {
+        padding: 8px;
+    }
+
+    .listing-info-label {
+        font-size: 9px;
+    }
+
+    .listing-info-item strong {
+        font-size: 10px;
+    }
+
+    .listing-description {
+        font-size: 10px;
+    }
+
+    .listing-distance {
+        font-size: 10px;
+    }
+
+    .listing-price strong {
+        font-size: 18px;
+    }
+
+    .listing-actions {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .listing-actions .btn {
+        min-height: 38px;
+        font-size: 11px;
+    }
+
+    .listing-favorite-btn {
+        width: 34px;
+        height: 34px;
+    }
+
+    .listing-category-badge {
+        font-size: 9px;
+        padding: 5px 8px;
+    }
+
+    .listing-availability {
+        font-size: 9px;
+        padding: 5px 8px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 430px) {
+
+    #listings-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+    }
+
+    .listing-image-wrapper {
+        height: 145px;
+    }
+
+    .listing-card-body {
+        padding: 10px;
+    }
+
+    .listing-title {
+        font-size: 14px;
+    }
+
+    .listing-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .listing-info-item:nth-child(2) {
+        display: none;
+    }
+
+    .listing-price strong {
+        font-size: 17px;
+    }
+}
