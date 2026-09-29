@@ -3562,7 +3562,207 @@ if (forgotPasswordBtn) {
     });
 
 }
+// =====================================================
+// STEP 1C - ADVANCED HERO CONTROLS
+// =====================================================
 
+function setupHeroControls() {
+
+  // ---------------------------------------------------
+  // HERO SEARCH
+  // ---------------------------------------------------
+
+  const heroSearchInput =
+    document.getElementById("hero-search-input");
+
+  const heroSearchBtn =
+    document.getElementById("hero-search-btn");
+
+
+  function performHeroSearch() {
+
+    if (!heroSearchInput) return;
+
+    const query =
+      heroSearchInput.value.trim();
+
+
+    // Put hero search text into main search
+    const mainSearch =
+      document.getElementById("search-input");
+
+
+    if (mainSearch) {
+
+      mainSearch.value = query;
+
+    }
+
+
+    // Use existing search system
+    filterListings();
+
+
+    // Scroll to marketplace
+    const marketplace =
+      document.querySelector(".marketplace");
+
+
+    if (marketplace) {
+
+      marketplace.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+    }
+
+  }
+
+
+  if (heroSearchBtn) {
+
+    heroSearchBtn.addEventListener(
+      "click",
+      performHeroSearch
+    );
+
+  }
+
+
+  // Press Enter in Hero Search
+  if (heroSearchInput) {
+
+    heroSearchInput.addEventListener(
+      "keydown",
+      event => {
+
+        if (event.key === "Enter") {
+
+          event.preventDefault();
+
+          performHeroSearch();
+
+        }
+
+      }
+    );
+
+  }
+
+
+  // ---------------------------------------------------
+  // HERO EXPLORE BUTTON
+  // ---------------------------------------------------
+
+  const heroExploreBtn =
+    document.getElementById("hero-explore-btn");
+
+
+  if (heroExploreBtn) {
+
+    heroExploreBtn.addEventListener(
+      "click",
+      () => {
+
+        const marketplace =
+          document.querySelector(".marketplace");
+
+
+        if (marketplace) {
+
+          marketplace.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+
+        }
+
+      }
+    );
+
+  }
+
+
+  // ---------------------------------------------------
+  // HERO LIST YOUR ITEM BUTTON
+  // ---------------------------------------------------
+
+  const heroListItemBtn =
+    document.getElementById(
+      "hero-list-item-btn"
+    );
+
+
+  if (heroListItemBtn) {
+
+    heroListItemBtn.addEventListener(
+      "click",
+      () => {
+
+        const listItemModal =
+          document.getElementById(
+            "list-item-modal"
+          );
+
+
+        // User must login first
+        if (!currentUser) {
+
+          alert(
+            "Please login first to list an item."
+          );
+
+
+          const authModal =
+            document.getElementById(
+              "auth-modal"
+            );
+
+
+          if (authModal) {
+
+            authModal.classList.remove(
+              "hidden"
+            );
+
+          }
+
+
+          return;
+
+        }
+
+
+        // Open listing modal
+        if (listItemModal) {
+
+          listItemModal.classList.remove(
+            "hidden"
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// INITIALIZE HERO CONTROLS
+// =====================================================
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    setupHeroControls();
+
+  }
+);
 // =====================================================
 // END OF FLEX RENT SCRIPT
 // =====================================================
