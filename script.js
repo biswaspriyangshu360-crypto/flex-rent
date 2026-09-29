@@ -4128,298 +4128,200 @@ function renderSavedAddresses() {
 // SAVE NEW ADDRESS
 // =====================================================
 
-function saveNewAddress(
-  event
-) {
-
-  event.preventDefault();
-
-
-  const type =
-    document.getElementById(
-      "address-type"
-    )?.value ||
-    "Home";
-
-
-  const name =
-    document.getElementById(
-      "address-full-name"
-    )?.value.trim();
-
-
-  const phone =
-    document.getElementById(
-      "address-phone"
-    )?.value.trim();
-
-
-  const pincode =
-    document.getElementById(
-      "address-pincode"
-    )?.value.trim();
-
-
-  const house =
-    document.getElementById(
-      "address-house"
-    )?.value.trim();
-
-
-  const area =
-    document.getElementById(
-      "address-area"
-    )?.value.trim();
-
-
-  const city =
-    document.getElementById(
-      "address-city"
-    )?.value.trim();
-
-
-  const state =
-    document.getElementById(
-      "address-state"
-    )?.value.trim();
-
-
-  const landmark =
-    document.getElementById(
-      "address-landmark"
-    )?.value.trim();
-
-
-  if (!name) {
-
-    alert(
-      "Please enter full name."
-    );
-
-    return;
-
-  }
-
-
-  if (
-    !/^[0-9]{10}$/.test(
-      phone
-    )
-  ) {
-
-    alert(
-      "Please enter a valid 10-digit mobile number."
-    );
-
-    return;
-
-  }
-
-
-  if (
-    !/^[0-9]{6}$/.test(
-      pincode
-    )
-  ) {
-
-    alert(
-      "Please enter a valid 6-digit PIN code."
-    );
-
-    return;
-
-  }
-
-
-  if (
-    !house ||
-    !area ||
-    !city ||
-    !state
-  ) {
-
-    alert(
-      "Please complete all required address fields."
-    );
-
-    return;
-
-  }
-
-
-  const addressParts = [
-
-    house,
-
-    area,
-
-    landmark,
-
-    city,
-
-    state,
-
-    pincode
-
-  ].filter(Boolean);
-
-
-  const address = {
-
-    id:
-      "address-" +
-      Date.now(),
-
-    type:
-      type,
-
-    name:
-      name,
-
-    phone:
-      phone,
-
-    pincode:
-      pincode,
-
-    house:
-      house,
-
-    area:
-      area,
-
-    city:
-      city,
-
-    state:
-      state,
-
-    landmark:
-      landmark,
-
-    display:
-      addressParts.join(", "),
-
-    lat:
-      null,
-
-    lng:
-      null,
-
-    createdAt:
-      new Date().toISOString()
-
-  };
-
-
-  const addresses =
-    getSavedAddresses();
-
-
-  addresses.unshift(
-    address
-  );
-
-
-  saveAddresses(
-    addresses
-  );
-
-
-  selectLocation(
-    address
-  );
-
-
-  const form =
-    document.getElementById(
-      "address-form"
-    );
-
-
-  form?.reset();
-
-
-  const typeInput =
-    document.getElementById(
-      "address-type"
-    );
-
-
-  if (typeInput) {
-
-    typeInput.value =
-      "Home";
-
-  }
-
-
-  document
-    .querySelectorAll(
-      ".address-type-btn"
-    )
-    .forEach(
-      button => {
-
-        button.classList.remove(
-          "active"
-        );
-
-        if (
-          button.dataset.addressType ===
-          "Home"
-        ) {
-
-          button.classList.add(
-            "active"
-          );
-
+async function saveNewAddress() {
+    const type = document.getElementById('address-type')?.value || 'Home';
+    const fullName = document.getElementById('address-full-name')?.value.trim();
+    const phone = document.getElementById('address-phone')?.value.trim();
+    const pincode = document.getElementById('address-pincode')?.value.trim();
+    const house = document.getElementById('address-house')?.value.trim();
+    const area = document.getElementById('address-area')?.value.trim();
+    const city = document.getElementById('address-city')?.value.trim();
+    const state = document.getElementById('address-state')?.value.trim();
+    const landmark = document.getElementById('address-landmark')?.value.trim();
+
+    // Basic validation
+    if (!fullName || !phone || !pincode || !house || !area || !city || !state) {
+        showToast('Please fill all required address fields.', 'error');
+        return;
+    }
+
+    if (!/^\d{6}$/.test(pincode)) {
+        showToast('Please enter a valid 6-digit PIN code.', 'error');
+        return;
+    }
+
+    const saveButton = document.getElementById('save-address-btn');
+
+    try {
+        if (saveButton) {
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finding location...';
         }
 
-      }
-    );
+        // Create a complete address for geocoding
+        const addressQuery = [
+            house,
+            area,
+            landmark,
+            city,
+            state,
+            pincode,
+            'India'
+        ]
+            .filter(Boolean)
+            .join(', ');
 
+        console.log('Geocoding address:', addressQuery);
 
-  const addressModal =
-    document.getElementById(
-      "address-form-modal"
-    );
+        // Convert address into latitude/longitude
+        const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=in&q=${encodeURIComponent(addressQuery)}`
+        );
 
+        if (!response.ok) {
+            throw new Error('Location service is currently unavailable.');
+        }
 
-  addressModal?.classList.add(
-    "hidden"
-  );
+        const results = await response.json();
 
+        if (!results || results.length === 0) {
+            showToast(
+                'Location not found. Please check your address, city, state or PIN code.',
+                'error'
+            );
+            return;
+        }
 
-  const locationModal =
-    document.getElementById(
-      "location-modal"
-    );
+        const result = results[0];
 
+        const latitude = parseFloat(result.lat);
+        const longitude = parseFloat(result.lon);
 
-  const forListing =
-    locationModal?.dataset.forListing ===
-    "true";
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+            throw new Error('Invalid coordinates received.');
+        }
 
+        // Create address object
+        const address = {
+            id: Date.now().toString(),
+            type,
+            fullName,
+            phone,
+            pincode,
+            house,
+            area,
+            city,
+            state,
+            landmark,
+            display: [
+                house,
+                area,
+                city,
+                state,
+                pincode
+            ]
+                .filter(Boolean)
+                .join(', '),
 
-  if (forListing) {
+            // Exact coordinates
+            lat: latitude,
+            lng: longitude,
 
-    applyListingLocation(
-      address
-    );
+            // Extra information
+            formattedAddress: result.display_name || addressQuery,
+            createdAt: new Date().toISOString()
+        };
 
-  }
+        console.log('Geocoded address:', address);
 
+        // Get existing saved addresses
+        const savedAddresses = JSON.parse(
+            localStorage.getItem('flexRentAddresses') || '[]'
+        );
 
-  renderSavedAddresses();
+        // Save new address
+        savedAddresses.push(address);
 
+        localStorage.setItem(
+            'flexRentAddresses',
+            JSON.stringify(savedAddresses)
+        );
 
-  alert(
-    "Address saved successfully!"
-  );
+        // Select this address as the active location
+        selectLocation(address);
 
+        // Close address form
+        const addressFormModal = document.getElementById('address-form-modal');
+
+        if (addressFormModal) {
+            addressFormModal.classList.add('hidden');
+        }
+
+        // Close location modal if open
+        const locationModal = document.getElementById('location-modal');
+
+        if (locationModal) {
+            locationModal.classList.add('hidden');
+        }
+
+        // Reset form
+        const form = document.getElementById('address-form');
+
+        if (form) {
+            form.reset();
+        }
+
+        // Reset address type
+        const addressTypeInput = document.getElementById('address-type');
+
+        if (addressTypeInput) {
+            addressTypeInput.value = 'Home';
+        }
+
+        // Reset active address type button
+        document
+            .querySelectorAll('.address-type-btn')
+            .forEach(button => button.classList.remove('active'));
+
+        const homeButton = document.querySelector(
+            '.address-type-btn[data-type="Home"]'
+        );
+
+        if (homeButton) {
+            homeButton.classList.add('active');
+        }
+
+        // Update saved address UI
+        if (typeof renderSavedAddresses === 'function') {
+            renderSavedAddresses();
+        }
+
+        showToast('Address saved with accurate location!', 'success');
+
+        // Focus map on new location
+        if (
+            typeof focusMapOnLocation === 'function' &&
+            Number.isFinite(latitude) &&
+            Number.isFinite(longitude)
+        ) {
+            focusMapOnLocation(latitude, longitude);
+        }
+
+    } catch (error) {
+        console.error('Address geocoding error:', error);
+
+        showToast(
+            error.message || 'Could not find this location. Please try again.',
+            'error'
+        );
+
+    } finally {
+        if (saveButton) {
+            saveButton.disabled = false;
+            saveButton.innerHTML = 'Save Address';
+        }
+    }
 }
-
 
 // =====================================================
 // LOAD SAVED LOCATION
