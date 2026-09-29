@@ -2032,3 +2032,29 @@ body {
   }
 
 }
+/* =========================================================
+   FLEX RENT LOGO
+========================================================= */
+
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.logo-image {
+  width: 150px;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+  .logo-image {
+    width: 125px;
+  }
+
+}
