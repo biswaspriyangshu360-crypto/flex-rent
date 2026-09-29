@@ -3164,7 +3164,63 @@ window.addEventListener(
 
   }
 );
+// ==========================================
+// FORGOT PASSWORD
+// ==========================================
 
+const forgotPasswordBtn = document.getElementById("forgot-password-btn");
+
+if (forgotPasswordBtn) {
+
+    forgotPasswordBtn.addEventListener("click", async () => {
+
+        const emailInput = document.getElementById("auth-email");
+        const email = emailInput ? emailInput.value.trim() : "";
+
+        if (!email) {
+            alert("Please enter your email address first.");
+            emailInput?.focus();
+            return;
+        }
+
+        try {
+
+            forgotPasswordBtn.disabled = true;
+            forgotPasswordBtn.textContent = "Sending...";
+
+            const { error } = await supabase.auth.resetPasswordForEmail(
+                email,
+                {
+                    redirectTo: window.location.origin + window.location.pathname
+                }
+            );
+
+            if (error) {
+                throw error;
+            }
+
+            alert(
+                "Password reset link has been sent to your email. Please check your inbox and Spam folder."
+            );
+
+        } catch (error) {
+
+            console.error("Password reset error:", error);
+
+            alert(
+                "Password reset failed: " + error.message
+            );
+
+        } finally {
+
+            forgotPasswordBtn.disabled = false;
+            forgotPasswordBtn.textContent = "Forgot Password?";
+
+        }
+
+    });
+
+}
 
 // =====================================================
 // END OF FLEX RENT SCRIPT
