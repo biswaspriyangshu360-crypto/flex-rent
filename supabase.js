@@ -280,3 +280,19 @@ async function uploadListingImage(file) {
 
   return data.publicUrl;
 }
+// ================================
+// LOGIN USER
+// ================================
+
+async function signInUser(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
