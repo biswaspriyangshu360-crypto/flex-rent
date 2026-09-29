@@ -537,6 +537,15 @@ function renderListings(items) {
   }
 
 
+  // User's currently selected location
+  const userLocation =
+    selectedLocation &&
+    Number.isFinite(Number(selectedLocation.lat)) &&
+    Number.isFinite(Number(selectedLocation.lng))
+      ? selectedLocation
+      : null;
+
+
   items.forEach(item => {
 
     const card =
@@ -554,84 +563,13 @@ function renderListings(items) {
       item.available !== false;
 
 
-    card.innerHTML = `
+    // Calculate distance between user and listing
+    let distanceText = "";
 
-      <img
-        src="${escapeAttribute(image)}"
-        alt="${escapeAttribute(item.title)}"
-      >
-
-      <div class="card-body">
-
-        <span class="card-category">
-          ${escapeHTML(item.category)}
-        </span>
-
-        <h3 class="card-title">
-          ${escapeHTML(item.title)}
-        </h3>
-
-        <p class="card-location">
-
-          <i class="fa-solid fa-location-dot"></i>
-
-          ${escapeHTML(item.location)}
-
-        </p>
-
-        <p style="
-          color:#94A3B8;
-          font-size:0.85rem;
-          margin-bottom:10px;
-        ">
-
-          ${escapeHTML(
-            item.description
-              ? item.description.substring(0, 90)
-              : "No description available."
-          )}
-
-        </p>
-
-        <div class="card-price">
-
-          ${formatINR(item.price_per_day)}
-
-          <small>/ day</small>
-
-        </div>
-
-        ${
-          availability
-            ? `
-              <button
-                class="btn btn-primary btn-block"
-                onclick="openBookingModal('${escapeAttribute(item.id)}')"
-              >
-                Rent Now
-              </button>
-            `
-            : `
-              <button
-                class="btn btn-secondary btn-block"
-                disabled
-              >
-                Currently Unavailable
-              </button>
-            `
-        }
-
-      </div>
-
-    `;
-
-
-    container.appendChild(card);
-
-  });
-
-}
-
+    if (
+      userLocation &&
+      Number.isFinite(Number(item.latitude)) &&
+      Number
 
 // =====================================================
 // SEARCH
