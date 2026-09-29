@@ -15,7 +15,7 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
   >
 
-  <!-- Leaflet Map CSS -->
+  <!-- Leaflet - kept for compatibility with existing script.js -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -35,6 +35,7 @@
   ========================================================== -->
 
   <div id="loading-screen">
+
     <div class="spinner"></div>
 
     <h2>Flex Rent</h2>
@@ -42,6 +43,7 @@
     <p>
       Connecting rentals worldwide...
     </p>
+
   </div>
 
 
@@ -56,6 +58,37 @@
       <i class="fa-solid fa-layer-group"></i>
       Flex<span>Rent</span>
     </div>
+
+
+    <!-- =======================================================
+         LOCATION SELECTOR
+    ======================================================== -->
+
+    <button
+      type="button"
+      id="location-selector-btn"
+      class="location-selector"
+    >
+
+      <div class="location-selector-icon">
+        <i class="fa-solid fa-location-dot"></i>
+      </div>
+
+      <div class="location-selector-content">
+
+        <span>
+          Deliver / Rent to
+        </span>
+
+        <strong id="selected-location-text">
+          Select your location
+        </strong>
+
+      </div>
+
+      <i class="fa-solid fa-chevron-down location-chevron"></i>
+
+    </button>
 
 
     <!-- Main Search -->
@@ -92,8 +125,11 @@
         id="list-item-nav-btn"
         type="button"
       >
+
         <i class="fa-solid fa-plus"></i>
+
         List Your Item
+
       </button>
 
 
@@ -102,7 +138,9 @@
         id="auth-nav-btn"
         type="button"
       >
+
         Login / Register
+
       </button>
 
 
@@ -111,8 +149,11 @@
         id="dashboard-nav-btn"
         type="button"
       >
+
         <i class="fa-solid fa-user"></i>
+
         Dashboard
+
       </button>
 
     </nav>
@@ -136,32 +177,39 @@
 
       <div class="hero-content">
 
-        <!-- Badge -->
         <div class="hero-badge">
+
           <i class="fa-solid fa-sparkles"></i>
 
           Smart Community Rental Marketplace
+
         </div>
 
 
-        <!-- Main Heading -->
         <h1>
+
           Rent What You Need.
+
           <br>
 
-          <span>Earn From What You Own.</span>
+          <span>
+            Earn From What You Own.
+          </span>
+
         </h1>
 
 
-        <!-- Description -->
         <p>
+
           Discover tools, equipment and everyday items available
           for rent near you — or turn your unused items into
           extra income.
+
         </p>
 
 
         <!-- Hero Search -->
+
         <div class="hero-search-box">
 
           <i class="fa-solid fa-magnifying-glass"></i>
@@ -177,13 +225,16 @@
             id="hero-search-btn"
             class="btn btn-primary"
           >
+
             Search
+
           </button>
 
         </div>
 
 
         <!-- Hero Actions -->
+
         <div class="hero-actions">
 
           <button
@@ -191,8 +242,11 @@
             id="hero-list-item-btn"
             class="btn btn-primary"
           >
+
             <i class="fa-solid fa-plus"></i>
+
             List Your Item
+
           </button>
 
 
@@ -201,40 +255,50 @@
             id="hero-explore-btn"
             class="btn btn-outline"
           >
+
             <i class="fa-solid fa-compass"></i>
+
             Explore Items
+
           </button>
 
         </div>
 
 
         <!-- Trust Features -->
+
         <div class="hero-trust">
 
           <div>
+
             <i class="fa-solid fa-location-dot"></i>
 
             <span>
               Rent Nearby
             </span>
+
           </div>
 
 
           <div>
+
             <i class="fa-solid fa-shield-halved"></i>
 
             <span>
               Secure Rentals
             </span>
+
           </div>
 
 
           <div>
+
             <i class="fa-solid fa-wallet"></i>
 
             <span>
               Earn From Items
             </span>
+
           </div>
 
         </div>
@@ -243,16 +307,20 @@
 
 
       <!-- Hero Visual -->
+
       <div class="hero-visual">
 
         <div class="hero-card hero-card-main">
 
           <div class="hero-card-icon">
+
             <i class="fa-solid fa-toolbox"></i>
+
           </div>
 
 
           <div>
+
             <span>
               Popular Rental
             </span>
@@ -264,22 +332,25 @@
             <p>
               Available near you
             </p>
+
           </div>
 
 
           <div class="hero-card-arrow">
+
             <i class="fa-solid fa-arrow-right"></i>
+
           </div>
 
         </div>
 
 
-        <!-- Floating Card -->
         <div class="floating-card floating-card-top">
 
           <i class="fa-solid fa-location-dot"></i>
 
           <div>
+
             <strong>
               Nearby Items
             </strong>
@@ -287,17 +358,18 @@
             <small>
               Find rentals around you
             </small>
+
           </div>
 
         </div>
 
 
-        <!-- Floating Card -->
         <div class="floating-card floating-card-bottom">
 
           <i class="fa-solid fa-star"></i>
 
           <div>
+
             <strong>
               Trusted Rentals
             </strong>
@@ -305,6 +377,7 @@
             <small>
               Rent with confidence
             </small>
+
           </div>
 
         </div>
@@ -324,6 +397,7 @@
       <div class="section-heading">
 
         <div>
+
           <span class="section-label">
             Explore
           </span>
@@ -331,6 +405,7 @@
           <h2>
             What are you looking for?
           </h2>
+
         </div>
 
       </div>
@@ -338,13 +413,17 @@
 
       <div class="category-showcase">
 
+
         <button
           class="category-showcase-card"
           data-category="Everyday"
           type="button"
         >
+
           <div class="category-icon">
+
             <i class="fa-solid fa-box-open"></i>
+
           </div>
 
           <strong>
@@ -354,6 +433,7 @@
           <span>
             Useful daily items
           </span>
+
         </button>
 
 
@@ -362,8 +442,11 @@
           data-category="Agriculture"
           type="button"
         >
+
           <div class="category-icon">
+
             <i class="fa-solid fa-tractor"></i>
+
           </div>
 
           <strong>
@@ -373,6 +456,7 @@
           <span>
             Farming equipment
           </span>
+
         </button>
 
 
@@ -381,8 +465,11 @@
           data-category="Construction"
           type="button"
         >
+
           <div class="category-icon">
+
             <i class="fa-solid fa-helmet-safety"></i>
+
           </div>
 
           <strong>
@@ -392,6 +479,7 @@
           <span>
             Tools & machinery
           </span>
+
         </button>
 
 
@@ -400,8 +488,11 @@
           data-category="Industrial"
           type="button"
         >
+
           <div class="category-icon">
+
             <i class="fa-solid fa-industry"></i>
+
           </div>
 
           <strong>
@@ -411,6 +502,7 @@
           <span>
             Heavy equipment
           </span>
+
         </button>
 
 
@@ -419,8 +511,11 @@
           data-category="Gardening"
           type="button"
         >
+
           <div class="category-icon">
+
             <i class="fa-solid fa-seedling"></i>
+
           </div>
 
           <strong>
@@ -430,6 +525,7 @@
           <span>
             Garden tools
           </span>
+
         </button>
 
 
@@ -438,8 +534,11 @@
           data-category="Other"
           type="button"
         >
+
           <div class="category-icon">
+
             <i class="fa-solid fa-ellipsis"></i>
+
           </div>
 
           <strong>
@@ -449,6 +548,7 @@
           <span>
             Explore more
           </span>
+
         </button>
 
       </div>
@@ -458,7 +558,7 @@
 
 
     <!-- =======================================================
-         ORIGINAL CATEGORY FILTER
+         CATEGORY FILTER
     ======================================================== -->
 
     <section class="categories-bar">
@@ -468,8 +568,11 @@
         data-category="All"
         type="button"
       >
+
         <i class="fa-solid fa-border-all"></i>
+
         All
+
       </button>
 
 
@@ -478,8 +581,11 @@
         data-category="Everyday"
         type="button"
       >
+
         <i class="fa-solid fa-box-open"></i>
+
         Everyday
+
       </button>
 
 
@@ -488,8 +594,11 @@
         data-category="Agriculture"
         type="button"
       >
+
         <i class="fa-solid fa-tractor"></i>
+
         Agriculture
+
       </button>
 
 
@@ -498,8 +607,11 @@
         data-category="Construction"
         type="button"
       >
+
         <i class="fa-solid fa-helmet-safety"></i>
+
         Construction
+
       </button>
 
 
@@ -508,8 +620,11 @@
         data-category="Industrial"
         type="button"
       >
+
         <i class="fa-solid fa-industry"></i>
+
         Industrial
+
       </button>
 
 
@@ -518,8 +633,11 @@
         data-category="Gardening"
         type="button"
       >
+
         <i class="fa-solid fa-seedling"></i>
+
         Gardening
+
       </button>
 
 
@@ -528,8 +646,11 @@
         data-category="Other"
         type="button"
       >
+
         <i class="fa-solid fa-ellipsis"></i>
+
         Other
+
       </button>
 
     </section>
@@ -537,37 +658,62 @@
 
 
     <!-- =======================================================
-         MAP
+         LOCATION SUMMARY
     ======================================================== -->
 
-    <section class="map-wrapper">
+    <section class="location-summary-card">
 
-      <div class="map-header">
+      <div class="location-summary-left">
 
-        <div>
-          <span class="section-label">
-            Discover Nearby
-          </span>
+        <div class="location-summary-icon">
 
-          <h3>
-            <i class="fa-solid fa-location-dot"></i>
-            Rental Items Near You
-          </h3>
+          <i class="fa-solid fa-location-crosshairs"></i>
+
         </div>
 
 
-        <input
-          type="text"
-          id="location-search"
-          placeholder="Search location..."
-        >
+        <div>
+
+          <span>
+            Your rental location
+          </span>
+
+          <strong id="location-summary-text">
+            Select a location to see nearby rental items
+          </strong>
+
+        </div>
 
       </div>
 
 
-      <div id="map"></div>
+      <button
+        type="button"
+        id="change-location-btn"
+        class="btn btn-outline"
+      >
+
+        <i class="fa-solid fa-location-dot"></i>
+
+        Change Location
+
+      </button>
 
     </section>
+
+
+
+    <!-- =======================================================
+         HIDDEN MAP
+         Kept temporarily for compatibility with existing
+         script.js. We will remove map logic in next step.
+    ======================================================== -->
+
+    <div
+      id="map"
+      style="display:none;"
+      aria-hidden="true"
+    ></div>
 
 
 
@@ -601,8 +747,11 @@
           id="marketplace-explore-btn"
           class="btn btn-outline"
         >
+
           View All
+
           <i class="fa-solid fa-arrow-right"></i>
+
         </button>
 
       </div>
@@ -612,7 +761,9 @@
         id="listings-grid"
         class="listings-grid"
       >
-        <!-- Dynamic cards will be inserted by script.js -->
+
+        <!-- Dynamic cards inserted by script.js -->
+
       </div>
 
     </section>
@@ -643,6 +794,7 @@
 
 
       <div class="steps-grid">
+
 
         <div class="step-card">
 
@@ -738,6 +890,7 @@
       <div class="dashboard-header">
 
         <div>
+
           <span class="section-label">
             Account
           </span>
@@ -745,6 +898,7 @@
           <h2>
             User Dashboard
           </h2>
+
         </div>
 
 
@@ -753,14 +907,15 @@
           class="btn btn-danger"
           type="button"
         >
+
           <i class="fa-solid fa-right-from-bracket"></i>
+
           Logout
+
         </button>
 
       </div>
 
-
-      <!-- Dashboard Tabs -->
 
       <div class="dashboard-tabs">
 
@@ -769,8 +924,11 @@
           data-tab="tab-listings"
           type="button"
         >
+
           <i class="fa-solid fa-box"></i>
+
           My Listings
+
         </button>
 
 
@@ -779,8 +937,11 @@
           data-tab="tab-bookings"
           type="button"
         >
+
           <i class="fa-solid fa-calendar"></i>
+
           My Bookings
+
         </button>
 
 
@@ -789,8 +950,11 @@
           data-tab="tab-profile"
           type="button"
         >
+
           <i class="fa-solid fa-user"></i>
+
           Profile Info
+
         </button>
 
       </div>
@@ -847,6 +1011,438 @@
 
 
   <!-- =========================================================
+       LOCATION MODAL
+  ========================================================== -->
+
+  <div
+    id="location-modal"
+    class="modal hidden"
+  >
+
+    <div class="modal-content location-modal-content">
+
+      <!-- Close -->
+
+      <span class="close-modal">
+        &times;
+      </span>
+
+
+      <!-- Header -->
+
+      <div class="location-modal-header">
+
+        <div class="location-modal-icon">
+
+          <i class="fa-solid fa-location-dot"></i>
+
+        </div>
+
+        <div>
+
+          <h2>
+            Select Location
+          </h2>
+
+          <p>
+            Choose where you want to rent or deliver items.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- Current Location -->
+
+      <button
+        type="button"
+        id="use-current-location-btn"
+        class="current-location-option"
+      >
+
+        <div class="current-location-icon">
+
+          <i class="fa-solid fa-location-crosshairs"></i>
+
+        </div>
+
+
+        <div class="current-location-text">
+
+          <strong>
+            Use My Current Location
+          </strong>
+
+          <span>
+            Automatically detect your location using GPS
+          </span>
+
+        </div>
+
+
+        <i class="fa-solid fa-chevron-right"></i>
+
+      </button>
+
+
+      <!-- Divider -->
+
+      <div class="location-divider">
+
+        <span>
+          OR
+        </span>
+
+      </div>
+
+
+      <!-- Saved Addresses -->
+
+      <div class="saved-address-section">
+
+        <div class="location-section-title">
+
+          <h3>
+            Saved Addresses
+          </h3>
+
+          <span id="saved-address-count">
+            0 saved
+          </span>
+
+        </div>
+
+
+        <div
+          id="saved-addresses-list"
+          class="saved-addresses-list"
+        >
+
+          <!-- Saved addresses will be inserted here -->
+
+          <div class="no-saved-address">
+
+            <i class="fa-regular fa-address-book"></i>
+
+            <p>
+              No saved addresses yet
+            </p>
+
+            <small>
+              Add an address to quickly select it later.
+            </small>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Add Address -->
+
+      <button
+        type="button"
+        id="add-new-address-btn"
+        class="add-address-btn"
+      >
+
+        <span class="add-address-icon">
+
+          <i class="fa-solid fa-plus"></i>
+
+        </span>
+
+        <span>
+          Add New Address
+        </span>
+
+        <i class="fa-solid fa-chevron-right"></i>
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================================================
+       ADD NEW ADDRESS MODAL
+  ========================================================== -->
+
+  <div
+    id="address-form-modal"
+    class="modal hidden"
+  >
+
+    <div class="modal-content address-form-modal-content">
+
+      <span class="close-modal">
+        &times;
+      </span>
+
+
+      <div class="location-modal-header">
+
+        <div class="location-modal-icon">
+
+          <i class="fa-solid fa-house"></i>
+
+        </div>
+
+        <div>
+
+          <h2>
+            Add New Address
+          </h2>
+
+          <p>
+            Enter your address details.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <form id="address-form">
+
+        <!-- Address Type -->
+
+        <div class="form-group">
+
+          <label>
+            Save Address As
+          </label>
+
+          <div class="address-type-options">
+
+            <button
+              type="button"
+              class="address-type-btn active"
+              data-address-type="Home"
+            >
+
+              <i class="fa-solid fa-house"></i>
+
+              Home
+
+            </button>
+
+
+            <button
+              type="button"
+              class="address-type-btn"
+              data-address-type="College"
+            >
+
+              <i class="fa-solid fa-graduation-cap"></i>
+
+              College
+
+            </button>
+
+
+            <button
+              type="button"
+              class="address-type-btn"
+              data-address-type="Other"
+            >
+
+              <i class="fa-solid fa-location-dot"></i>
+
+              Other
+
+            </button>
+
+          </div>
+
+          <input
+            type="hidden"
+            id="address-type"
+            value="Home"
+          >
+
+        </div>
+
+
+        <!-- Full Name -->
+
+        <div class="form-group">
+
+          <label>
+            Full Name
+          </label>
+
+          <input
+            type="text"
+            id="address-full-name"
+            placeholder="Enter full name"
+            required
+          >
+
+        </div>
+
+
+        <!-- Mobile -->
+
+        <div class="form-group">
+
+          <label>
+            Mobile Number
+          </label>
+
+          <input
+            type="tel"
+            id="address-phone"
+            placeholder="10-digit mobile number"
+            maxlength="10"
+            inputmode="numeric"
+            required
+          >
+
+        </div>
+
+
+        <!-- PIN -->
+
+        <div class="form-group">
+
+          <label>
+            PIN Code
+          </label>
+
+          <input
+            type="text"
+            id="address-pincode"
+            placeholder="Enter 6-digit PIN code"
+            maxlength="6"
+            inputmode="numeric"
+            required
+          >
+
+        </div>
+
+
+        <!-- House / Building -->
+
+        <div class="form-group">
+
+          <label>
+            House / Flat / Building
+          </label>
+
+          <input
+            type="text"
+            id="address-house"
+            placeholder="Flat, house number, building name"
+            required
+          >
+
+        </div>
+
+
+        <!-- Area -->
+
+        <div class="form-group">
+
+          <label>
+            Area / Street / Locality
+          </label>
+
+          <input
+            type="text"
+            id="address-area"
+            placeholder="Area, street or locality"
+            required
+          >
+
+        </div>
+
+
+        <!-- City -->
+
+        <div class="form-row">
+
+          <div class="form-group">
+
+            <label>
+              City
+            </label>
+
+            <input
+              type="text"
+              id="address-city"
+              placeholder="City"
+              required
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              State
+            </label>
+
+            <input
+              type="text"
+              id="address-state"
+              placeholder="State"
+              required
+            >
+
+          </div>
+
+        </div>
+
+
+        <!-- Landmark -->
+
+        <div class="form-group">
+
+          <label>
+            Landmark
+            <span class="optional-label">
+              Optional
+            </span>
+          </label>
+
+          <input
+            type="text"
+            id="address-landmark"
+            placeholder="Nearby landmark"
+          >
+
+        </div>
+
+
+        <!-- Save -->
+
+        <button
+          type="submit"
+          id="save-address-btn"
+          class="btn btn-primary btn-block"
+        >
+
+          <i class="fa-solid fa-location-dot"></i>
+
+          Save & Select Address
+
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================================================
        AUTH MODAL
   ========================================================== -->
 
@@ -868,6 +1464,7 @@
 
 
       <form id="auth-form">
+
 
         <!-- Name -->
 
@@ -965,7 +1562,9 @@
           class="btn btn-primary btn-block"
           id="auth-submit-btn"
         >
+
           Login
+
         </button>
 
       </form>
@@ -977,13 +1576,15 @@
         id="auth-divider"
         style="text-align:center; margin:15px 0;"
       >
+
         <span>
           ──────── OR ────────
         </span>
+
       </div>
 
 
-      <!-- Google Login -->
+      <!-- Google -->
 
       <button
         type="button"
@@ -998,7 +1599,7 @@
       </button>
 
 
-      <!-- Phone Login -->
+      <!-- Phone -->
 
       <button
         type="button"
@@ -1014,7 +1615,7 @@
       </button>
 
 
-      <!-- OTP Section -->
+      <!-- OTP -->
 
       <div
         id="phone-otp-section"
@@ -1044,7 +1645,9 @@
           id="verify-phone-otp-btn"
           class="btn btn-primary btn-block"
         >
+
           Verify OTP
+
         </button>
 
 
@@ -1054,7 +1657,9 @@
           class="btn btn-secondary btn-block"
           style="margin-top:8px;"
         >
+
           Resend OTP
+
         </button>
 
       </div>
@@ -1105,6 +1710,7 @@
 
 
       <form id="listing-form">
+
 
         <!-- Item Name -->
 
@@ -1190,8 +1796,37 @@
         <div class="form-group">
 
           <label>
-            Location
+            Item Location
           </label>
+
+
+          <div class="listing-location-box">
+
+            <div class="listing-location-info">
+
+              <i class="fa-solid fa-location-dot"></i>
+
+              <span id="listing-location-text">
+                Select where this item is available
+              </span>
+
+            </div>
+
+
+            <button
+              type="button"
+              id="select-listing-location-btn"
+              class="btn btn-outline"
+            >
+
+              Select Location
+
+            </button>
+
+          </div>
+
+
+          <!-- Existing JS can still use this field -->
 
           <input
             type="text"
@@ -1286,6 +1921,7 @@
 
       <div id="booking-details">
 
+
         <!-- Location -->
 
         <p id="modal-item-location"></p>
@@ -1345,28 +1981,39 @@
 
 
           <p>
+
             Rate:
+
             <span id="summary-rate">
               ₹0
             </span>
+
             / day
+
           </p>
 
 
           <p>
+
             Total Duration:
+
             <span id="summary-days">
               1
             </span>
+
             day(s)
+
           </p>
 
 
           <h3>
+
             Total Payable:
+
             <span id="summary-total">
               ₹0
             </span>
+
           </h3>
 
         </div>
@@ -1381,13 +2028,17 @@
 
         <div class="payment-options">
 
+
           <button
             class="pay-option active"
             data-method="UPI"
             type="button"
           >
+
             <i class="fa-solid fa-mobile-screen-button"></i>
+
             UPI
+
           </button>
 
 
@@ -1396,8 +2047,11 @@
             data-method="Card"
             type="button"
           >
+
             <i class="fa-solid fa-credit-card"></i>
+
             Card
+
           </button>
 
 
@@ -1406,8 +2060,11 @@
             data-method="Net Banking"
             type="button"
           >
+
             <i class="fa-solid fa-building-columns"></i>
+
             Net Banking
+
           </button>
 
         </div>
@@ -1420,8 +2077,11 @@
           class="btn btn-primary btn-block"
           type="button"
         >
+
           <i class="fa-solid fa-lock"></i>
+
           Confirm & Pay
+
         </button>
 
       </div>
@@ -1437,6 +2097,7 @@
   ========================================================== -->
 
   <script src="supabase.js"></script>
+
   <script src="script.js"></script>
 
 </body>
